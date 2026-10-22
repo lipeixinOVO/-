@@ -1,0 +1,1037 @@
+{
+  "generated_at": "2026-10-22 18:12:18",
+  "trade_date": "2026-10-22",
+  "base_amount": 1000,
+  "scoring_basis": "index",
+  "multiplier_table": [
+    {
+      "min": 82,
+      "mult": 2.0,
+      "label": "明显低估，加倍"
+    },
+    {
+      "min": 68,
+      "mult": 1.5,
+      "label": "偏便宜，加码"
+    },
+    {
+      "min": 56,
+      "mult": 1.2,
+      "label": "温和加码"
+    },
+    {
+      "min": 40,
+      "mult": 1.0,
+      "label": "中性，基准"
+    },
+    {
+      "min": 28,
+      "mult": 0.8,
+      "label": "偏贵，略减"
+    },
+    {
+      "min": 14,
+      "mult": 0.5,
+      "label": "贵，减半"
+    },
+    {
+      "min": 0,
+      "mult": 0.3,
+      "label": "极度高估，只留底仓"
+    }
+  ],
+  "assets": [
+    {
+      "id": "IXIC",
+      "name": "纳斯达克综合指数",
+      "kind": "index_ref",
+      "advisory_only": true,
+      "price": 26702.86,
+      "price_date": "2026-10-21",
+      "score": 39.55,
+      "multiplier": 0.8,
+      "label": "偏贵，略减",
+      "band_pos": 96.2,
+      "completeness": 1.0,
+      "suggest_amount": null,
+      "dimensions": [
+        {
+          "key": "valuation",
+          "weight": 30,
+          "score": 38.7,
+          "anchor": "纳斯达克综合指数自身 PE 不可得，用纳指100(NDX) 估值代理",
+          "metrics": [
+            {
+              "name": "纳指100 PE-TTM 10年分位",
+              "raw": 29.7658,
+              "unit": "",
+              "pct": 41.63,
+              "score": 58.37,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "蛋卷基金 index_eva pe_history（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "PE 越低分位越低，价格越便宜、分数越高"
+            },
+            {
+              "name": "纳指100 PB 分位",
+              "raw": 9.3425,
+              "unit": "",
+              "pct": 80.96,
+              "score": 19.04,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "蛋卷基金 index_eva detail（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "蛋卷口径；交叉校验 PE 分位=0.43"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "trend",
+          "weight": 25,
+          "score": 58.98,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "距 200 日均线偏离",
+              "raw": 0.0695,
+              "unit": "%",
+              "pct": 37.78,
+              "score": 62.22,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "偏离越大越贵，分位越高分数越低"
+            },
+            {
+              "name": "距 52 周高点回撤",
+              "raw": -0.0325,
+              "unit": "%",
+              "pct": 44.26,
+              "score": 55.74,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "回撤越深（历史分位越低）分数越高"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "sentiment",
+          "weight": 20,
+          "score": 37.54,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "20 日年化波动率",
+              "raw": 0.1482,
+              "unit": "%",
+              "pct": 38.94,
+              "score": 38.94,
+              "weight": 60,
+              "higher_is_cheaper": true,
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "波动放大=恐慌，分数升高"
+            },
+            {
+              "name": "60 日动量",
+              "raw": 0.0734,
+              "unit": "%",
+              "pct": 64.55,
+              "score": 35.45,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "macro",
+          "weight": 25,
+          "score": 22.73,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "美债 10Y 实际利率(TIPS)",
+              "raw": 0.0276,
+              "unit": "%",
+              "pct": 99.29,
+              "score": 0.71,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 real_yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "实际利率越高，折现压力越大，分数越低"
+            },
+            {
+              "name": "美债 10Y 名义利率",
+              "raw": 0.0513,
+              "unit": "%",
+              "pct": 99.39,
+              "score": 0.61,
+              "weight": 15,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": ""
+            },
+            {
+              "name": "美元指数(DXY)",
+              "raw": 101.55,
+              "unit": "",
+              "pct": 70.35,
+              "score": 29.65,
+              "weight": 25,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 DINIW 日采样（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "美元走强推高非美元投资者成本"
+            },
+            {
+              "name": "USDCNY 汇率",
+              "raw": 6.674,
+              "unit": "",
+              "pct": 25.29,
+              "score": 74.71,
+              "weight": 20,
+              "higher_is_cheaper": false,
+              "source": "东财 133.USDCNH（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "人民币走弱时买美元资产成本更高"
+            }
+          ],
+          "missing_ratio": 0.0
+        }
+      ],
+      "trend_flag": {
+        "flag": "healthy",
+        "ma200_slope_60d": 0.0419,
+        "dev": 0.0695
+      },
+      "execution": {},
+      "fund_meta": {},
+      "gates": [],
+      "note": "仅作市场温度参考，不产生买入动作",
+      "conclusion": "综合 39.5 分 → 0.8 倍（偏贵，略减）：估值偏贵，价格居中。"
+    },
+    {
+      "id": "NDX",
+      "name": "纳斯达克100指数",
+      "kind": "index",
+      "advisory_only": false,
+      "price": 29822.52,
+      "price_date": "2026-10-21",
+      "score": 42.66,
+      "multiplier": 1.0,
+      "label": "中性，基准",
+      "band_pos": 16.6,
+      "completeness": 1.0,
+      "suggest_amount": 1000.0,
+      "dimensions": [
+        {
+          "key": "valuation",
+          "weight": 30,
+          "score": 42.64,
+          "anchor": "纳指100(NDX) 指数自身 PE/PB，蛋卷口径",
+          "metrics": [
+            {
+              "name": "纳指100 PE-TTM 10年分位",
+              "raw": 29.7658,
+              "unit": "",
+              "pct": 41.63,
+              "score": 58.37,
+              "weight": 60,
+              "higher_is_cheaper": false,
+              "source": "蛋卷基金 index_eva pe_history（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "PE 越低分位越低，价格越便宜、分数越高"
+            },
+            {
+              "name": "纳指100 PB 分位",
+              "raw": 9.3425,
+              "unit": "",
+              "pct": 80.96,
+              "score": 19.04,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "蛋卷基金 index_eva detail（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "蛋卷口径；交叉校验 PE 分位=0.43"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "trend",
+          "weight": 25,
+          "score": 64.75,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "距 200 日均线偏离",
+              "raw": 0.0726,
+              "unit": "%",
+              "pct": 35.33,
+              "score": 64.67,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 US_MinKService .NDX（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "偏离越大越贵，分位越高分数越低"
+            },
+            {
+              "name": "距 52 周高点回撤",
+              "raw": -0.0449,
+              "unit": "%",
+              "pct": 35.17,
+              "score": 64.83,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 US_MinKService .NDX（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "回撤越深（历史分位越低）分数越高"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "sentiment",
+          "weight": 20,
+          "score": 40.0,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "20 日年化波动率",
+              "raw": 0.1595,
+              "unit": "%",
+              "pct": 41.18,
+              "score": 41.18,
+              "weight": 60,
+              "higher_is_cheaper": true,
+              "source": "新浪财经 US_MinKService .NDX（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "波动放大=恐慌，分数升高"
+            },
+            {
+              "name": "60 日动量",
+              "raw": 0.0742,
+              "unit": "%",
+              "pct": 61.78,
+              "score": 38.22,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 US_MinKService .NDX（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "macro",
+          "weight": 25,
+          "score": 22.73,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "美债 10Y 实际利率(TIPS)",
+              "raw": 0.0276,
+              "unit": "%",
+              "pct": 99.29,
+              "score": 0.71,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 real_yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "实际利率越高，折现压力越大，分数越低"
+            },
+            {
+              "name": "美债 10Y 名义利率",
+              "raw": 0.0513,
+              "unit": "%",
+              "pct": 99.39,
+              "score": 0.61,
+              "weight": 15,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": ""
+            },
+            {
+              "name": "美元指数(DXY)",
+              "raw": 101.55,
+              "unit": "",
+              "pct": 70.35,
+              "score": 29.65,
+              "weight": 25,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 DINIW 日采样（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "美元走强推高非美元投资者成本"
+            },
+            {
+              "name": "USDCNY 汇率",
+              "raw": 6.674,
+              "unit": "",
+              "pct": 25.29,
+              "score": 74.71,
+              "weight": 20,
+              "higher_is_cheaper": false,
+              "source": "东财 133.USDCNH（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "人民币走弱时买美元资产成本更高"
+            }
+          ],
+          "missing_ratio": 0.0
+        }
+      ],
+      "trend_flag": {
+        "flag": "healthy",
+        "ma200_slope_60d": 0.0507,
+        "dev": 0.0726
+      },
+      "execution": {
+        "why": "6 只候选实测年化跟踪误差最低（0.83%）；华安1.00% / 大成1.03% / 南方1.42% / 天弘1.46% / 国泰11.83%",
+        "fund_code": "000055",
+        "fund_name": "广发纳斯达克100A(QDII)",
+        "tracking_error": 0.83,
+        "nav_date": "2026-10-20",
+        "nav": 1.2009,
+        "acc_nav": 1.2408,
+        "chg_pct": -0.14,
+        "subscribe_status": "暂停申购",
+        "redeem_status": "开放赎回",
+        "fallbacks": [
+          {
+            "fund_code": "040046",
+            "fund_name": "华安纳斯达克100A",
+            "tracking_error": 1.0,
+            "nav_date": "2026-10-20",
+            "nav": 8.1105,
+            "acc_nav": 8.1105,
+            "chg_pct": -0.15,
+            "subscribe_status": "限制大额申购",
+            "redeem_status": "开放赎回"
+          },
+          {
+            "fund_code": "000834",
+            "fund_name": "大成纳斯达克100ETF联接A",
+            "tracking_error": 1.03,
+            "nav_date": "2026-10-20",
+            "nav": 6.2192,
+            "acc_nav": 6.2192,
+            "chg_pct": -0.15,
+            "subscribe_status": "限制大额申购",
+            "redeem_status": "开放赎回"
+          },
+          {
+            "fund_code": "016452",
+            "fund_name": "南方纳斯达克100A",
+            "tracking_error": 1.42,
+            "nav_date": "2026-10-20",
+            "nav": 2.2691,
+            "acc_nav": 2.2691,
+            "chg_pct": -0.14,
+            "subscribe_status": "限制大额申购",
+            "redeem_status": "开放赎回"
+          }
+        ]
+      },
+      "fund_meta": {},
+      "gates": [],
+      "note": "评分口径：纳指100 指数本身。落地基金 000055。",
+      "conclusion": "综合 42.7 分 → 1.0 倍（中性，基准）：估值中性，价格在均值下方。"
+    },
+    {
+      "id": "GOLD",
+      "name": "黄金（COMEX 主力连续）",
+      "kind": "commodity",
+      "advisory_only": false,
+      "price": 4108.2,
+      "price_date": "2026-10-22",
+      "score": 54.53,
+      "multiplier": 1.0,
+      "label": "中性，基准",
+      "band_pos": 90.8,
+      "completeness": 1.0,
+      "suggest_amount": 1000.0,
+      "dimensions": [
+        {
+          "key": "valuation",
+          "weight": 15,
+          "score": 14.68,
+          "anchor": "黄金无 PE，用 10 年价格分位 + 金/股比价",
+          "metrics": [
+            {
+              "name": "金价 10 年名义分位",
+              "raw": 4108.2,
+              "unit": "",
+              "pct": 90.88,
+              "score": 9.12,
+              "weight": 60,
+              "higher_is_cheaper": false,
+              "source": "东方财富 push2his 101.GC00Y（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "未做通胀调整，属近似口径"
+            },
+            {
+              "name": "金价 / 标普500 比价分位",
+              "raw": 0.5362,
+              "unit": "",
+              "pct": 76.99,
+              "score": 23.01,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "东财 GC00Y ÷ 新浪 .INX（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "金/股比价越高说明黄金相对股票越贵"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "trend",
+          "weight": 30,
+          "score": 99.02,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "距 200 日均线偏离",
+              "raw": -0.0943,
+              "unit": "%",
+              "pct": 1.12,
+              "score": 98.88,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "东方财富 push2his 101.GC00Y（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "偏离越大越贵，分位越高分数越低"
+            },
+            {
+              "name": "距 52 周高点回撤",
+              "raw": -0.2408,
+              "unit": "%",
+              "pct": 0.84,
+              "score": 99.16,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "东方财富 push2his 101.GC00Y（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "回撤越深（历史分位越低）分数越高"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "sentiment",
+          "weight": 25,
+          "score": 79.23,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "20 日年化波动率",
+              "raw": 0.2008,
+              "unit": "%",
+              "pct": 82.99,
+              "score": 82.99,
+              "weight": 60,
+              "higher_is_cheaper": true,
+              "source": "东方财富 push2his 101.GC00Y（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "波动放大=恐慌，分数升高"
+            },
+            {
+              "name": "60 日动量",
+              "raw": -0.0131,
+              "unit": "%",
+              "pct": 26.41,
+              "score": 73.59,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "东方财富 push2his 101.GC00Y（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "macro",
+          "weight": 30,
+          "score": 9.37,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "美债 10Y 实际利率(TIPS)",
+              "raw": 0.0276,
+              "unit": "%",
+              "pct": 99.29,
+              "score": 0.71,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 real_yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "实际利率越高，折现压力越大，分数越低"
+            },
+            {
+              "name": "美债 10Y 名义利率",
+              "raw": 0.0513,
+              "unit": "%",
+              "pct": 99.39,
+              "score": 0.61,
+              "weight": 20,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": ""
+            },
+            {
+              "name": "美元指数(DXY)",
+              "raw": 101.55,
+              "unit": "",
+              "pct": 70.35,
+              "score": 29.65,
+              "weight": 30,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 DINIW 日采样（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "美元走强推高非美元投资者成本"
+            }
+          ],
+          "missing_ratio": 0.0
+        }
+      ],
+      "trend_flag": {
+        "flag": "healthy",
+        "ma200_slope_60d": 0.0068,
+        "dev": -0.0943
+      },
+      "execution": {
+        "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
+        "fund_code": "000216",
+        "fund_name": "华安黄金ETF联接A",
+        "tracking_error": null,
+        "nav_date": "2026-10-21",
+        "nav": 3.0672,
+        "acc_nav": 3.0672,
+        "chg_pct": -0.27,
+        "subscribe_status": "开放申购",
+        "redeem_status": "开放赎回",
+        "fallbacks": [
+          {
+            "fund_code": "002610",
+            "fund_name": "博时黄金ETF联接A",
+            "tracking_error": null,
+            "nav_date": "2026-10-21",
+            "nav": 2.8869,
+            "acc_nav": 2.8869,
+            "chg_pct": -0.27,
+            "subscribe_status": "开放申购",
+            "redeem_status": "开放赎回"
+          },
+          {
+            "fund_code": "000307",
+            "fund_name": "易方达黄金ETF联接A",
+            "tracking_error": null,
+            "nav_date": "2026-10-21",
+            "nav": 2.9069,
+            "acc_nav": 2.9069,
+            "chg_pct": -0.27,
+            "subscribe_status": "开放申购",
+            "redeem_status": "开放赎回"
+          }
+        ]
+      },
+      "fund_meta": {},
+      "gates": [],
+      "note": "评分口径：COMEX 黄金主力连续合约日线",
+      "conclusion": "综合 54.5 分 → 1.0 倍（中性，基准）：估值偏贵，价格在均值下方。"
+    },
+    {
+      "id": "MSCI_HEALTH",
+      "name": "MSCI 全球医疗保健指数",
+      "kind": "index",
+      "advisory_only": false,
+      "price": 657.4543025606844,
+      "price_date": "2026-10-21",
+      "score": 43.24,
+      "multiplier": 1.0,
+      "label": "中性，基准",
+      "band_pos": 20.3,
+      "completeness": 1.0,
+      "suggest_amount": 1000.0,
+      "dimensions": [
+        {
+          "key": "valuation",
+          "weight": 35,
+          "score": 67.77,
+          "anchor": "MSCI 官方 PE 历史不可得（需订阅）；用相对 MSCI World 比价 + 对数趋势偏离代理。官方快照 2026-08-31：PE 22.44、PB 4.85、股息率 1.77%",
+          "metrics": [
+            {
+              "name": "医疗 / MSCI World 比价 10年分位",
+              "raw": 0.041,
+              "unit": "",
+              "pct": 10.48,
+              "score": 89.52,
+              "weight": 60,
+              "higher_is_cheaper": false,
+              "source": "MSCI 106801 ÷ MSCI 990100（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "比价越高=医疗相对全球大盘越贵，分数越低"
+            },
+            {
+              "name": "距 10 年对数趋势偏离",
+              "raw": 0.0256,
+              "unit": "%",
+              "pct": 64.85,
+              "score": 35.15,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "偏离长期对数趋势越多=越贵；CAPE 近似思路，MSCI 历史 PE 序列不可得时用它代理"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "trend",
+          "weight": 25,
+          "score": 9.96,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "距 200 日均线偏离",
+              "raw": 0.1005,
+              "unit": "%",
+              "pct": 92.72,
+              "score": 7.28,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "偏离越大越贵，分位越高分数越低"
+            },
+            {
+              "name": "距 52 周高点回撤",
+              "raw": -0.002,
+              "unit": "%",
+              "pct": 87.35,
+              "score": 12.65,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "回撤越深（历史分位越低）分数越高"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "sentiment",
+          "weight": 20,
+          "score": 62.43,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "20 日年化波动率",
+              "raw": 0.1691,
+              "unit": "%",
+              "pct": 83.43,
+              "score": 83.43,
+              "weight": 60,
+              "higher_is_cheaper": true,
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "波动放大=恐慌，分数升高"
+            },
+            {
+              "name": "60 日动量",
+              "raw": 0.0535,
+              "unit": "%",
+              "pct": 69.07,
+              "score": 30.93,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "macro",
+          "weight": 20,
+          "score": 22.73,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "美债 10Y 实际利率(TIPS)",
+              "raw": 0.0276,
+              "unit": "%",
+              "pct": 99.29,
+              "score": 0.71,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 real_yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "实际利率越高，折现压力越大，分数越低"
+            },
+            {
+              "name": "美债 10Y 名义利率",
+              "raw": 0.0513,
+              "unit": "%",
+              "pct": 99.39,
+              "score": 0.61,
+              "weight": 15,
+              "higher_is_cheaper": false,
+              "source": "美国财政部 yield_curve（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": ""
+            },
+            {
+              "name": "美元指数(DXY)",
+              "raw": 101.55,
+              "unit": "",
+              "pct": 70.35,
+              "score": 29.65,
+              "weight": 25,
+              "higher_is_cheaper": false,
+              "source": "新浪财经 DINIW 日采样（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "美元走强推高非美元投资者成本"
+            },
+            {
+              "name": "USDCNY 汇率",
+              "raw": 6.674,
+              "unit": "",
+              "pct": 25.29,
+              "score": 74.71,
+              "weight": 20,
+              "higher_is_cheaper": false,
+              "source": "东财 133.USDCNH（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "人民币走弱时买美元资产成本更高"
+            }
+          ],
+          "missing_ratio": 0.0
+        }
+      ],
+      "trend_flag": {
+        "flag": "healthy",
+        "ma200_slope_60d": 0.0243,
+        "dev": 0.1005
+      },
+      "execution": {
+        "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用",
+        "fund_code": "000369",
+        "fund_name": "广发全球医疗保健指数人民币(QDII)A",
+        "tracking_error": null,
+        "nav_date": "2026-10-20",
+        "nav": 2.683,
+        "acc_nav": 2.793,
+        "chg_pct": 1.98,
+        "subscribe_status": "限制大额申购",
+        "redeem_status": "开放赎回",
+        "fallbacks": []
+      },
+      "fund_meta": {},
+      "gates": [],
+      "note": "评分口径：MSCI 官方指数点位（106801，净总回报口径，1999 年起）。不再用基金累计净值。",
+      "conclusion": "综合 43.2 分 → 1.0 倍（中性，基准）：估值偏便宜，价格明显高于均值。"
+    },
+    {
+      "id": "CSI_DIVIDEND",
+      "name": "中证红利指数",
+      "kind": "index",
+      "advisory_only": false,
+      "price": 5408.37,
+      "price_date": "2026-10-22",
+      "score": 41.08,
+      "multiplier": 1.0,
+      "label": "中性，基准",
+      "band_pos": 6.7,
+      "completeness": 1.0,
+      "suggest_amount": 1000.0,
+      "dimensions": [
+        {
+          "key": "valuation",
+          "weight": 40,
+          "score": 25.09,
+          "anchor": "中证红利(000922) 指数估值，蛋卷口径",
+          "metrics": [
+            {
+              "name": "股息率分位（PE 分位反向代理）",
+              "raw": 8.9863,
+              "unit": "",
+              "pct": 85.47,
+              "score": 14.53,
+              "weight": 60,
+              "higher_is_cheaper": false,
+              "source": "蛋卷基金 index_eva pe_history（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "真实股息率=0.046，历史股息率序列不可得，用 PE 分位反向代理"
+            },
+            {
+              "name": "PB 分位",
+              "raw": 0.8913,
+              "unit": "",
+              "pct": 59.08,
+              "score": 40.92,
+              "weight": 40,
+              "higher_is_cheaper": false,
+              "source": "蛋卷基金 index_eva detail（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "蛋卷口径"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "trend",
+          "weight": 20,
+          "score": 70.92,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "距 200 日均线偏离",
+              "raw": -0.0334,
+              "unit": "%",
+              "pct": 17.17,
+              "score": 82.83,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "东方财富 push2his 1.000922（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "偏离越大越贵，分位越高分数越低"
+            },
+            {
+              "name": "距 52 周高点回撤",
+              "raw": -0.0951,
+              "unit": "%",
+              "pct": 40.98,
+              "score": 59.02,
+              "weight": 50,
+              "higher_is_cheaper": false,
+              "source": "东方财富 push2his 1.000922（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "回撤越深（历史分位越低）分数越高"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "sentiment",
+          "weight": 15,
+          "score": 57.67,
+          "anchor": null,
+          "metrics": [
+            {
+              "name": "20 日年化波动率",
+              "raw": 0.1588,
+              "unit": "%",
+              "pct": 67.79,
+              "score": 67.79,
+              "weight": 60,
+              "higher_is_cheaper": true,
+              "source": "东方财富 push2his 1.000922（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "波动放大=恐慌，分数升高"
+            },
+            {
+              "name": "成交额 / 60 日均额",
+              "raw": 0.9043,
+              "unit": "倍",
+              "pct": 42.5,
+              "score": 42.5,
+              "weight": 40,
+              "higher_is_cheaper": true,
+              "source": "东方财富 push2his 1.000922（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "放量（恐慌或狂热）给分，需结合趋势看"
+            }
+          ],
+          "missing_ratio": 0.0
+        },
+        {
+          "key": "macro",
+          "weight": 25,
+          "score": 32.84,
+          "anchor": "A股10Y国债未接入，股债性价比暂用相对沪深300 强弱替代",
+          "metrics": [
+            {
+              "name": "中证红利 / 沪深300 相对强弱",
+              "raw": 1.3402,
+              "unit": "",
+              "pct": 79.63,
+              "score": 20.37,
+              "weight": 60,
+              "higher_is_cheaper": false,
+              "source": "东财 000922 ÷ 000300（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "红利相对大盘越强，性价比越低"
+            },
+            {
+              "name": "沪深300 PE 分位（A股整体估值环境）",
+              "raw": 12.8491,
+              "unit": "",
+              "pct": 51.55,
+              "score": 51.55,
+              "weight": 40,
+              "higher_is_cheaper": true,
+              "source": "蛋卷基金 index_eva pe_history SH000300（2026-10-22 18:12 取）",
+              "fetched_at": "",
+              "note": "大盘越贵，资金越倾向高股息防御，红利相对吸引力上升 → 方向为正"
+            }
+          ],
+          "missing_ratio": 0.0
+        }
+      ],
+      "trend_flag": {
+        "flag": "weakening",
+        "ma200_slope_60d": -0.0017,
+        "dev": -0.0334
+      },
+      "execution": {
+        "why": "跟踪中证红利(000922)；C类 009052。注意「中证红利价值」024564 与「中证红利低波动」020602 是不同指数，勿混",
+        "fund_code": "009051",
+        "fund_name": "易方达中证红利ETF联接发起式A",
+        "tracking_error": null,
+        "nav_date": "2026-10-21",
+        "nav": 1.2243,
+        "acc_nav": 1.5313,
+        "chg_pct": -0.95,
+        "subscribe_status": "开放申购",
+        "redeem_status": "开放赎回",
+        "fallbacks": []
+      },
+      "fund_meta": {
+        "yeild": 0.046,
+        "pe": 8.9863,
+        "pb": 0.8913
+      },
+      "gates": [],
+      "note": "评分口径：中证红利指数 000922 本身",
+      "conclusion": "综合 41.1 分 → 1.0 倍（中性，基准）：估值偏贵，价格在均值下方。"
+    }
+  ],
+  "alternatives": [],
+  "macro": {
+    "ust_10y_real": 2.76,
+    "ust_10y_nominal": 5.13,
+    "dxy": 101.55,
+    "usdcnh": 6.674,
+    "gold_spot": 4090.84
+  },
+  "errors": []
+}

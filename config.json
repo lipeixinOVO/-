@@ -1,0 +1,99 @@
+{
+  "_comment": "定投台配置 v3。评分一律基于指数本身，不基于基金净值（净值有分红折算、T+1 披露、费率漂移三重失真）。落地基金只作执行参考，不参与打分。",
+  "schema_version": 3,
+  "base_amount": 1000,
+  "monthly_cap_multiple": 2.0,
+  "window_years": 10,
+  "scoring_basis": "index",
+  "assets": [
+    {
+      "id": "IXIC",
+      "name": "纳斯达克综合指数",
+      "kind": "index_ref",
+      "advisory_only": true,
+      "data": { "type": "sina_us", "symbol": ".IXIC" },
+      "weights": { "valuation": 30, "trend": 25, "sentiment": 20, "macro": 25 },
+      "note": "仅作市场温度参考，不产生买入动作"
+    },
+    {
+      "id": "NDX",
+      "name": "纳斯达克100指数",
+      "kind": "index",
+      "advisory_only": false,
+      "data": { "type": "sina_us", "symbol": ".NDX" },
+      "valuation": { "type": "danjuan", "code": "NDX" },
+      "weights": { "valuation": 30, "trend": 25, "sentiment": 20, "macro": 25 },
+      "execution": {
+        "fund_code": "000055",
+        "fund_name": "广发纳斯达克100A(QDII)",
+        "tracking_error": 0.83,
+        "why": "6 只候选实测年化跟踪误差最低（0.83%）；华安1.00% / 大成1.03% / 南方1.42% / 天弘1.46% / 国泰11.83%",
+        "fallbacks": [
+          { "code": "040046", "name": "华安纳斯达克100A", "tracking_error": 1.00 },
+          { "code": "000834", "name": "大成纳斯达克100ETF联接A", "tracking_error": 1.03 },
+          { "code": "016452", "name": "南方纳斯达克100A", "tracking_error": 1.42 }
+        ]
+      },
+      "note": "评分口径：纳指100 指数本身。落地基金 000055。"
+    },
+    {
+      "id": "GOLD",
+      "name": "黄金（COMEX 主力连续）",
+      "kind": "commodity",
+      "advisory_only": false,
+      "data": { "type": "em_kline", "secid": "101.GC00Y" },
+      "spot_sina": "hf_XAU",
+      "weights": { "valuation": 15, "trend": 30, "sentiment": 25, "macro": 30 },
+      "execution": {
+        "fund_code": "000216",
+        "fund_name": "华安黄金ETF联接A",
+        "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
+        "fallbacks": [
+          { "code": "002610", "name": "博时黄金ETF联接A" },
+          { "code": "000307", "name": "易方达黄金ETF联接A" }
+        ]
+      },
+      "note": "评分口径：COMEX 黄金主力连续合约日线"
+    },
+    {
+      "id": "MSCI_HEALTH",
+      "name": "MSCI 全球医疗保健指数",
+      "kind": "index",
+      "advisory_only": false,
+      "data": { "type": "msci", "code": "106801", "variant": "NETR" },
+      "benchmark": { "type": "msci", "code": "990100", "variant": "NETR" },
+      "weights": { "valuation": 35, "trend": 25, "sentiment": 20, "macro": 20 },
+      "execution": {
+        "fund_code": "000369",
+        "fund_name": "广发全球医疗保健指数人民币(QDII)A",
+        "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用"
+      },
+      "note": "评分口径：MSCI 官方指数点位（106801，净总回报口径，1999 年起）。不再用基金累计净值。"
+    },
+    {
+      "id": "CSI_DIVIDEND",
+      "name": "中证红利指数",
+      "kind": "index",
+      "advisory_only": false,
+      "data": { "type": "em_kline", "secid": "1.000922" },
+      "valuation": { "type": "danjuan", "code": "SH000922" },
+      "weights": { "valuation": 40, "trend": 20, "sentiment": 15, "macro": 25 },
+      "execution": {
+        "fund_code": "009051",
+        "fund_name": "易方达中证红利ETF联接发起式A",
+        "why": "跟踪中证红利(000922)；C类 009052。注意「中证红利价值」024564 与「中证红利低波动」020602 是不同指数，勿混"
+      },
+      "note": "评分口径：中证红利指数 000922 本身"
+    }
+  ],
+  "multiplier_table": [
+    { "min": 82, "mult": 2.0, "label": "明显低估，加倍" },
+    { "min": 68, "mult": 1.5, "label": "偏便宜，加码" },
+    { "min": 56, "mult": 1.2, "label": "温和加码" },
+    { "min": 40, "mult": 1.0, "label": "中性，基准" },
+    { "min": 28, "mult": 0.8, "label": "偏贵，略减" },
+    { "min": 14, "mult": 0.5, "label": "贵，减半" },
+    { "min": 0,  "mult": 0.3, "label": "极度高估，只留底仓" }
+  ],
+  "band_notes": "中性带宽 40-56（16 分），较 v2 的 45-55（10 分）拓宽 60%，避免分数轻微抖动就跨档。档位间不再有 15 分空档。"
+}

@@ -1,0 +1,50 @@
+name: daily-dca
+
+# 每个交易日北京时间 08:30 跑一次（UTC 00:30）。
+# 选这个时点：美股已收盘、隔夜数据齐；A 股未开盘，当天的建议可以照着执行。
+on:
+  schedule:
+    - cron: "30 0 * * 2-6"   # UTC 周二~周六 = 北京周二~周六 08:30，覆盖周一~周五交易日
+  workflow_dispatch:         # 手动触发
+
+permissions:
+  contents: write            # 需要回写 data/out 与 docs
+
+concurrency:
+  group: daily-dca
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 纯标准库实现，无第三方依赖，不需要 pip install
+      - name: 跑批（抓数 → 算分 → 出快照）
+        run: python run_daily.py
+
+      - name: 生成站点
+        run: python build_site.py
+
+      # 站点生成后先自检：数据缺项、权重和不等于 100、曲线与当天不一致都会让这一步失败，
+      # 失败即不提交，避免把坏数据推到线上页面。
+      - name: 交付前自检
+        run: python tools/selfcheck.py
+
+      - name: 提交结果
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "无变化，跳过提交"
+          else
+            git commit -m "chore: 每日跑批 $(TZ=Asia/Shanghai date +%Y-%m-%d)"
+            git push
+          fi

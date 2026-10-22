@@ -1,0 +1,167 @@
+# -*- coding: utf-8 -*-
+"""把 dca-dashboard 推到 GitHub（绕过被墙的 git，全走 REST API）。
+
+用 Git Data API 做**单次提交**：blobs → tree → commit → 更新 ref，
+比逐个文件 Contents API 快一个数量级（1 次 commit 而不是 N 次）。
+
+用法：
+    python push_github.py            # 建仓库（若不存在）+ 推送
+    python push_github.py --dry      # 只列要推的文件
+"""
+import base64
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import requests
+
+OWNER = "lipeixinOVO"
+REPO = os.environ.get("GH_REPO", "-")   # 实际仓库名就是一个减号
+BRANCH = "main"
+LOCAL = Path(r"C:/Users/27576/Desktop/ai/定投台/dca-dashboard")
+CRED = Path(os.path.expanduser("~")) / ".git-credentials"
+API = "https://api.github.com"
+
+# 不进仓库的：接口缓存（易变、体积大）、每日完整快照（本地复盘用）
+SKIP_DIRS = {"cache", "__pycache__", ".git", "node_modules"}
+SKIP_NAMES = {".DS_Store", "_selfcheck.js"}   # 自检临时产物不进仓库
+
+
+def token():
+    for line in CRED.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"https://([^@\s]+)@github\.com/?$", line.strip())
+        if m:
+            c = m.group(1)
+            return c.split(":")[0] if ":" in c else c
+    raise RuntimeError("未找到 GitHub token")
+
+
+H = {"Authorization": f"Bearer {token()}", "Accept": "application/vnd.github+json",
+     "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "workbuddy-sync"}
+
+
+def collect():
+    out = []
+    for p in sorted(LOCAL.rglob("*")):
+        if p.is_dir():
+            continue
+        rel = p.relative_to(LOCAL)
+        parts = set(rel.parts)
+        if parts & SKIP_DIRS or p.name in SKIP_NAMES:
+            continue
+        # data/out 只留 latest 与 report，其余每日快照不进仓库
+        if rel.parts[:2] == ("data", "out") and p.name not in ("latest.json", "report.md"):
+            continue
+        if p.suffix in (".pyc", ".log"):
+            continue
+        out.append((rel.as_posix(), p))
+    return out
+
+
+def ensure_repo():
+    r = requests.get(f"{API}/repos/{OWNER}/{REPO}", headers=H, timeout=25)
+    if r.status_code == 200:
+        print(f"仓库已存在：{r.json()['full_name']}（{r.json().get('visibility')}）")
+        return r.json()
+    if r.status_code != 404:
+        raise RuntimeError(f"查询仓库失败 {r.status_code}: {r.text[:200]}")
+    print("仓库不存在，创建中…")
+    r = requests.post(f"{API}/user/repos", headers=H, timeout=30, json={
+        "name": REPO,
+        "description": "定投台 · 五标的定投倍数看板（纳指100 / 黄金 / MSCI全球医疗 / 中证红利 / 纳指综指）",
+        "private": False,
+        "has_issues": True,
+        "has_wiki": False,
+        "auto_init": True,          # 生成 initial commit，便于建 ref
+    })
+    if r.status_code not in (200, 201):
+        raise RuntimeError(f"创建仓库失败 {r.status_code}: {r.text[:300]}")
+    print(f"已创建：{r.json()['html_url']}")
+    return r.json()
+
+
+def get_head_sha():
+    import time
+    for _ in range(6):
+        r = requests.get(f"{API}/repos/{OWNER}/{REPO}/git/ref/heads/{BRANCH}",
+                         headers=H, timeout=25)
+        if r.status_code == 200:
+            return r.json()["object"]["sha"]
+        time.sleep(2)   # auto_init 建 ref 有一两秒延迟
+    # 仓库是空的（没有 initial commit）→ 用 Contents API 建个 README 触发首次提交
+    print("仓库为空，先创建初始提交…")
+    r = requests.put(f"{API}/repos/{OWNER}/{REPO}/contents/README.md", headers=H, timeout=30,
+                     json={"message": "init", "content": base64.b64encode(b"# dca-dashboard\n").decode()})
+    if r.status_code not in (200, 201):
+        raise RuntimeError(f"初始化失败 {r.status_code}: {r.text[:300]}")
+    r = requests.get(f"{API}/repos/{OWNER}/{REPO}/git/ref/heads/{BRANCH}", headers=H, timeout=25)
+    r.raise_for_status()
+    return r.json()["object"]["sha"]
+
+
+def blob(p):
+    data = p.read_bytes()
+    r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/blobs", headers=H, timeout=60,
+                      json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
+    r.raise_for_status()
+    return r.json()["sha"]
+
+
+def enable_pages():
+    """启用 GitHub Pages，源指向 main /docs。已开启或权限不足都不算失败。"""
+    r = requests.post(f"{API}/repos/{OWNER}/{REPO}/pages", headers=H, timeout=30,
+                      json={"source": {"branch": BRANCH, "path": "/docs"}})
+    if r.status_code in (201, 204):
+        print(f"Pages 已启用：https://{OWNER.lower()}.github.io/{REPO}/")
+    elif r.status_code == 409:
+        print(f"Pages 之前已启用：https://{OWNER.lower()}.github.io/{REPO}/")
+    else:
+        print(f"⚠ Pages 自动启用失败（{r.status_code}）——需手动到 Settings → Pages，"
+              f"Source 选 Deploy from a branch，Branch 选 main / docs")
+
+
+def main(dry=False):
+    files = collect()
+    total = sum(p.stat().st_size for _, p in files)
+    print(f"待推 {len(files)} 个文件，共 {total/1024:.0f} KB")
+    if dry:
+        for rel, p in files:
+            print(f"  {rel}  ({p.stat().st_size/1024:.1f} KB)")
+        return
+
+    ensure_repo()
+    head = get_head_sha()
+    print(f"当前 HEAD: {head[:8]}")
+
+    tree = []
+    for i, (rel, p) in enumerate(files, 1):
+        sha = blob(p)
+        tree.append({"path": rel, "mode": "100644", "type": "blob", "sha": sha})
+        print(f"  [{i}/{len(files)}] {rel}", flush=True)
+
+    r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/trees", headers=H, timeout=60,
+                      json={"tree": tree})
+    r.raise_for_status()
+    tree_sha = r.json()["sha"]
+
+    r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/commits", headers=H, timeout=60, json={
+        "message": "feat: 定投台上线（指数口径评分 + 历史回填 + 每日 Action）",
+        "tree": tree_sha,
+        "parents": [head],
+    })
+    if r.status_code not in (200, 201):
+        raise RuntimeError(f"建 commit 失败 {r.status_code}: {r.text[:400]}")
+    commit_sha = r.json()["sha"]
+
+    r = requests.patch(f"{API}/repos/{OWNER}/{REPO}/git/refs/heads/{BRANCH}", headers=H,
+                       timeout=30, json={"sha": commit_sha, "force": False})
+    if r.status_code not in (200, 201):
+        raise RuntimeError(f"更新 ref 失败 {r.status_code}: {r.text[:400]}")
+    print(f"\n推送完成：https://github.com/{OWNER}/{REPO}/commit/{commit_sha[:8]}")
+    enable_pages()
+
+
+if __name__ == "__main__":
+    main(dry="--dry" in sys.argv)

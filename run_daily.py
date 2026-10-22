@@ -1,0 +1,211 @@
+# -*- coding: utf-8 -*-
+"""定投台每日跑批：拉数据 → 算分 → 出快照 + 报告。
+
+用法：
+    python run_daily.py            # 跑一次，写 data/out/
+    python run_daily.py --dry      # 只打印，不落盘
+"""
+import json
+import os
+import sys
+import time
+import datetime as dt
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+
+from src import sources as S          # noqa: E402
+from src import engine as E           # noqa: E402
+from src import compute as C          # noqa: E402
+
+DJ_H = {"Referer": "https://danjuanfunds.com/"}
+
+
+def load_ctx():
+    ctx = {"errors": []}
+    ty = dt.date.today().year
+    years = list(range(ty - 9, ty + 1))
+
+    print("· 拉取美债实际利率（美国财政部，逐年 CSV）…", flush=True)
+    ctx["ust_real"] = S.treasury_curve("real", years)
+    print(f"  → {len(ctx['ust_real'])} 个交易日", flush=True)
+
+    print("· 拉取美债名义利率…", flush=True)
+    ctx["ust_nominal"] = S.treasury_curve("nominal", years)
+    print(f"  → {len(ctx['ust_nominal'])} 个交易日", flush=True)
+
+    print("· 拉取美元指数 / 人民币汇率 / 沪深300…", flush=True)
+    # 一律保留日期，回填历史时才能按 as_of 截断（否则会把"未来"的宏观数据用进过去）
+    for key, secid in (("dxy", "100.UDI"), ("usdcny", "133.USDCNH"), ("hs300", "1.000300")):
+        try:
+            rows = S.em_kline(secid)
+            ctx[key] = [(r[0], r[1]) for r in rows]
+            print(f"  → {key}: {len(rows)} 条", flush=True)
+        except Exception as e:  # noqa: BLE001
+            ctx[key] = []
+            ctx["errors"].append(f"{key}({secid}): {e}")
+        time.sleep(1.0)
+
+    try:
+        ctx["spx"] = S.sina_us_daily(".INX")
+        print(f"  → spx: {len(ctx['spx'])} 条", flush=True)
+    except Exception as e:  # noqa: BLE001
+        ctx["spx"] = []
+        ctx["errors"].append(f"spx: {e}")
+
+    try:
+        ctx["gold_spot"] = S.sina_snapshot("hf_XAU")
+    except Exception:  # noqa: BLE001
+        ctx["gold_spot"] = {}
+
+    print("· 拉取指数估值（蛋卷）…", flush=True)
+    C.load_valuation_anchors(ctx)
+    return ctx
+
+
+def explain(a):
+    """用规则生成一句人话结论，不经过 LLM。"""
+    dims = {d["key"]: d for d in a["dimensions"]}
+    parts = []
+    val = dims.get("valuation", {}).get("score")
+    tr = dims.get("trend", {}).get("score")
+    if val is not None:
+        parts.append("估值偏贵" if val < 40 else ("估值偏便宜" if val > 60 else "估值中性"))
+    if tr is not None:
+        parts.append("价格在均值下方" if tr > 60 else ("价格明显高于均值" if tr < 40 else "价格居中"))
+    head = f"综合 {a['score']:.1f} 分 → {a['multiplier']:.1f} 倍（{a['label']}）"
+    return head + "：" + "，".join(parts) + "。"
+
+
+def run(dry=False):
+    with open(os.path.join(HERE, "config.json"), encoding="utf-8") as f:
+        cfg = json.load(f)
+
+    print("=" * 72)
+    print("定投台 · 每日跑批")
+    print("=" * 72)
+    ctx = load_ctx()
+
+    results = []
+    for a in cfg["assets"]:
+        print(f"· 计算 {a['name']} …", flush=True)
+        fn = C.COMPUTERS[a["id"]]
+        try:
+            r = fn(a, ctx)
+        except Exception as e:  # noqa: BLE001
+            ctx["errors"].append(f"{a['id']}: {e}")
+            print(f"  ✗ 失败：{e}", flush=True)
+            continue
+
+        score = E.composite(r["dims"])
+        mult, label = E.multiplier_for(score, cfg["multiplier_table"])
+        comp = E.completeness_of(r["dims"])
+        trend = E.trend_flag(r["closes"])
+        mult, gates = E.apply_gates(score, mult, r["dims"], comp, trend)
+
+        # 执行可行性：只作提示，不影响倍数（用户要求只输出评分与倍率）
+        ex = a.get("execution") or {}
+        ex_status = {}
+        if ex.get("fund_code"):
+            def _probe(code, name, te=None):
+                try:
+                    st = S.fund_status(code)
+                    return {"fund_code": code, "fund_name": name, "tracking_error": te, **st}
+                except Exception as e:  # noqa: BLE001
+                    return {"fund_code": code, "fund_name": name, "tracking_error": te, "error": str(e)}
+
+            ex_status = {"why": ex.get("why"), **_probe(ex["fund_code"], ex.get("fund_name"),
+                                                       ex.get("tracking_error"))}
+            time.sleep(0.8)
+            fbs = []
+            for fb in ex.get("fallbacks") or []:
+                fbs.append(_probe(fb["code"], fb.get("name"), fb.get("tracking_error")))
+                time.sleep(0.8)
+            ex_status["fallbacks"] = fbs
+
+        item = {
+            "id": a["id"],
+            "name": a["name"],
+            "kind": a["kind"],
+            "advisory_only": a.get("advisory_only", False),
+            "price": r.get("price"),
+            "price_date": r.get("price_date"),
+            "score": score,
+            "multiplier": round(mult, 2),
+            "label": label,
+            "band_pos": E.band_position(score, cfg["multiplier_table"]),
+            "completeness": comp,
+            "suggest_amount": round(cfg["base_amount"] * mult, 0) if not a.get("advisory_only") else None,
+            "dimensions": r["dims"],
+            "trend_flag": trend,
+            "execution": ex_status,
+            "fund_meta": r.get("fund_meta") or {},
+            "gates": gates,
+            "note": a.get("note", ""),
+        }
+        item["conclusion"] = explain(item)
+        results.append(item)
+        print(f"  → {item['score']:.1f} 分 / {item['multiplier']:.1f} 倍 / 完整度 {comp:.0%}"
+              + (f" / 闸门 {len(gates)}" if gates else ""), flush=True)
+        time.sleep(0.6)
+
+    alts = []
+    for a in cfg["assets"]:
+        for alt in a.get("alternatives") or []:
+            try:
+                st = S.fund_status(alt["code"])
+                alts.append({"code": alt["code"], "name": alt["name"], **st})
+            except Exception as e:  # noqa: BLE001
+                alts.append({"code": alt["code"], "name": alt["name"], "error": str(e)})
+            time.sleep(0.8)
+
+    out = {
+        "generated_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "trade_date": dt.date.today().isoformat(),
+        "base_amount": cfg["base_amount"],
+        "scoring_basis": cfg.get("scoring_basis", "index"),
+        "multiplier_table": cfg["multiplier_table"],
+        "assets": results,
+        "alternatives": alts,
+        "macro": {
+            "ust_10y_real": _last(ctx.get("ust_real")),
+            "ust_10y_nominal": _last(ctx.get("ust_nominal")),
+            "dxy": _last(ctx.get("dxy")),
+            "usdcnh": _last(ctx.get("usdcny")),
+            "gold_spot": (ctx.get("gold_spot") or {}).get("price"),
+        },
+        "errors": ctx.get("errors", []),
+    }
+
+    if not dry:
+        os.makedirs(os.path.join(HERE, "data", "out"), exist_ok=True)
+        day_path = os.path.join(HERE, "data", "out", f"{out['trade_date']}.json")
+        with open(day_path, "w", encoding="utf-8") as f:
+            json.dump(out, f, ensure_ascii=False, indent=2)
+        with open(os.path.join(HERE, "data", "out", "latest.json"), "w", encoding="utf-8") as f:
+            json.dump(out, f, ensure_ascii=False, indent=2)
+        from src import render as R
+        from src import history as H
+        md = R.to_markdown(out)
+        for p in (os.path.join(HERE, "data", "out", "report.md"),
+                  os.path.join(HERE, "docs", "report.md")):
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w", encoding="utf-8") as f:
+                f.write(md)
+        n = H.append(out["trade_date"], out["assets"])
+        print(f"\n历史序列已更新：{n} 期")
+        print(f"\n已写出：{day_path}")
+        print(f"已写出：data/out/report.md")
+
+    return out
+
+
+def _last(seq):
+    if not seq:
+        return None
+    last = seq[-1]
+    return last[1] if isinstance(last, tuple) else last
+
+
+if __name__ == "__main__":
+    run(dry="--dry" in sys.argv)

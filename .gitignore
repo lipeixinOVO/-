@@ -1,0 +1,15 @@
+# 接口缓存（易变、体积大，不进仓库）
+data/cache/
+
+# 每日完整快照（含全部指标明细，仅本地复盘用；仓库只留 data/history.json）
+data/out/*.json
+!data/out/latest.json
+
+__pycache__/
+*.pyc
+.DS_Store
+*.js
+!docs/*.js
+
+# 本地截图与预览，不进仓库
+_shots/
