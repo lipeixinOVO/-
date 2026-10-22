@@ -36,14 +36,21 @@ def load_ctx():
 
     print("· 拉取美元指数 / 人民币汇率 / 沪深300…", flush=True)
     # 一律保留日期，回填历史时才能按 as_of 截断（否则会把"未来"的宏观数据用进过去）
-    for key, secid in (("dxy", "100.UDI"), ("usdcny", "133.USDCNH"), ("hs300", "1.000300")):
+    # 每个 key 都挂兜底源：东财偶发断连时不能让整个宏观维度塌掉
+    macro_src = {
+        "dxy": {"type": "em_kline", "secid": "100.UDI"},
+        "usdcny": {"type": "em_kline", "secid": "133.USDCNH"},
+        "hs300": {"type": "em_kline", "secid": "1.000300",
+                  "fallback": [{"type": "tx_kline", "secid": "1.000300"}]},
+    }
+    for key, spec in macro_src.items():
         try:
-            rows = S.em_kline(secid)
+            rows, src = C.try_chain(spec, ctx, label=key)
             ctx[key] = [(r[0], r[1]) for r in rows]
-            print(f"  → {key}: {len(rows)} 条", flush=True)
+            print(f"  → {key}: {len(rows)} 条（{src}）", flush=True)
         except Exception as e:  # noqa: BLE001
             ctx[key] = []
-            ctx["errors"].append(f"{key}({secid}): {e}")
+            ctx["errors"].append(f"{key}({spec.get('secid')}): {e}")
         time.sleep(1.0)
 
     try:
@@ -175,6 +182,8 @@ def run(dry=False):
             "gold_spot": (ctx.get("gold_spot") or {}).get("price"),
         },
         "errors": ctx.get("errors", []),
+        # 主力源失败、自动回退到备用源时记在这里，页面上要能看见（否则数据"悄悄换源"）
+        "data_notes": ctx.get("notes", []),
     }
 
     if not dry:

@@ -98,25 +98,15 @@ def msci_index(code, variant="NETR"):
 
 
 def em_kline(secid):
-    """东财日线：[(date, close, amount)]。secid 例：1.000922 / 101.GC00Y"""
-    def _go():
-        # 部分标的（如美元指数）不支持 f56/f57 字段，服务端会直接断连 → 降级再试
-        js = None
-        for fields2 in ("f51,f53,f56,f57", "f51,f53"):
-            url = ("https://push2his.eastmoney.com/api/qt/stock/kline/get"
-                   f"?secid={secid}&fields1=f1,f2,f3,f4,f5"
-                   f"&fields2={fields2}&klt=101&fqt=1&beg=0&end=20500101")
-            try:
-                js = fetch_json(url, timeout=20, retries=2)
-                if js.get("data"):
-                    break
-            except Exception:  # noqa: BLE001
-                js = None
-        if not js:
-            raise RuntimeError(f"em_kline 无数据: {secid}")
-        data = js.get("data") or {}
+    """东财日线：[(date, close, amount)]。secid 例：1.000922 / 101.GC00Y
+
+    实测注意：这个接口对部分 secid（1.000922、101.GC00Y）会**间歇性直接断连**
+    （RemoteDisconnected，不带任何响应），本地和 GitHub Runner 都会遇到。
+    所以这里多轮重试，并且调用方必须准备兜底源，不能只依赖它。
+    """
+    def _parse(klines):
         out = []
-        for line in data.get("klines") or []:
+        for line in klines:
             p = line.split(",")
             if len(p) < 2:
                 continue
@@ -128,7 +118,108 @@ def em_kline(secid):
             out.append([p[0], close, amt])
         out.sort(key=lambda x: x[0])
         return out
+
+    def _go():
+        last = "未尝试"
+        for fields2 in ("f51,f53,f56,f57", "f51,f53"):
+            url = ("https://push2his.eastmoney.com/api/qt/stock/kline/get"
+                   f"?secid={secid}&fields1=f1,f2,f3,f4,f5"
+                   f"&fields2={fields2}&klt=101&fqt=1&beg=0&end=20500101")
+            for attempt in range(3):
+                try:
+                    js = fetch_json(url, timeout=20, retries=2)
+                    klines = (js.get("data") or {}).get("klines") or []
+                    if klines:
+                        return _parse(klines)
+                    last = "返回体里没有 klines"
+                except Exception as e:  # noqa: BLE001
+                    last = f"{type(e).__name__}: {e}"
+                time.sleep(0.6 + attempt * 1.0)
+        raise RuntimeError(f"em_kline 无数据: {secid}（{last[:80]}）")
+
     return [tuple(x) for x in _cached(f"em_{secid}", _go)]
+
+
+def csindex_perf(code, start="2004-01-01"):
+    """中证指数官网日线：[(date, close, amount)]。amount 由 tradingValue(亿元) 换算成元。
+
+    注意 tradeDate 两种格式混用：早期 "2004-01-01"，近期 "20261022"，必须统一。
+    """
+    def _go():
+        url = ("https://www.csindex.com.cn/csindex-home/perf/index-perf"
+               f"?indexCode={code}&startDate={start}&endDate=2030-01-01")
+        js = fetch_json(url, headers={"Referer": "https://www.csindex.com.cn/"},
+                        timeout=30, retries=3)
+        out = []
+        for r in js.get("data") or []:
+            d = str(r.get("tradeDate") or "").strip()
+            if len(d) == 8 and d.isdigit():
+                d = f"{d[:4]}-{d[4:6]}-{d[6:]}"
+            c = r.get("close")
+            if len(d) != 10 or c is None:
+                continue
+            try:
+                amt = float(r.get("tradingValue") or 0) * 1e8    # 亿元 → 元
+            except (TypeError, ValueError):
+                amt = 0.0
+            out.append([d, float(c), amt])
+        out.sort(key=lambda x: x[0])
+        if not out:
+            raise RuntimeError(f"csindex 无数据: {code}")
+        return out
+    return [tuple(x) for x in _cached(f"csindex_{code}_{start}", _go)]
+
+
+def sina_gold_daily(symbol="GC"):
+    """新浪外盘期货日线（COMEX 黄金连续 = GC）：[(date, close, 0)]。
+
+    接口返回 JSONP，外面包了一层 `var _GC=(...)`；volume 恒为 0，所以成交额维度不可用，
+    调用方会自动退化成动量指标。历史约 10 年（2016 起），与东财逐日对齐过。
+    """
+    def _go():
+        url = ("https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
+               f"var%20_{symbol}=/GlobalFuturesService.getGlobalFuturesDailyKLine"
+               f"?symbol={symbol}")
+        txt = fetch(url, headers=SINA_H, timeout=25, retries=3)
+        m = re.search(r"\((\[.*\])\)", txt, re.S)
+        rows = json.loads(m.group(1)) if m else []
+        out = []
+        for r in rows:
+            try:
+                out.append([r["date"], float(r["close"]), 0.0])
+            except (KeyError, TypeError, ValueError):
+                continue
+        out.sort(key=lambda x: x[0])
+        if not out:
+            raise RuntimeError(f"新浪期货无数据: {symbol}")
+        return out
+    return [tuple(x) for x in _cached(f"sinagold_{symbol}", _go)]
+
+
+def tx_kline(secid):
+    """腾讯财经日线兜底：[(date, close, 0)]。secid 例：1.000300 → sh000300。"""
+    mkt, code = secid.split(".", 1)
+    sym = {"1": "sh", "0": "sz"}.get(mkt)
+    if not sym:
+        raise RuntimeError(f"tx_kline 不支持的市场前缀: {secid}")
+    sym += code
+    def _go():
+        url = ("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
+               f"?param={sym},day,,,4000,qfq")
+        js = fetch_json(url, timeout=25, retries=3)
+        d = (js.get("data") or {}).get(sym) or {}
+        rows = d.get("qfqday") or d.get("day") or []
+        out = []
+        for r in rows:
+            try:
+                out.append([r[0], float(r[2]), 0.0])
+            except (IndexError, TypeError, ValueError):
+                continue
+        out.sort(key=lambda x: x[0])
+        if not out:
+            raise RuntimeError(f"tx_kline 无数据: {sym}")
+        return out
+    return [tuple(x) for x in _cached(f"tx_{sym}", _go)]
 
 
 def sina_snapshot(code, enc="gbk"):

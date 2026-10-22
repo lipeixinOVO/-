@@ -24,30 +24,61 @@ def _src(name):
 
 # ---------------------------------------------------------------- 序列获取
 
-def load_series(cfg, as_of=None):
+_FETCHERS = {
+    "sina_us": lambda d: (S.sina_us_daily(d["symbol"]),
+                          f"新浪财经 US_MinKService {d['symbol']}"),
+    "em_kline": lambda d: (S.em_kline(d["secid"]),
+                           f"东方财富 push2his {d['secid']}"),
+    "msci": lambda d: (S.msci_index(d["code"], d.get("variant", "NETR")),
+                       f"MSCI 官方指数接口 index_codes={d['code']}（{d.get('variant', 'NETR')}）"),
+    "csindex": lambda d: (S.csindex_perf(d["code"], d.get("start", "2004-01-01")),
+                          f"中证指数官网 indexCode={d['code']}"),
+    "sina_gold": lambda d: (S.sina_gold_daily(d.get("symbol", "GC")),
+                            f"新浪外盘期货 {d.get('symbol', 'GC')} 日线"),
+    "tx_kline": lambda d: (S.tx_kline(d["secid"]),
+                           f"腾讯财经 {d['secid']}"),
+}
+
+
+def try_chain(spec, ctx=None, label=""):
+    """按 config 里写的顺序逐个数据源尝试，返回 (rows, 来源说明)。
+
+    东财部分 secid 会间歇性断连（实测 1.000922 / 101.GC00Y 都中过），
+    所以任何一个标的都不允许只挂一个源；全部失败才抛错，并把每个源的失败原因一起抛出来。
+    """
+    specs = [spec] + list(spec.get("fallback") or [])
+    errs = []
+    for s in specs:
+        t = s.get("type")
+        if t not in _FETCHERS:
+            raise ValueError(f"未知 data.type: {t}")
+        try:
+            rows, src = _FETCHERS[t](s)
+            if rows:
+                if errs and ctx is not None:
+                    ctx.setdefault("notes", []).append(
+                        f"{label}主力源失败（{errs[0][:60]}），已回退到 {src}")
+                return rows, src
+            errs.append(f"{t}: 空数据")
+        except Exception as e:  # noqa: BLE001
+            errs.append(f"{t}: {e}")
+    raise RuntimeError(f"{label}全部数据源失败 → " + "；".join(errs))
+
+
+def load_series(cfg, as_of=None, ctx=None):
     """按 config.data 取行情序列。as_of 给定时截断到该日（回填历史用，避免前视偏差）。"""
     d = cfg["data"]
-    t = d["type"]
-    if t == "sina_us":
-        rows = S.sina_us_daily(d["symbol"])
-        src = f"新浪财经 US_MinKService {d['symbol']}"
-    elif t == "em_kline":
-        rows = S.em_kline(d["secid"])
-        src = f"东方财富 push2his {d['secid']}"
-    elif t == "msci":
-        rows = S.msci_index(d["code"], d.get("variant", "NETR"))
-        src = f"MSCI 官方指数接口 index_codes={d['code']}（{d.get('variant', 'NETR')}）"
-    else:
-        raise ValueError(f"未知 data.type: {t}")
+    rows, src = try_chain(d, ctx, label=cfg.get("name", ""))
 
     if as_of:
         rows = [r for r in rows if r[0] <= as_of]
     if not rows:
         raise RuntimeError(f"{d} 在 {as_of} 之前无数据")
 
+    amounts = [x[2] if len(x) > 2 else 0.0 for x in rows]
     return {"closes": [x[1] for x in rows],
             "dates": [x[0] for x in rows],
-            "amounts": ([x[2] for x in rows] if t == "em_kline" else None),
+            "amounts": amounts if any(amounts) else None,
             "date": rows[-1][0],
             "src": _src(src)}
 
@@ -181,7 +212,7 @@ def _out(ser, dims):
 # ---------------------------------------------------------------- 各标的
 
 def compute_ixic(cfg, ctx, as_of=None):
-    ser = load_series(cfg, as_of)
+    ser = load_series(cfg, as_of, ctx)
     dims = [
         E.build_dimension("valuation", cfg["weights"]["valuation"],
                           _val_from_dj(ctx, "NDX", 50, 50, "纳指100", as_of=as_of),
@@ -197,7 +228,7 @@ def compute_ixic(cfg, ctx, as_of=None):
 
 
 def compute_ndx(cfg, ctx, as_of=None):
-    ser = load_series(cfg, as_of)
+    ser = load_series(cfg, as_of, ctx)
     dims = [
         E.build_dimension("valuation", cfg["weights"]["valuation"],
                           _val_from_dj(ctx, "NDX", 60, 40, "纳指100", as_of=as_of),
@@ -213,7 +244,7 @@ def compute_ndx(cfg, ctx, as_of=None):
 
 
 def compute_gold(cfg, ctx, as_of=None):
-    ser = load_series(cfg, as_of)
+    ser = load_series(cfg, as_of, ctx)
     closes = ser["closes"]
     ms = [E.mk_metric("金价 10 年名义分位", closes[-E.WINDOW:], False, 60, ser["src"], "", unit="",
                       note="未做通胀调整，属近似口径")]
@@ -251,14 +282,14 @@ def compute_health(cfg, ctx, as_of=None):
       ① 医疗 / MSCI World 比价 10 年分位 —— 衡量"医疗相对全球大盘贵不贵"（相对估值）
       ② 距 10 年对数回归趋势偏离 —— 近似 CAPE 思路，衡量"涨得超前长期轨道多少"（绝对估值代理）
     """
-    ser = load_series(cfg, as_of)
+    ser = load_series(cfg, as_of, ctx)
     closes = ser["closes"]
     ms = []
 
     bm_cfg = cfg.get("benchmark")
     if bm_cfg:
         try:
-            bm = load_series({"data": bm_cfg}, as_of)
+            bm = load_series({"data": bm_cfg}, as_of, ctx)
             ratio = E.ratio_series(list(zip(ser["dates"], closes)),
                                    list(zip(bm["dates"], bm["closes"])))
             if len(ratio) > 250:
@@ -272,7 +303,7 @@ def compute_health(cfg, ctx, as_of=None):
     # 早期版本用截断后的 closes 算，导致回填期全部复用最早那一天的残差，
     # 10-21 的回填分（50.9）与实际（43.2）差 7.7 分。
     if "_health_resid" not in ctx:
-        full = load_series(cfg, None)
+        full = load_series(cfg, None, ctx)
         ctx["_health_resid"] = E.log_resid_dated(full["closes"], full["dates"], 2500, 21)
     resid = [v for d, v in ctx["_health_resid"] if not as_of or d <= as_of]
     if resid:
@@ -295,7 +326,7 @@ def compute_health(cfg, ctx, as_of=None):
 
 
 def compute_dividend(cfg, ctx, as_of=None):
-    ser = load_series(cfg, as_of)
+    ser = load_series(cfg, as_of, ctx)
     closes = ser["closes"]
     det = (ctx["dj"].get("SH000922") or {}).get("detail") or {}
     pe_hist = _pe_upto(ctx, "SH000922", as_of)
