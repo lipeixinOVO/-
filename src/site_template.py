@@ -150,6 +150,31 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 .foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
   font-size:10.5px;color:var(--dim3);line-height:1.9;letter-spacing:.04em}
 
+/* ---------- 观察型模块（长期锚 / 二十二年） ---------- */
+.labs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lab{background:linear-gradient(180deg,var(--card-a),var(--card-b));border:1px solid var(--line);
+  border-radius:var(--r);padding:18px 20px 12px;
+  box-shadow:0 1px 2px rgba(20,22,27,.04),0 14px 30px -22px rgba(20,22,27,.35)}
+.lab .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
+.lab .sub{font-size:10.5px;color:var(--dim2);margin-top:4px;line-height:1.65;letter-spacing:.01em}
+.lab .big{font-size:32px;font-weight:400;letter-spacing:-.02em;color:#14161b;
+  margin:13px 0 0;line-height:1.1;font-variant-numeric:tabular-nums}
+.lab .big small{font-size:11px;color:var(--dim3);margin-left:6px;letter-spacing:.04em}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:13px 0 10px}
+.kv .c{border-top:1px solid var(--line);padding-top:8px}
+.kv .k{font-size:9.5px;color:var(--dim2);letter-spacing:.06em;text-transform:uppercase}
+.kv .v{font-size:13px;color:#14161b;margin-top:3px;font-variant-numeric:tabular-nums}
+.kv .v i{font-style:normal;font-size:10.5px;margin-left:5px;letter-spacing:.02em}
+.kv .v i.up{color:#b4452e}
+.kv .v i.dn{color:#2f7d54}
+.kv .v i.mid{color:var(--dim2)}
+.lab svg{width:100%;height:auto;display:block;margin-top:8px}
+.lab .cap{font-size:9.5px;color:var(--dim3);margin-top:6px;letter-spacing:.04em;line-height:1.7}
+
+@media(max-width:760px){
+  .labs{grid-template-columns:1fr}
+}
+
 @media(max-width:720px){
   .hero{grid-template-columns:1fr 1fr}
   .hero>div:first-child{grid-column:1/-1}
@@ -335,6 +360,173 @@ def _esc(s):
             .replace('"', "&quot;"))
 
 
+# ---------------------------------------------------------------- 观察型模块
+# 手绘 SVG：不用图表库（Pages 静态托管，外部 CDN 一旦被墙整页白屏）
+def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 28)):
+    """多线折线图。layers=[{pts:[(idx, val)], color, width, dash}]，x 轴用索引。"""
+    import math
+
+    allv = [v for L in layers for _i, v in L["pts"] if v] + [r[1] for r in refs]
+    if not allv:
+        return ""
+    vmin, vmax = min(allv), max(allv)
+    tf = (lambda v: math.log10(v)) if log else (lambda v: v)
+    a, b = tf(vmin), tf(vmax)
+    if b - a < 1e-9:
+        b = a + 1.0
+    n = max([len(L["pts"]) for L in layers] or [1])
+    PL, PR, PT, PB = pad
+    X = lambda i: PL + (w - PL - PR) * (i / max(1, n - 1))
+    Y = lambda v: PT + (h - PT - PB) * (1 - (tf(v) - a) / (b - a))
+
+    o = [f'<svg viewBox="0 0 {w} {h}" preserveAspectRatio="xMidYMid meet">']
+    # 对数轴用 1-2-3-5-7 优选刻度（等比、等距），线性轴均分四段
+    if log:
+        ticks, p = [], int(math.floor(math.log10(max(vmin, 1e-9))))
+        while 10 ** p <= vmax * 10:
+            for mm in (1, 2, 3, 5, 7):
+                v = mm * 10 ** p
+                if vmin * 0.999 <= v <= vmax * 1.001:
+                    ticks.append(v)
+            p += 1
+        if len(ticks) < 2:
+            ticks = [vmin, vmax]
+    else:
+        ticks = [vmin + (vmax - vmin) * k / 4.0 for k in range(5)]
+    for v in ticks:
+        yy = Y(v)
+        txt = f"{v:,.0f}" if vmax >= 100 else f"{v:.2f}"
+        o.append(f'<line x1="{PL}" y1="{yy:.1f}" x2="{w - PR}" y2="{yy:.1f}" '
+                 'stroke="rgba(20,22,27,.08)" stroke-width="1"/>')
+        o.append(f'<text x="{PL - 8}" y="{yy + 3.5:.1f}" fill="#8b8e97" font-size="9.5" '
+                 f'text-anchor="end">{txt}</text>')
+    for lbl, rv, rc in refs:
+        yy = Y(rv)
+        o.append(f'<line x1="{PL}" y1="{yy:.1f}" x2="{w - PR}" y2="{yy:.1f}" stroke="{rc}" '
+                 'stroke-width="1" stroke-dasharray="3 4"/>')
+        # 标签放左侧起点上方：右下角会和小数点很多的 x 轴末标签撞在一起，
+        # 右移 30px 是为了跟 y 轴刻度数字拉开，否则看起来像"0.30 参考 0.3"
+        o.append(f'<text x="{PL + 30}" y="{yy - 6:.1f}" fill="{rc}" font-size="9" '
+                 f'text-anchor="start" letter-spacing=".4">{lbl}</text>')
+    for L in layers:
+        seg = [(i, v) for i, v in L["pts"] if v]
+        if not seg:
+            continue
+        d = " ".join(("M" if j == 0 else "L") + f"{X(i):.1f} {Y(v):.1f}"
+                     for j, (i, v) in enumerate(seg))
+        dash = f' stroke-dasharray="{L["dash"]}"' if L.get("dash") else ""
+        o.append(f'<path d="{d}" fill="none" stroke="{L["color"]}" '
+                 f'stroke-width="{L.get("width", 1.8)}"{dash} '
+                 'stroke-linejoin="round" stroke-linecap="round"/>')
+    for i, txt in xlabels:
+        anchor = "start" if i == 0 else ("end" if i >= n - 1 else "middle")
+        # 首个标签右移 8px，避开 y 轴刻度数字（否则 "0.30" 和 "2024-06-19" 会粘在一起）
+        xx = X(i) + (12 if i == 0 else 0)
+        o.append(f'<text x="{xx:.1f}" y="{h - 6}" fill="#8b8e97" font-size="9.5" '
+                 f'text-anchor="{anchor}" letter-spacing=".3">{txt}</text>')
+    o.append("</svg>")
+    return "".join(o)
+
+
+def _num(v, nd=2):
+    return "—" if v is None else f"{v:,.{nd}f}"
+
+
+def _dev_html(dev, pct):
+    """偏离百分比 + 分位的小标签：涨红跌绿（A 股习惯），分位低=便宜=绿。"""
+    if dev is None:
+        return "—"
+    cls = "up" if dev > 0.5 else ("dn" if dev < -0.5 else "mid")
+    tag = f'<i class="{cls}">{dev:+.2f}%</i>'
+    if pct is not None:
+        pc = "up" if pct > 70 else ("dn" if pct < 30 else "mid")
+        tag += f'<i class="{pc}">历史分位 {pct:.0f}%</i>'
+    return tag
+
+
+def _labs_html(labs):
+    """两张「长期锚」卡片 + 一张二十二年双线图。数据缺失时整块不渲染。"""
+    if not labs:
+        return "", "", ""
+    da, cy, el = labs.get("div_anchor"), labs.get("cyb_ratio"), labs.get("equity_long")
+
+    a = ""
+    if da:
+        s = da["series"]
+        n = len(s)
+        L = [
+            {"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#14161b", "width": 1.5},
+            {"pts": [(i, r[2]) for i, r in enumerate(s)], "color": "#9c782f", "width": 1.7},
+            {"pts": [(i, r[3]) for i, r in enumerate(s)], "color": "#3b6ea5", "width": 1.7},
+        ]
+        xl = [(0, s[0][0]), (n // 2, s[n // 2][0]), (n - 1, s[-1][0])]
+        a += f"""<div class="lab">
+  <div class="t">中证红利 · 月线锚</div>
+  <div class="sub">40 月均线当估值中枢、90 月均线当深度低估参考点 —— 民间经验规则，非学术结论，这里只量「现在离这两条线多远」</div>
+  <div class="big">{_num(da['close'])}<small>{da['month']} 收盘 · 点位</small></div>
+  <div class="kv">
+    <div class="c"><div class="k">vs 40 月均线 {_num(da['ma40'])}</div><div class="v">{_dev_html(da['dev40'], da['dev40_pct'])}</div></div>
+    <div class="c"><div class="k">vs 90 月均线 {_num(da['ma90'])}</div><div class="v">{_dev_html(da['dev90'], da['dev90_pct'])}</div></div>
+  </div>
+  {_svg(L, xlabels=xl)}
+  <div class="cap">月线 {da['months']} 期（2005-01 起）· <span style="color:#14161b">黑</span>=月收盘　<span style="color:#9c782f">金</span>=MA40　<span style="color:#3b6ea5">蓝</span>=MA90</div>
+</div>"""
+
+    if cy:
+        s = cy["series"]
+        n = len(s)
+        L = [{"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#9c782f", "width": 1.8}]
+        refs = [(f"参考 {cy['ref']}", cy["ref"], "#b4452e")]
+        xl = [(0, s[0][0]), (n // 2, s[n // 2][0]), (n - 1, s[-1][0])]
+        gap = (cy["ratio"] / cy["ref"] - 1) * 100 if cy["ref"] else None
+        gap_html = (f'<i class="{"up" if gap > 0 else "dn"}">{gap:+.1f}%</i>'
+                    if gap is not None else "—")
+        a += f"""<div class="lab">
+  <div class="t">创业板指 ÷ 中证红利</div>
+  <div class="sub">「直接指数相除」。比值越低，创业板相对红利越便宜；{cy['ref']} 是截图里提到的观察点</div>
+  <div class="big">{cy['ratio']:.4f}<small>{cy['as_of']} · 历史分位 {_num(cy['pct'], 1)}%</small></div>
+  <div class="kv">
+    <div class="c"><div class="k">距 {cy['ref']} 参考点</div><div class="v">{gap_html}</div></div>
+    <div class="c"><div class="k">区间（{cy['from']} 起，{cy['n']} 个交易日）</div><div class="v">{cy['min']:.4f} – {cy['max']:.4f}</div></div>
+  </div>
+  {_svg(L, refs=refs, xlabels=xl)}
+  <div class="cap">历史低点 {cy['min']:.4f}（{cy['min_d']}）、高点 {cy['max']:.4f}（{cy['max_d']}）· 创业板指仅回溯到 {cy['from']}，故分位是近 12 年口径</div>
+</div>"""
+
+    b = ""
+    if el:
+        s = el["series"]
+        n = len(s)
+        L = [
+            {"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#3b6ea5", "width": 1.6},
+            {"pts": [(i, r[2]) for i, r in enumerate(s)], "color": "#14161b", "width": 1.7},
+        ]
+        yrs = sorted({r[0][:4] for r in s})
+        xl = [(next(i for i, r in enumerate(s) if r[0][:4] == y), y)
+              for y in yrs[::4]] + [(n - 1, s[-1][0][:4])]
+        note = ""
+        if labs.get("notes"):
+            note = "　·　" + labs["notes"][-1]
+        b = f"""<div class="chart">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:10px">
+    <div>
+      <div style="font-size:13.5px;font-weight:600;color:#0e1013">二十二年，两条线</div>
+      <div style="font-size:10.5px;color:var(--dim2);margin-top:4px">
+        <span style="color:#14161b">黑</span>=全市场全收益（中证全指 H00985，替代万得全A）　
+        <span style="color:#3b6ea5">蓝</span>=沪深300全收益（H00300）　·　纵轴为对数刻度
+      </div>
+    </div>
+    <div style="font-size:11.5px;color:var(--dim2);text-align:right;line-height:1.8">
+      年化 <b style="color:#14161b">{_num(el['cagr_all'], 2)}%</b>（全市场）
+      vs <b style="color:#3b6ea5">{_num(el['cagr300'], 2)}%</b>（沪深300）
+    </div>
+  </div>
+  {_svg(L, w=1060, h=330, log=True, pad=(52, 14, 16, 26), xlabels=xl)}
+  <div class="cap">月度采样 {el['months']} 期（{el['from']} 起，基点 1000）· 全市场 {_num(el['hall'])} · 沪深300 {_num(el['h300'])}{_esc(note)}</div>
+</div>"""
+    return a, b, ""
+
+
 def render(payload):
     latest = payload["latest"]
     hist = payload["history"]
@@ -371,6 +563,16 @@ def render(payload):
                "<th style='padding:0 10px 9px;font-weight:400'>落地基金</th>"
                "</tr></thead><tbody style='color:var(--txt)'>" + "".join(rows) + "</tbody></table>")
 
+    # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
+    labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
+    labs_sec = ""
+    if labs_a:
+        labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small></h2>\n'
+                     f'<div class="labs">{labs_a}</div>\n')
+    if labs_b:
+        labs_sec += ('<h2>二十二年 <small>全收益口径 · 对数轴</small></h2>\n'
+                     f'{labs_b}\n')
+
     return f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -395,6 +597,7 @@ def render(payload):
 <h2>分数历史 <small>中性带宽 40–56 分 · 虚线为 1.0 倍基准</small></h2>
 <div class="chart" id="chart"></div>
 
+{labs_sec}
 <h2>口径与数据来源</h2>
 <div class="notes">
   <ul>
@@ -411,12 +614,17 @@ def render(payload):
     · <b>MSCI 全球医疗保健指数的 PE 历史不可得</b>（官方基本面接口需订阅，实测 404；蛋卷未覆盖）→ 估值改用「医疗/MSCI World 比价分位」+「距 10 年对数趋势偏离」两个真实代理。官方快照 2026-08-31：PE 22.44、PB 4.85<br>
     · 中证红利真实股息率历史序列不可得 → 用 PE 分位反向代理<br>
     · A 股 10Y 国债未接入（中债接口需鉴权）→ 红利宏观用「相对沪深300 强弱」+「沪深300 PE 分位」替代<br>
-    · 黄金价格分位为名义口径，未做通胀调整
+    · 黄金价格分位为名义口径，未做通胀调整<br>
+    · <b>「长期锚」三块不参与打分</b>：40/90 月均线、创红比 0.3 都来自民间经验规则（非学术结论），页面只量「现在离参考点多远」<br>
+    · 万得全A(800707.WI) 属 Wind 商业数据、公开接口取不到 → 「全市场」一条改用中证全指全收益 H00985 替代（同口径、同基点）<br>
+    · 创业板指公开接口只回溯到 2014-06 → 创红比分位是「近 12 年」口径，不是全历史
   </div>
   <ul>
     <li><b>数据来源</b>：MSCI 官方指数接口（106801 / 990100）· 新浪财经 US_MinKService（.IXIC/.NDX/.INX）·
         东方财富 push2his（GC00Y/000922/000300/UDI/USDCNH）· 美国财政部 official CSV（TIPS 与名义收益率）·
-        蛋卷基金 index_eva（PE 周频序列 + PB 分位）· 天天基金（净值与申购状态）</li>
+        蛋卷基金 index_eva（PE 周频序列 + PB 分位）· 天天基金（净值与申购状态）·
+        中证指数官网 index-perf（000922 / H00300 沪深300全收益 / H00985 中证全指全收益）·
+        新浪 sz399006（创业板指，3000 条上限）</li>
     <li><b>跟踪误差实测</b>（纳指100 六只候选，QDII 净值按 T+1 对齐后年化）：
         广发 000055 = 0.83%　华安 040046 = 1.00%　大成 000834 = 1.03%　南方 016452 = 1.42%　天弘 018043 = 1.46%　国泰 160213 = 11.83%</li>
   </ul>

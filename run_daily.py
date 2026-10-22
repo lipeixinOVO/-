@@ -17,6 +17,7 @@ sys.path.insert(0, HERE)
 from src import sources as S          # noqa: E402
 from src import engine as E           # noqa: E402
 from src import compute as C          # noqa: E402
+from src import labs as LB            # noqa: E402
 
 DJ_H = {"Referer": "https://danjuanfunds.com/"}
 
@@ -182,6 +183,15 @@ def run(dry=False):
         for e in ctx["errors"]:
             print(f"   ✗ {str(e)[:200]}", flush=True)
 
+    # 观察型模块：红利月线锚 / 创红比 / 二十二年双线。**不参与打分**，
+    # 单独 try，任何一块挂掉都不许影响主表跑批。
+    print("\n· 观察型模块（长期锚 · 二十二年）…", flush=True)
+    try:
+        labs = LB.run()
+    except Exception as e:  # noqa: BLE001
+        labs = {"errors": [f"labs: {e}"], "notes": []}
+        print(f"  ✗ 整体失败：{e}", flush=True)
+
     out = {
         "generated_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "trade_date": dt.date.today().isoformat(),
@@ -200,6 +210,8 @@ def run(dry=False):
         "errors": ctx.get("errors", []),
         # 主力源失败、自动回退到备用源时记在这里，页面上要能看见（否则数据"悄悄换源"）
         "data_notes": ctx.get("notes", []),
+        # 观察型模块（红利月线锚 / 创红比 / 二十二年曲线），不参与打分
+        "labs": labs,
     }
 
     if not dry:
