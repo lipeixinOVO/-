@@ -49,31 +49,5 @@ jobs:
             git push
           fi
 
-  # 定时跑批里的提交用的是 GITHUB_TOKEN，这种提交**不会**触发别的 workflow，
-  # 所以每天必须在这里自己部署一次，否则页面停在旧数据上。
-  deploy:
-    needs: run
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main          # 取上面刚提交后的最新 docs/
-
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: 部署
-        id: deploy
-        uses: actions/deploy-pages@v4
+# Pages 走「Deploy from a branch → main /docs」：
+# 上面的 git push 只要改到 docs/，GitHub 就会自动重新发布，不需要额外部署 workflow。
