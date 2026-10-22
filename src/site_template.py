@@ -59,6 +59,26 @@ body{
 .hero .v.pick{color:var(--gold-l)}
 .hero .hint{font-size:11px;color:var(--dim2);margin-top:5px;letter-spacing:.02em}
 
+/* ---------- 阈值提示（只标位置，不喊买卖） ---------- */
+.sigs{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
+.sig{display:flex;align-items:flex-start;gap:12px;padding:11px 16px 12px;border-radius:10px;
+  border:1px solid var(--line);background:linear-gradient(180deg,#fffdf8,#fdfaf4)}
+.sig .tag{flex:none;font-size:9.5px;letter-spacing:.14em;padding:2.5px 8px;border-radius:4px;
+  white-space:nowrap;margin-top:1px;border:1px solid rgba(156,120,47,.34);color:#8a6b25;
+  background:rgba(156,120,47,.07)}
+.sig .tx{font-size:12.5px;color:#14161b;line-height:1.72;min-width:0}
+.sig .tx b{font-weight:600}
+.sig .num{flex:none;margin-left:auto;font-size:14px;font-weight:600;color:#8a6b25;
+  font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:1px}
+.sig.hi{border-color:rgba(180,69,46,.3);background:linear-gradient(180deg,#fff8f5,#fdf4f0)}
+.sig.hi .tag{color:#b4452e;border-color:rgba(180,69,46,.36);background:rgba(180,69,46,.06)}
+.sig.hi .num{color:#b4452e}
+.sig.calm{background:linear-gradient(180deg,var(--card-a),var(--card-b))}
+.sig.calm .tag{color:var(--dim2);border-color:var(--line-2);background:rgba(20,22,27,.025)}
+.sig.calm .num{color:var(--dim);font-weight:500}
+.sigrule{font-size:10.5px;color:var(--dim2);letter-spacing:.02em;line-height:1.95;margin:10px 2px 0}
+@media(max-width:640px){.sig{flex-wrap:wrap}.sig .num{margin-left:0}}
+
 /* ---------- 宏观条 ---------- */
 .macro{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:var(--r);
@@ -588,6 +608,26 @@ def _labs_html(labs):
     return a, b, ""
 
 
+def _signals_html(sg):
+    """阈值提示条。tx 由 src/signals.py 自己拼（含 <b>），此处不再转义；
+    其余字段一律 _esc，避免以后有人往 signals 里塞外部数据时出现注入。"""
+    items = (sg or {}).get("items") or []
+    if not items:
+        return ""
+    rows = []
+    for s in items:
+        lv = _esc(s.get("lv") or "mid")
+        num = s.get("num")
+        num_html = f"<span class='num'>{_esc(num)}</span>" if num else ""
+        rows.append(
+            f"<div class='sig {lv}'><span class='tag'>{_esc(s.get('tag', ''))}</span>"
+            f"<div class='tx'>{s.get('tx', '')}</div>{num_html}</div>")
+    rule = sg.get("rules") or ""
+    tail = (f"<div class='sigrule'>阈值口径：{_esc(rule)}　·　"
+            "提示只描述「现在处在哪个位置」，不构成买卖指令，也不改变上面的倍数</div>")
+    return f"<div class='sigs'>{''.join(rows)}</div>{tail}"
+
+
 def render(payload):
     latest = payload["latest"]
     hist = payload["history"]
@@ -626,6 +666,7 @@ def render(payload):
 
     # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
+    sig_sec = _signals_html(payload.get("signals") or {})
     labs_sec = ""
     if labs_a:
         labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small></h2>\n'
@@ -649,6 +690,7 @@ def render(payload):
 </div>
 
 <div class="hero" id="hero"></div>
+{sig_sec}
 <div class="macro" id="macro"></div>
 <div class="grid" id="grid"></div>
 

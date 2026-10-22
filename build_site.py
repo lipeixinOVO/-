@@ -75,9 +75,13 @@ def main():
     rows = H.load()
     names = {a["id"]: a["name"] for a in latest["assets"]}
     ids, names, series = H.to_series_payload(rows, names)
+
+    # 阈值提示：纯派生（读分数/倍数/长期锚 + 历史累积），不改分数、不参与算分
+    from src import signals as SG
     payload = {"latest": latest,
                "history": [{"trade_date": r["d"]} for r in rows],
-               "series": {"ids": ids, "names": names, "data": series}}
+               "series": {"ids": ids, "names": names, "data": series},
+               "signals": {"items": SG.compute(latest, rows), "rules": SG.RULE_TEXT}}
 
     os.makedirs(SITE_DIR, exist_ok=True)
     with open(os.path.join(SITE_DIR, "data.json"), "w", encoding="utf-8") as f:
