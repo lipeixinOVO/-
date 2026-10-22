@@ -154,6 +154,9 @@ def run(dry=False):
         results.append(item)
         print(f"  → {item['score']:.1f} 分 / {item['multiplier']:.1f} 倍 / 完整度 {comp:.0%}"
               + (f" / 闸门 {len(gates)}" if gates else ""), flush=True)
+        print("     维度 " + " ".join(
+            f"{d['key'][:5]}={d['score']:.0f}(w{d['weight']},缺{d.get('missing_ratio', 0):.0%})"
+            for d in item["dimensions"]), flush=True)
         time.sleep(0.6)
 
     alts = []
@@ -165,6 +168,11 @@ def run(dry=False):
             except Exception as e:  # noqa: BLE001
                 alts.append({"code": alt["code"], "name": alt["name"], "error": str(e)})
             time.sleep(0.8)
+
+    if ctx.get("errors"):
+        print("\n· 数据源错误汇总（这些缺口会直接压低完整度）：", flush=True)
+        for e in ctx["errors"]:
+            print(f"   ✗ {str(e)[:200]}", flush=True)
 
     out = {
         "generated_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

@@ -62,6 +62,7 @@ def try_chain(spec, ctx=None, label=""):
             errs.append(f"{t}: 空数据")
         except Exception as e:  # noqa: BLE001
             errs.append(f"{t}: {e}")
+            print(f"    ! {label} 源 {t} 失败：{str(e)[:120]}", flush=True)
     raise RuntimeError(f"{label}全部数据源失败 → " + "；".join(errs))
 
 

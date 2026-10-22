@@ -26,6 +26,9 @@ jobs:
           python-version: "3.12"
 
       # 纯标准库实现，无第三方依赖，不需要 pip install
+      - name: 数据源连通性探针（调试期用，仅打印不阻断）
+        run: python tools/probe_ci.py
+
       - name: 跑批（抓数 → 算分 → 出快照）
         run: python run_daily.py
 
