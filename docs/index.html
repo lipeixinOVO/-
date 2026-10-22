@@ -98,11 +98,13 @@ body{
   border:1px solid var(--line-2);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 
 .card .mid{display:flex;align-items:flex-end;gap:14px;margin:17px 0 15px}
-.score{font-size:42px;font-weight:300;line-height:.92;letter-spacing:-.03em;
-  background:linear-gradient(180deg,#16181d,#000);-webkit-background-clip:text;
-  background-clip:text;-webkit-text-fill-color:transparent}
-.score small{font-size:11px;color:var(--dim3);margin-left:4px;vertical-align:3px;
-  -webkit-text-fill-color:var(--dim3);letter-spacing:.06em}
+/* 分数用纯色，不用渐变裁切（-webkit-background-clip:text 在部分手机内核里
+   会把文字画成近乎透明的浅灰，实测微信/夸克上分数看不清） */
+.score{font-size:42px;font-weight:400;line-height:.92;letter-spacing:-.02em;
+  color:#0f1217;-webkit-text-fill-color:#0f1217;
+  font-variant-numeric:tabular-nums}
+.score small{font-size:11px;color:#5d6069;margin-left:4px;vertical-align:3px;
+  -webkit-text-fill-color:#5d6069;letter-spacing:.06em}
 .mult{font-size:21px;font-weight:500;padding:5px 12px;border-radius:7px;line-height:1.25;
   white-space:nowrap;letter-spacing:.01em}
 .mult.up{background:linear-gradient(180deg,rgba(198,168,96,.3),rgba(198,168,96,.14));
@@ -209,10 +211,32 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 @media(max-width:560px){
   .wrap{padding:0 15px 64px}
   .grid{grid-template-columns:1fr}
-  .score{font-size:36px}
+  /* 手机上分数是主角：字号别缩太小，字重加粗，纯色不透明 */
+  .score{font-size:40px;font-weight:500;color:#0b0e12;-webkit-text-fill-color:#0b0e12}
+  .score small{font-size:12px;color:#4a4d56;-webkit-text-fill-color:#4a4d56}
   .mult{font-size:19px}
   .hd h1{font-size:21px;letter-spacing:.1em}
   .hd{padding-top:26px}
+  /* 参考卡不要压透明度，手机上本来字就小，再淡就糊了 */
+  .card.ref{opacity:1;border-style:dashed}
+  /* 小字整体提一档对比度 */
+  .card{padding:17px 16px 14px}
+  .card .nm{font-size:15px}
+  .card .px{color:#4a4d56}
+  .dim{font-size:12px}
+  .dim .r{color:#4a4d56}
+  .dim .r b{color:#0e1013}
+  .band .cap{font-size:10px;color:#6e717a}
+  .lbl{color:#4a4d56}
+  .fund{color:#4a4d56}
+  .fund .code{color:#1a1d24}
+  .macro .k{color:#5d6069}
+  .macro .v{font-size:15px}
+  .hd .meta{font-size:11px;color:#4a4d56}
+  h2 small{color:#6e717a}
+  .notes{font-size:12px;color:#3d4048}
+  .notes code{color:#2f333c}
+  .sig .tx{font-size:12.5px}
 }
 </style></head>
 <body><div class="wrap">
