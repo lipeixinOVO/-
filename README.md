@@ -150,6 +150,21 @@ python build_site.py           # 生成 docs/index.html
 改配色只需动 `src/site_template.py` 的 `:root` 变量，不用碰结构。
 浅底主题下金色要**压暗**才可读（`--gold` 越亮越看不清，与深色主题相反），SVG 曲线另有一套深色系 `colors`。
 
+### 分数历史曲线（每天自己长一格）
+
+曲线不是写死的图，是**每交易日累积 1 期**的 `data/history.json` 画出来的：
+
+```
+run_daily.py  →  src/history.py::append()  写/覆盖当日一条 {d, a:{id:{s,m,p}}}
+              →  git add -A 自动 commit（仓库里只留这一份几十 KB 的累积文件，data/out/*.json 不进仓库）
+              →  build_site.py 读它 → 内联进 docs/index.html → Pages 自动重建
+```
+
+- 2026-04-24 起的 120 期是 `backfill.py` 按 `as_of` 逐日截断回填的（无未来函数），此后每天追加一格
+- 图表工具条可切 **近 1 月 / 近 3 月 / 全部 N 期**，也可用 `?w=22` 直接打开某个窗口
+- 右侧「较上一期」是各标的当日分数相对上一期的变化，图例里跟的是最新分数
+- 窗口切换只重算前端 y 轴范围，不改变任何分数
+
 ### 观察型模块（`src/labs.py`，不参与打分）
 
 页面下半部分的三块长期指标，来自用户给的两张图，每天随跑批重算：
