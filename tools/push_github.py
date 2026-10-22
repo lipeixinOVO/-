@@ -111,6 +111,10 @@ def blob(p):
 
 def enable_pages():
     """启用 GitHub Pages，源指向 main /docs。已开启或权限不足都不算失败。"""
+    r = requests.get(f"{API}/repos/{OWNER}/{REPO}", headers=H, timeout=25)
+    if r.status_code == 200 and r.json().get("has_pages"):
+        print(f"Pages 已启用：https://{OWNER.lower()}.github.io/{REPO}/")
+        return
     r = requests.post(f"{API}/repos/{OWNER}/{REPO}/pages", headers=H, timeout=30,
                       json={"source": {"branch": BRANCH, "path": "/docs"}})
     if r.status_code in (201, 204):
@@ -118,8 +122,8 @@ def enable_pages():
     elif r.status_code == 409:
         print(f"Pages 之前已启用：https://{OWNER.lower()}.github.io/{REPO}/")
     else:
-        print(f"⚠ Pages 自动启用失败（{r.status_code}）——需手动到 Settings → Pages，"
-              f"Source 选 Deploy from a branch，Branch 选 main / docs")
+        print(f"⚠ Pages 自动启用失败（{r.status_code}）——首次启用必须手动到 Settings → Pages，"
+              f"Source 选 Deploy from a branch，Branch 选 main / docs（个人 token 与 GITHUB_TOKEN 都无权建站）")
 
 
 def main(dry=False):
