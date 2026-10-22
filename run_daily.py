@@ -38,8 +38,8 @@ def load_ctx():
 
     print("· 拉取沪深300（宏观用）…", flush=True)
     try:
-        rows, src = C.try_chain({"type": "em_kline", "secid": "1.000300",
-                                 "fallback": [{"type": "sina_cn", "symbol": "sh000300"},
+        rows, src = C.try_chain({"type": "sina_cn", "symbol": "sh000300",
+                                 "fallback": [{"type": "em_kline", "secid": "1.000300"},
                                               {"type": "tx_kline", "secid": "1.000300"}]},
                                 ctx, label="hs300")
         ctx["hs300"] = [(r[0], r[1]) for r in rows]
