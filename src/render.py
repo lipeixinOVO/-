@@ -161,6 +161,10 @@ def to_markdown(out):
     A("  - **MSCI 全球医疗保健指数：MSCI 官方指数接口（index_codes=106801，NETR 净总回报口径）**")
     A("  - MSCI World（比价基准）：同上，index_codes=990100")
     A("  - 美元指数：东财 100.UDI；离岸人民币：东财 133.USDCNH")
+    A("    - **这两项只做页面展示，不参与打分**：东财对这类全球品种的 secid 在 GitHub Runner 上"
+      "必断连（本地正常），若拿来打分，同一天会因运行机器不同算出不同倍率。"
+      "已验证分子分母都在云端的替代源（新浪外汇旧接口已废弃、Stooq 需 JS 校验、Yahoo 返回 403），"
+      "故宏观维度只保留美国财政部官方利率。")
     A("  - 美债实际/名义收益率：美国财政部 official CSV（daily_treasury_real_yield_curve / yield_curve）")
     A("  - 指数估值：蛋卷基金 index_eva（PE 周频序列 2016-10 至今日 + PB 分位）")
     A("  - 落地基金的净值与申购状态：天天基金 pingzhongdata + f10/lsjz")

@@ -227,9 +227,11 @@ def apply_gates(score, mult, dims, completeness, trend):
     不参与打分——否则同一份行情会因为代销渠道的临时限购而给出不同倍率，历史曲线也会断。
     """
     hits = []
-    if completeness < 0.7:
+    if completeness < 0.9:
+        # 阈值从 70% 提到 90%：缺一个高权重指标时，综合分可能偏移 5 分、倍率跨档，
+        # 这种"数据不全导致的建议"比不给建议更危险，一律退回基准并显式标注。
         return 1.0, hits + [{"gate": "low_completeness",
-                             "detail": f"数据完整度 {completeness:.0%} < 70%，强制基准 1.0×"}]
+                             "detail": f"数据完整度 {completeness:.0%} < 90%，强制基准 1.0×，请先补齐数据"}]
     if trend.get("flag") == "breakdown":
         if mult > 1.0:
             hits.append({"gate": "trend_breakdown",

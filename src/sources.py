@@ -196,6 +196,30 @@ def sina_gold_daily(symbol="GC"):
     return [tuple(x) for x in _cached(f"sinagold_{symbol}", _go)]
 
 
+def sina_cn_daily(symbol):
+    """新浪 A 股/指数日线：[(date, close, 0)]。symbol 例：sh000300。
+
+    实测从 GitHub Runner 可访问（347KB 全量），是东财 A 股接口的可靠备用。
+    只返回最近 datalen 根，够算 10 年分位。
+    """
+    def _go():
+        url = ("https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/"
+               f"CN_MarketData.getKLineData?symbol={symbol}&scale=240&ma=no&datalen=3000")
+        txt = fetch(url, headers=SINA_H, timeout=25, retries=3)
+        rows = json.loads(txt) if txt.strip().startswith("[") else []
+        out = []
+        for r in rows:
+            try:
+                out.append([r["day"], float(r["close"]), 0.0])
+            except (KeyError, TypeError, ValueError):
+                continue
+        out.sort(key=lambda x: x[0])
+        if not out:
+            raise RuntimeError(f"新浪A股日线无数据: {symbol}")
+        return out
+    return [tuple(x) for x in _cached(f"sinacn_{symbol}", _go)]
+
+
 def tx_kline(secid):
     """腾讯财经日线兜底：[(date, close, 0)]。secid 例：1.000300 → sh000300。"""
     mkt, code = secid.split(".", 1)

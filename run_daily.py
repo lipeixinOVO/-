@@ -24,7 +24,9 @@ DJ_H = {"Referer": "https://danjuanfunds.com/"}
 def load_ctx():
     ctx = {"errors": []}
     ty = dt.date.today().year
-    years = list(range(ty - 9, ty + 1))
+    # 利率取全历史（TIPS 2003 年起）而不是近 10 年：2010 年代是人为低利率的异常期，
+    # 只拿这 10 年做分位会把当前的 2.7% 打成 99 分位，机械地压低所有美元资产的分数。
+    years = list(range(2003, ty + 1))
 
     print("· 拉取美债实际利率（美国财政部，逐年 CSV）…", flush=True)
     ctx["ust_real"] = S.treasury_curve("real", years)
@@ -34,24 +36,30 @@ def load_ctx():
     ctx["ust_nominal"] = S.treasury_curve("nominal", years)
     print(f"  → {len(ctx['ust_nominal'])} 个交易日", flush=True)
 
-    print("· 拉取美元指数 / 人民币汇率 / 沪深300…", flush=True)
-    # 一律保留日期，回填历史时才能按 as_of 截断（否则会把"未来"的宏观数据用进过去）
-    # 每个 key 都挂兜底源：东财偶发断连时不能让整个宏观维度塌掉
-    macro_src = {
-        "dxy": {"type": "em_kline", "secid": "100.UDI"},
-        "usdcny": {"type": "em_kline", "secid": "133.USDCNH"},
-        "hs300": {"type": "em_kline", "secid": "1.000300",
-                  "fallback": [{"type": "tx_kline", "secid": "1.000300"}]},
-    }
-    for key, spec in macro_src.items():
+    print("· 拉取沪深300（宏观用）…", flush=True)
+    try:
+        rows, src = C.try_chain({"type": "em_kline", "secid": "1.000300",
+                                 "fallback": [{"type": "sina_cn", "symbol": "sh000300"},
+                                              {"type": "tx_kline", "secid": "1.000300"}]},
+                                ctx, label="hs300")
+        ctx["hs300"] = [(r[0], r[1]) for r in rows]
+        print(f"  → hs300: {len(rows)} 条（{src}）", flush=True)
+    except Exception as e:  # noqa: BLE001
+        ctx["hs300"] = []
+        ctx["errors"].append(f"hs300: {e}")
+
+    # 美元指数 / 离岸人民币：**仅用于页面展示，不参与打分**。
+    # 这两个东财 secid（100.UDI / 133.USDCNH）在 GitHub Runner 上必断连，
+    # 若拿来打分会让"同一天、不同机器"算出不同倍率，所以只做参考显示。
+    for key, secid in (("dxy", "100.UDI"), ("usdcny", "133.USDCNH")):
         try:
-            rows, src = C.try_chain(spec, ctx, label=key)
+            rows = S.em_kline(secid)
             ctx[key] = [(r[0], r[1]) for r in rows]
-            print(f"  → {key}: {len(rows)} 条（{src}）", flush=True)
-        except Exception as e:  # noqa: BLE001
+            print(f"  → {key}: {len(rows)} 条（仅展示）", flush=True)
+        except Exception:  # noqa: BLE001
             ctx[key] = []
-            ctx["errors"].append(f"{key}({spec.get('secid')}): {e}")
-        time.sleep(1.0)
+            ctx.setdefault("notes", []).append(f"{key} 本期取不到（仅展示项，不影响分数）")
+        time.sleep(0.8)
 
     try:
         ctx["spx"] = S.sina_us_daily(".INX")

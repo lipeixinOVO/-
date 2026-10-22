@@ -35,9 +35,12 @@ def main(n_days=120, force=False):
     print("· 加载数据（含全量历史）…", flush=True)
     ctx = load_ctx()
 
-    # 交易日历用中证红利（A股）的日期；宏观序列按 as_of 各自截断
-    cal = [r[0] for r in S.em_kline("1.000922")]
-    cal = [d for d in cal if d >= "2021-01-01"]
+    # 交易日历用中证红利（A股）的日期；宏观序列按 as_of 各自截断。
+    # 走多源链，避免东财 1.000922 断连时整个回填直接崩掉。
+    _div = next(a for a in cfg["assets"] if a["id"] == "CSI_DIVIDEND")
+    cal_rows, cal_src = C.try_chain(_div["data"], ctx, label="交易日历")
+    print(f"  交易日历来源：{cal_src}", flush=True)
+    cal = [r[0] for r in cal_rows if r[0] >= "2021-01-01"]
     dates = cal[-n_days:]
 
     os.makedirs(OUT_DIR, exist_ok=True)

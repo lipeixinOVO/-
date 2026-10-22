@@ -37,6 +37,8 @@ _FETCHERS = {
                             f"新浪外盘期货 {d.get('symbol', 'GC')} 日线"),
     "tx_kline": lambda d: (S.tx_kline(d["secid"]),
                            f"腾讯财经 {d['secid']}"),
+    "sina_cn": lambda d: (S.sina_cn_daily(d["symbol"]),
+                          f"新浪财经 CN_MarketData {d['symbol']}"),
 }
 
 
@@ -177,31 +179,31 @@ def _sentiment_dims(closes, amounts, source, w_vol=60, w_other=40):
     return ms
 
 
-def _macro_us(ctx, w_real, w_dxy, w_nom, w_cny=0, as_of=None):
-    """统一约定：unit='%' 的指标，raw 一律存小数（0.0276 = 2.76%）。"""
+def _macro_us(ctx, as_of=None, w_real=70, w_nom=30):
+    """美元资产的宏观维度：只用**美国财政部官方利率**，两种运行环境都稳定可取。
+
+    历史教训：原先还放了「美元指数 DXY」和「USDCNH」。实测东财的这两个 secid
+    （100.UDI / 133.USDCNH）在 GitHub Runner 上直接断连，而它们在本地能取到，
+    结果同一天本地 39.5 分、云端 34.0 分，倍数从 1.0 变 0.8 —— 分数不能依赖
+    "跑在哪台机器上"。所以把不可靠输入从评分里剔除，只在页面上作展示。
+
+    统一约定：unit='%' 的指标，raw 一律存小数（0.0276 = 2.76%）。
+    """
     def _cut(rows):
         return [r for r in (rows or []) if r[0] <= as_of] if as_of else (rows or [])
 
     ms = []
     real = _cut(ctx.get("ust_real"))
     if real:
-        ms.append(E.mk_metric("美债 10Y 实际利率(TIPS)", [x[1] / 100 for x in real][-E.WINDOW:], False,
+        # 利率不截断到 2500 日：用 2003 年至今的全历史算分位更公平（详见 run_daily.load_ctx 注释）
+        ms.append(E.mk_metric("美债 10Y 实际利率(TIPS)", [x[1] / 100 for x in real], False,
                               w_real, _src("美国财政部 real_yield_curve"), "", unit="%",
-                              note="实际利率越高，折现压力越大，分数越低"))
+                              note="全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"))
     nom = _cut(ctx.get("ust_nominal"))
     if nom and w_nom:
-        ms.append(E.mk_metric("美债 10Y 名义利率", [x[1] / 100 for x in nom][-E.WINDOW:], False,
-                              w_nom, _src("美国财政部 yield_curve"), "", unit="%"))
-    dxy = _cut(ctx.get("dxy"))
-    if dxy:
-        ms.append(E.mk_metric("美元指数(DXY)", [x[1] for x in dxy][-E.WINDOW:], False, w_dxy,
-                              _src("新浪财经 DINIW 日采样"), "", unit="",
-                              note="美元走强推高非美元投资者成本"))
-    cny = _cut(ctx.get("usdcny"))
-    if cny and w_cny:
-        ms.append(E.mk_metric("USDCNY 汇率", [x[1] for x in cny][-E.WINDOW:], False, w_cny,
-                              _src("东财 133.USDCNH"), "", unit="",
-                              note="人民币走弱时买美元资产成本更高"))
+        ms.append(E.mk_metric("美债 10Y 名义利率", [x[1] / 100 for x in nom], False,
+                              w_nom, _src("美国财政部 yield_curve"), "", unit="%",
+                              note="全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"))
     return ms
 
 
@@ -223,7 +225,7 @@ def compute_ixic(cfg, ctx, as_of=None):
         E.build_dimension("sentiment", cfg["weights"]["sentiment"],
                           _sentiment_dims(ser["closes"], None, ser["src"])),
         E.build_dimension("macro", cfg["weights"]["macro"],
-                          _macro_us(ctx, 40, 25, 15, 20, as_of)),
+                          _macro_us(ctx, as_of=as_of)),
     ]
     return _out(ser, dims)
 
@@ -239,7 +241,7 @@ def compute_ndx(cfg, ctx, as_of=None):
         E.build_dimension("sentiment", cfg["weights"]["sentiment"],
                           _sentiment_dims(ser["closes"], None, ser["src"])),
         E.build_dimension("macro", cfg["weights"]["macro"],
-                          _macro_us(ctx, 40, 25, 15, 20, as_of)),
+                          _macro_us(ctx, as_of=as_of)),
     ]
     return _out(ser, dims)
 
@@ -267,7 +269,7 @@ def compute_gold(cfg, ctx, as_of=None):
         E.build_dimension("sentiment", cfg["weights"]["sentiment"],
                           _sentiment_dims(closes, ser["amounts"], ser["src"], 60, 40)),
         E.build_dimension("macro", cfg["weights"]["macro"],
-                          _macro_us(ctx, 50, 30, 20, as_of=as_of)),
+                          _macro_us(ctx, as_of=as_of)),
     ]
     r = _out(ser, dims)
     r["spot"] = ctx.get("gold_spot")
@@ -321,7 +323,7 @@ def compute_health(cfg, ctx, as_of=None):
         E.build_dimension("sentiment", cfg["weights"]["sentiment"],
                           _sentiment_dims(closes, None, ser["src"])),
         E.build_dimension("macro", cfg["weights"]["macro"],
-                          _macro_us(ctx, 40, 25, 15, 20, as_of)),
+                          _macro_us(ctx, as_of=as_of)),
     ]
     return _out(ser, dims)
 

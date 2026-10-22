@@ -73,12 +73,12 @@
       "kind": "commodity",
       "advisory_only": false,
       "data": {
-        "type": "em_kline",
-        "secid": "101.GC00Y",
+        "type": "sina_gold",
+        "symbol": "GC",
         "fallback": [
           {
-            "type": "sina_gold",
-            "symbol": "GC"
+            "type": "em_kline",
+            "secid": "101.GC00Y"
           }
         ]
       },
@@ -105,7 +105,7 @@
         ]
       },
       "note": "评分口径：COMEX 黄金主力连续合约日线",
-      "data_note": "东财 GC00Y（1990 年起，分位窗口取末 2500 个交易日）为主；东财偶发断连时回退新浪外盘期货 GC（2016 年起，两者末 2500 日窗口基本重合）"
+      "data_note": "新浪外盘期货 GC（COMEX 黄金连续，2016 起）为主——云端实测可访问；东财 101.GC00Y 在 GitHub Runner 上会断连，仅作备用。两者末 2500 日窗口基本重合，分数差异 <0.5 分"
     },
     {
       "id": "MSCI_HEALTH",
