@@ -14,20 +14,20 @@ import json
 CSS = """
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0b0c0f; --bg-2:#0e0f13;
-  --card-a:#1e2027; --card-b:#16181e;
-  --line:rgba(255,255,255,.13); --line-2:rgba(255,255,255,.22);
-  --txt:#f7f7f9; --dim:#d4d4db; --dim2:#adaeb8; --dim3:#8e8f99;
-  --gold:#e8c47f; --gold-l:#f6e2b4; --gold-d:#a3844a;
-  --ink:#9aa6b2; --ok:#8ad3aa; --hot:#e88b72;
+  --bg:#f7f5f1; --bg-2:#f2f0eb;
+  --card-a:#ffffff; --card-b:#fdfcf9;
+  --line:rgba(20,22,27,.11); --line-2:rgba(20,22,27,.2);
+  --txt:#14161b; --dim:#3d4048; --dim2:#5d6069; --dim3:#878a93;
+  --gold:#9c782f; --gold-l:#6f5520; --gold-d:#c6a860;
+  --ink:#66727e; --ok:#2f7d54; --hot:#b4452e;
   --r:14px;
 }
 html{background:var(--bg);-webkit-text-size-adjust:100%}
 body{
   background:
-    radial-gradient(1100px 520px at 50% -220px, rgba(217,181,115,.13), transparent 62%),
-    radial-gradient(760px 420px at 88% 8%, rgba(120,150,190,.085), transparent 60%),
-    #0b0c0f;
+    radial-gradient(1100px 520px at 50% -220px, rgba(198,168,96,.18), transparent 62%),
+    radial-gradient(760px 420px at 88% 8%, rgba(120,150,190,.09), transparent 60%),
+    #f7f5f1;
   color:var(--txt);min-height:100vh;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   font-size:14.5px;line-height:1.62;
@@ -42,13 +42,13 @@ body{
 .hd{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding:34px 0 22px;border-bottom:1px solid var(--line)}
 .hd .brand{display:flex;align-items:baseline;gap:14px}
-.hd h1{font-size:27px;font-weight:600;letter-spacing:.16em;color:#fff}
-.hd .en{font-size:9.5px;letter-spacing:.34em;color:#c2a06a;
+.hd h1{font-size:27px;font-weight:600;letter-spacing:.16em;color:#0e1013}
+.hd .en{font-size:9.5px;letter-spacing:.34em;color:#9c782f;
   text-transform:uppercase;padding-bottom:4px}
 .hd .meta{font-size:11.5px;color:var(--dim2);text-align:right;line-height:1.95;letter-spacing:.02em}
-.hd .meta b{color:var(--dim);font-weight:500}
+.hd .meta b{color:var(--txt);font-weight:500}
 .hd .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);
-  margin-right:6px;vertical-align:1px;box-shadow:0 0 8px rgba(217,181,115,.8)}
+  margin-right:6px;vertical-align:1px;box-shadow:0 0 0 3px rgba(156,120,47,.14)}
 
 /* ---------- 结论条 ---------- */
 .hero{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:1px;background:var(--line);
@@ -63,45 +63,45 @@ body{
 .macro{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:var(--r);
   overflow:hidden;margin:22px 0 4px}
-.macro div{background:#191b22;padding:12px 16px 13px}
-.macro .k{font-size:9.5px;letter-spacing:.16em;color:#84858f;text-transform:uppercase}
-.macro .v{font-size:16px;font-weight:500;margin-top:3px;color:#f2f2f5}
+.macro div{background:#fbfaf7;padding:12px 16px 13px}
+.macro .k{font-size:9.5px;letter-spacing:.16em;color:#6b6e78;text-transform:uppercase}
+.macro .v{font-size:16px;font-weight:500;margin-top:3px;color:#14161b}
 .macro .v small{font-size:10px;color:var(--dim2);font-weight:400;margin-left:2px}
 
 /* ---------- 标的卡 ---------- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(346px,1fr));gap:14px;margin-top:18px}
 .card{position:relative;background:linear-gradient(180deg,var(--card-a) 0%,var(--card-b) 100%);
   border:1px solid var(--line);border-radius:var(--r);padding:19px 20px 16px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 26px 50px -40px #000;
+  box-shadow:0 1px 2px rgba(20,22,27,.04),0 14px 30px -22px rgba(20,22,27,.35);
   transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease}
-.card:hover{border-color:rgba(217,181,115,.26);transform:translateY(-2px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 32px 60px -38px #000,0 0 0 1px rgba(217,181,115,.05)}
-.card.ref{opacity:.82}
-.card.ref:hover{opacity:.95}
+.card:hover{border-color:rgba(156,120,47,.45);transform:translateY(-2px);
+  box-shadow:0 2px 4px rgba(20,22,27,.05),0 22px 42px -24px rgba(20,22,27,.4)}
+.card.ref{opacity:.86}
+.card.ref:hover{opacity:.96}
 .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.card .nm{font-size:14.5px;font-weight:550;line-height:1.4;letter-spacing:.01em;color:#fff}
+.card .nm{font-size:14.5px;font-weight:550;line-height:1.4;letter-spacing:.01em;color:#0e1013}
 .card .px{font-size:10.5px;color:var(--dim2);margin-top:4px;letter-spacing:.03em}
 .card .tag{font-size:9px;padding:2.5px 7px;border-radius:3px;color:var(--dim2);
   border:1px solid var(--line-2);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 
 .card .mid{display:flex;align-items:flex-end;gap:14px;margin:17px 0 15px}
 .score{font-size:42px;font-weight:300;line-height:.92;letter-spacing:-.03em;
-  background:linear-gradient(180deg,#fff,#d9d9e0);-webkit-background-clip:text;
+  background:linear-gradient(180deg,#16181d,#000);-webkit-background-clip:text;
   background-clip:text;-webkit-text-fill-color:transparent}
 .score small{font-size:11px;color:var(--dim3);margin-left:4px;vertical-align:3px;
   -webkit-text-fill-color:var(--dim3);letter-spacing:.06em}
 .mult{font-size:21px;font-weight:500;padding:5px 12px;border-radius:7px;line-height:1.25;
   white-space:nowrap;letter-spacing:.01em}
-.mult.up{background:linear-gradient(180deg,rgba(240,217,168,.16),rgba(217,181,115,.07));
-  color:var(--gold-l);border:1px solid rgba(217,181,115,.3)}
-.mult.base{background:rgba(255,255,255,.07);color:#dcdce2;border:1px solid var(--line-2)}
-.mult.down{background:rgba(255,255,255,.045);color:#b3bcc6;border:1px solid var(--line-2)}
+.mult.up{background:linear-gradient(180deg,rgba(198,168,96,.3),rgba(198,168,96,.14));
+  color:#6f5520;border:1px solid rgba(156,120,47,.45)}
+.mult.base{background:rgba(20,22,27,.06);color:#2f333c;border:1px solid var(--line-2)}
+.mult.down{background:rgba(20,22,27,.03);color:#6c7480;border:1px solid var(--line-2)}
 .lbl{font-size:10.5px;color:var(--dim2);margin-left:auto;text-align:right;line-height:1.6;
   letter-spacing:.02em}
 
 /* 档内位置 */
 .band{margin-bottom:15px}
-.band .track{height:3px;background:#282a32;border-radius:2px;position:relative;overflow:hidden}
+.band .track{height:3px;background:rgba(20,22,27,.1);border-radius:2px;position:relative;overflow:hidden}
 .band .fill{height:100%;border-radius:2px;
   background:linear-gradient(90deg,var(--gold-d),var(--gold) 65%,var(--gold-l))}
 .band .cap{display:flex;justify-content:space-between;font-size:9.5px;color:var(--dim3);
@@ -111,23 +111,23 @@ body{
 .dims{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:13px}
 .dim{font-size:11.5px}
 .dim .r{display:flex;justify-content:space-between;color:var(--dim2);margin-bottom:4px;letter-spacing:.03em}
-.dim .r b{color:#ececf1;font-weight:500}
-.dim .t{height:2.5px;background:#282a32;border-radius:2px;overflow:hidden}
+.dim .r b{color:#14161b;font-weight:500}
+.dim .t{height:2.5px;background:rgba(20,22,27,.1);border-radius:2px;overflow:hidden}
 .dim .f{height:100%;border-radius:2px;transition:width .3s ease}
 
 /* 底部 */
 .fund{font-size:10.5px;color:var(--dim2);padding-top:12px;border-top:1px solid var(--line);
   display:flex;justify-content:space-between;gap:8px;align-items:center;letter-spacing:.02em}
-.fund .code{color:#d6d6dc;font-family:ui-monospace,monospace;letter-spacing:.04em}
+.fund .code{color:#2f333c;font-family:ui-monospace,monospace;letter-spacing:.04em}
 .st{font-size:9.5px;padding:1.5px 6px;border-radius:3px;white-space:nowrap;letter-spacing:.05em}
-.st.ok{background:rgba(121,195,154,.1);color:var(--ok)}
-.st.lim{background:rgba(217,181,115,.11);color:var(--gold)}
-.st.no{background:rgba(217,121,95,.1);color:var(--hot)}
+.st.ok{background:rgba(47,125,84,.1);color:var(--ok)}
+.st.lim{background:rgba(156,120,47,.12);color:var(--gold)}
+.st.no{background:rgba(180,69,46,.1);color:var(--hot)}
 
 /* ---------- 区块标题 ---------- */
 h2{font-size:12px;font-weight:500;margin:44px 0 14px;padding-bottom:11px;
   border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;
-  letter-spacing:.2em;text-transform:uppercase;color:#f0f0f4}
+  letter-spacing:.2em;text-transform:uppercase;color:#14161b}
 h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em;text-transform:none}
 
 /* ---------- 图表 ---------- */
@@ -136,15 +136,15 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 .chart svg{width:100%;height:auto;display:block}
 
 /* ---------- 文字块 ---------- */
-.notes{background:linear-gradient(180deg,#1b1d24,#171920);border:1px solid var(--line);
+.notes{background:linear-gradient(180deg,#fdfcf9,#f7f5f0);border:1px solid var(--line);
   border-radius:var(--r);padding:20px 22px;font-size:12.5px;color:var(--dim);
   line-height:1.95;letter-spacing:.01em}
-.notes b{color:#f0f0f4;font-weight:500}
+.notes b{color:#0e1013;font-weight:600}
 .notes li{margin-left:16px;margin-bottom:4px}
-.notes code{background:rgba(255,255,255,.09);padding:1px 5px;border-radius:3px;font-size:11px;
-  font-family:ui-monospace,monospace;color:#dcdce4}
-.notes .warnbox{border-left:1px solid var(--gold-d);padding-left:14px;margin:14px 0;
-  color:#c3b191;background:linear-gradient(90deg,rgba(217,181,115,.09),transparent 70%);
+.notes code{background:rgba(20,22,27,.06);padding:1px 5px;border-radius:3px;font-size:11px;
+  font-family:ui-monospace,monospace;color:#2f333c}
+.notes .warnbox{border-left:2px solid var(--gold);padding-left:14px;margin:14px 0;
+  color:#6b5a35;background:linear-gradient(90deg,rgba(198,168,96,.14),transparent 70%);
   padding-top:8px;padding-bottom:8px}
 
 .foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
@@ -179,10 +179,10 @@ function stCls(s){ s=s||'';
   return ''; }
 function dimColor(sc){
   // 分数越高越该买 → 亮金；越低 → 冷灰。同一套色系里做明度区分，不用花花绿绿。
-  if(sc>=65) return 'linear-gradient(90deg,#a3844a,#f8e6bb)';
-  if(sc>=50) return 'linear-gradient(90deg,#8a7654,#e8c47f)';
-  if(sc>=35) return 'linear-gradient(90deg,#5b6470,#a3b3c1)';
-  return 'linear-gradient(90deg,#55565e,#8a8b95)';
+  if(sc>=65) return 'linear-gradient(90deg,#8a6b25,#c9a44e)';
+  if(sc>=50) return 'linear-gradient(90deg,#9c7c42,#c6b184)';
+  if(sc>=35) return 'linear-gradient(90deg,#7f8b9a,#aab4c1)';
+  return 'linear-gradient(90deg,#a4a7b0,#c6c9cf)';
 }
 function render(){
   const L = P.latest;
@@ -273,7 +273,7 @@ function renderChart(){
   const n = days;
   const x = function(i){ return PL + (n<=1?0:(W-PL-PR)*i/(n-1)); };
   const y = function(v){ return PT + (H-PT-PB)*(1-(v-mn)/Math.max(1e-9,mx-mn)); };
-  const colors = ['#f6e2b4','#e8c47f','#b9c9d8','#94a7b8','#dfa585'];
+  const colors = ['#8a6b25','#1f2937','#3b6ea5','#5c7a6b','#a15b3d'];
 
   let svg = '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet">';
   svg += '<defs>';
@@ -287,14 +287,14 @@ function renderChart(){
   for(let k=0;k<=4;k++){
     const v = mn + (mx-mn)*k/4, yy = y(v);
     svg += '<line x1="'+PL+'" y1="'+yy+'" x2="'+(W-PR)+'" y2="'+yy+
-      '" stroke="rgba(255,255,255,.1)" stroke-width="1"/>';
-    svg += '<text x="'+(PL-9)+'" y="'+(yy+3.5)+'" fill="#8e8f99" font-size="10" text-anchor="end">'+
+      '" stroke="rgba(20,22,27,.09)" stroke-width="1"/>';
+    svg += '<text x="'+(PL-9)+'" y="'+(yy+3.5)+'" fill="#7a7d87" font-size="10" text-anchor="end">'+
       v.toFixed(0)+'</text>';
   }
   if(50>mn && 50<mx){
     svg += '<line x1="'+PL+'" y1="'+y(50)+'" x2="'+(W-PR)+'" y2="'+y(50)+
-      '" stroke="rgba(232,196,127,.55)" stroke-width="1" stroke-dasharray="3 5"/>';
-    svg += '<text x="'+(W-PR)+'" y="'+(y(50)-7)+'" fill="#b5985f" font-size="9.5" '+
+      '" stroke="rgba(156,120,47,.55)" stroke-width="1" stroke-dasharray="3 5"/>';
+    svg += '<text x="'+(W-PR)+'" y="'+(y(50)-7)+'" fill="#96762f" font-size="9.5" '+
       'text-anchor="end" letter-spacing="1.5">1.0× BASELINE · 50</text>';
   }
   ids.forEach(function(id,ci){
@@ -311,7 +311,7 @@ function renderChart(){
   const hist = P.history;
   [0, Math.floor(n/2), n-1].forEach(function(i){
     const dd = (hist[i]||{}).trade_date||'';
-    svg += '<text x="'+x(i).toFixed(1)+'" y="'+(H-8)+'" fill="#8e8f99" font-size="10" '+
+    svg += '<text x="'+x(i).toFixed(1)+'" y="'+(H-8)+'" fill="#7a7d87" font-size="10" '+
       'letter-spacing=".5" text-anchor="'+(i===0?'start':(i===n-1?'end':'middle'))+'">'+dd+'</text>';
   });
   svg += '</svg>';
@@ -349,15 +349,15 @@ def render(payload):
         amt = "—" if a["advisory_only"] else f"{a['suggest_amount']:,.0f} 元"
         rows.append(
             "<tr>"
-            f"<td style='padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.11);color:#f2f2f6'>{_esc(a['name'])}</td>"
-            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.11)'>{a['score']:.1f}</td>"
-            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.11);color:var(--dim2)'>"
+            f"<td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>{_esc(a['name'])}</td>"
+            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>{a['score']:.1f}</td>"
+            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>"
             f"{(a.get('band_pos') or 50):.0f}%</td>"
-            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.11);color:var(--gold-l)'>"
+            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'>"
             f"<b style='font-weight:550'>{mult}</b></td>"
-            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.11)'>"
+            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>"
             f"{amt}</td>"
-            f"<td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.11);color:var(--dim)'>"
+            f"<td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>"
             f"{_esc(ex.get('fund_code') or '—')}</td>"
             "</tr>")
     summary = ("<table style='width:100%;border-collapse:collapse;font-size:12.5px'>"
@@ -374,8 +374,8 @@ def render(payload):
     return f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b0c0f">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#f7f5f1">
+<meta name="color-scheme" content="light">
 <title>定投台 · {_esc(latest['trade_date'])}</title>
 <style>{CSS}</style></head>
 <body><div class="wrap">
