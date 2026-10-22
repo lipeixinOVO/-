@@ -1,0 +1,43 @@
+name: deploy-pages
+
+# 把 docs/ 发布成 GitHub Pages 站点。
+# 用官方 Pages 部署链路（configure-pages enablement:true），好处是**无需个人 token 具备
+# Pages 写权限**——工作流自带的 GITHUB_TOKEN 声明 pages: write 即可，首次运行会自动建站。
+on:
+  push:
+    paths:
+      - "docs/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 配置 Pages（未启用时自动启用）
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: 打包 docs/
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: 部署
+        id: deploy
+        uses: actions/deploy-pages@v4
