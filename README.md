@@ -124,8 +124,12 @@ python build_site.py           # 生成 docs/index.html
 
 ### 线上地址
 
+- 站点：**<https://lipeixinovo.github.io/-/>**（2026-10-22 19:05 实测 200，构建 36 秒）
+- 报告：<https://lipeixinovo.github.io/-/report.md>
+- 原始数据：<https://lipeixinovo.github.io/-/data.json>（页面内联了同一份，直接访问可做程序化取用）
 - 仓库：<https://github.com/lipeixinOVO/->
-- 站点：仓库 Settings → Pages → Source 选 **Deploy from a branch**，分支 `main`、目录 **`/docs`**
+- Pages 已设为 **Deploy from a branch → `main` / `/docs`**，所以 `git push` 改了 `docs/` 就会自动重新发布，不需要额外的部署 workflow。
+  首次启用 Pages 必须在网页 Settings → Pages 手点（`POST /pages` 对个人 token 返回 403、对 Actions 自带 `GITHUB_TOKEN` 返回 `Resource not accessible by integration`，两条路都不通）。
 
 ### 前端主题
 
