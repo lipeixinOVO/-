@@ -147,7 +147,7 @@ def cyb_ratio(cyb_rows, div_rows, cap=620):
     }
 
 
-def equity_long(h300_rows, market_rows, mkt_tr_rows=None, start="2004-01-01"):
+def equity_long(h300_rows, market_rows, mkt_tr_rows=None, start="2004-12-31"):
     """沪深300全收益 vs 全市场，**日频**（对齐到共同交易日），按窗口分别抽稀。
 
     口径务必看清（两条线不是一回事）：
@@ -157,8 +157,12 @@ def equity_long(h300_rows, market_rows, mkt_tr_rows=None, start="2004-01-01"):
       一条含分红、一条不含 → 只能比形态和斜率，不能直接比收益高低。
       同口径对比看 cagr_market_tr（H00985）与 cagr300 两个数字。
 
-    窗口单位是「交易日」而不是自然日：5296 个交易日 ≈ 22 年，
+    窗口单位是「交易日」而不是自然日：5295 个交易日 ≈ 22 年，
     取近 245/1215/2430 个交易日分别约等于近 1/5/10 年。
+
+    起点取 2004-12-31（两个指数的真实基点日）。接口在 start 之前还会塞一行
+    `2004-01-01 = 1000` 的合成基点，成交量是 0，照画会多出一段不存在的横线，
+    而且横轴首年只有 1 个点、年份标签会挤在一起。
     """
     a = {str(r[0]): float(r[1]) for r in h300_rows if str(r[0]) >= start}
     b = {str(r[0]): float(r[1]) for r in market_rows if str(r[0]) >= start}

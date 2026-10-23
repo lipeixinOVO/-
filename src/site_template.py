@@ -665,10 +665,12 @@ def _esc(s):
 
 # ---------------------------------------------------------------- 观察型模块
 # 手绘 SVG：不用图表库（Pages 静态托管，外部 CDN 一旦被墙整页白屏）
-def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 28), fs=10):
+def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 28),
+         fs=10, ends=False):
     """多线折线图。layers=[{pts:[(idx, val)], color, width, dash}]，x 轴用索引。
 
     fs 是字号（用户单位）。窄屏画布用较大的 fs，因为它被缩小的倍数更少。
+    ends=True 时在每条线的末端标出末值（白描边打底，压住线本身也能看清）。
     """
     import math
 
@@ -734,10 +736,28 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
         o.append(f'<path d="{d}" fill="none" stroke="{L["color"]}" '
                  f'stroke-width="{L.get("width", 1.8)}"{dash} '
                  'stroke-linejoin="round" stroke-linecap="round"/>')
+        if ends:
+            li, lv = seg[-1]
+            # 标在线的右端外侧（PR 已经留出 56 的空间），压在线上会盖住线尾
+            o.append(f'<text x="{X(li) + 7:.1f}" y="{Y(lv) + fs * 0.35:.1f}" fill="{L["color"]}" '
+                     f'font-size="{fs + 1}" font-weight="600" text-anchor="start" '
+                     f'letter-spacing=".2">{lv:,.0f}</text>')
+    # 横轴标签按像素去重：窄屏上「2025」「2026」只隔 17px，会叠成一坨。
+    # 后一个挤到前一个身上就丢掉；如果后一个是「到现在」那根，反过来顶掉前一个。
+    kept = []
     for i, txt in xlabels:
+        xx = X(i)
+        if kept and xx - kept[-1][0] < max(32, fs * 3.4):
+            if i >= n - 1:
+                kept[-1] = (xx, i, txt)
+            continue
+        kept.append((xx, i, txt))
+    for xx, i, txt in kept:
         anchor = "start" if i == 0 else ("end" if i >= n - 1 else "middle")
-        # 首个标签右移 8px，避开 y 轴刻度数字（否则 "0.30" 和 "2024-06-19" 会粘在一起）
-        xx = X(i) + (12 if i == 0 else 0)
+        # 首个标签右移一点，避开 y 轴刻度数字（否则「0.30」和「2024-06-19」会粘在一起）。
+        # 4 个字的年份标签只需挪 2px，挪 12px 会顶到后一年的标签上。
+        if i == 0:
+            xx = xx + (12 if len(txt) > 4 else 2)
         o.append(f'<text x="{xx:.1f}" y="{h - 6}" fill="#6b6e78" font-size="{fs}" '
                  f'text-anchor="{anchor}" letter-spacing=".3">{txt}</text>')
     o.append("</svg>")
@@ -748,19 +768,22 @@ def _num(v, nd=2):
     return "—" if v is None else f"{v:,.{nd}f}"
 
 
-def _xlabels(pts, maxn=5):
-    """按窗口跨度自动选横轴标签：跨度 ≤ 14 个月用「年-月」，否则用整数年。"""
+def _xlabels(pts, maxn=6):
+    """按窗口跨度自动选横轴标签：跨度 ≤ 14 个月用「年-月」，否则用整数年。
+
+    年份刻度用 1/2/5/10 这种整数步长（不能出现 2004、2007、2010 这种怪间隔），
+    步长从密到疏试，取第一个不超 maxn 的 —— 22 年全貌在宽屏上就是 2004…2026 每两年一个。
+    """
     import datetime as _dt
     if not pts:
         return []
-    n = len(pts)
     try:
         span = (_dt.date.fromisoformat(pts[-1][0]) - _dt.date.fromisoformat(pts[0][0])).days
     except Exception:  # noqa: BLE001
         span = 0
 
+    idx = {}
     if span <= 430:                     # 一年半以内 → 月份刻度
-        idx = {}
         for j, r in enumerate(pts):
             idx.setdefault(r[0][:7], j)
         keys = sorted(idx)
@@ -770,27 +793,22 @@ def _xlabels(pts, maxn=5):
             pick.append(keys[-1])
         return [(idx[k], k[2:]) for k in pick]      # 2026-07 → 26-07
 
-    idx = {}
     for j, r in enumerate(pts):
         idx.setdefault(r[0][:4], j)
     yrs = sorted(idx)
-    # 优先取 5 的整数倍年份（2005/2010/…），首尾年份必留
-    cand = sorted({yrs[0], yrs[-1]} | {y for y in yrs if int(y) % 5 == 0},
-                  key=lambda y: idx[y])
-    # 离两端太近的刻度会和首尾标签叠在一起，但只在标签足够多时才开始剔
-    if len(cand) > 3:
-        cand = [y for y in cand
-                if (y == yrs[0] or int(y) - int(yrs[0]) >= 2)
-                and (y == yrs[-1] or int(yrs[-1]) - int(y) >= 2)]
-    if len(cand) < 3 and len(yrs) >= 3:
-        # 短窗口里 5 的倍数太少，退回等间隔
-        step = (len(yrs) - 1) / float(min(maxn, len(yrs)) - 1)
-        cand = sorted({yrs[int(round(i * step))] for i in range(min(maxn, len(yrs)))},
-                      key=lambda y: idx[y])
-    if len(cand) > maxn:
-        step = (len(cand) - 1) / float(maxn - 1)
-        cand = sorted({cand[int(round(i * step))] for i in range(maxn)},
-                      key=lambda y: idx[y])
+    # 末年只走了几个月就别当刻度（会和前一根叠在一起）
+    if len(yrs) > 2 and pts[-1][0][5:] < "09-30":
+        yrs = yrs[:-1]
+    step = 1
+    for s in (1, 2, 5, 10, 20, 50):
+        if sum(1 for y in yrs if int(y) % s == 0) <= maxn:
+            step = s
+            break
+    cand = [y for y in yrs if int(y) % step == 0]
+    if cand and yrs[0] not in cand and int(cand[0]) - int(yrs[0]) >= max(2, step - 1):
+        cand.insert(0, yrs[0])          # 首年离第一个刻度太远才补，太近会叠字
+    if yrs[-1] not in cand:
+        cand.append(yrs[-1])
     return [(idx[y], y) for y in cand]
 
 
@@ -882,9 +900,12 @@ def _labs_html(labs):
                 ]
 
             wide = _svg(_layers(pw), w=1060, h=336, log=True,
-                        pad=(54, 14, 16, 26), xlabels=_xlabels(pw), fs=10)
+                        pad=(54, 58, 16, 26), xlabels=_xlabels(pw, maxn=12),
+                        fs=10, ends=True)
+            # 窄屏没地方把末值标在线外，且右上角年化那块已经写了两个现值，就不标了
             narrow = _svg(_layers(pn), w=430, h=330, log=True,
-                          pad=(44, 8, 14, 24), xlabels=_xlabels(pn), fs=11)
+                          pad=(44, 8, 14, 24), xlabels=_xlabels(pn, maxn=5),
+                          fs=11)
             cls = ' class="on"' if on else ""
             btns.append(f'<button type="button" data-k="{k}"{cls}>{names[k]}</button>')
             panes.append(f'<div class="sw" data-k="{k}"{"" if on else " hidden"}>'
