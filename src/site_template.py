@@ -214,6 +214,9 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 
 /* ---------- 文字块 ---------- */
 .tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* 手机上表宽超过屏幕，给一句提示，否则右边三列会被当成"没有" */
+.swipehint{display:none;font-size:10.5px;color:var(--dim2);letter-spacing:.04em;
+  margin:9px 2px 0;text-align:center}
 .notes{background:linear-gradient(180deg,#fdfcf9,#f7f5f0);border:1px solid var(--line);
   border-radius:var(--r);padding:20px 22px;font-size:12.5px;color:var(--dim);
   line-height:1.95;letter-spacing:.01em}
@@ -293,6 +296,7 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
   .dirbar{font-size:12px;padding:10px 13px;gap:8px}
   .dirbar .sep{display:none}
   .tscroll table{min-width:540px}
+  .swipehint{display:block}
   .chartbar{gap:8px}
   .chartbar button{font-size:12.5px;padding:6px 15px}
   .charthint{font-size:11.5px;gap:12px}
@@ -876,7 +880,8 @@ def render(payload):
                "<th style='padding:0 10px 9px;font-weight:400'>建议金额</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>落地基金</th>"
                "</tr></thead><tbody style='color:var(--txt)'>" + "".join(rows) +
-               "</tbody></table></div>")
+               "</tbody></table></div>"
+               "<div class='swipehint'>← 左右滑动看倍数 / 建议金额 / 落地基金 →</div>")
 
     # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
