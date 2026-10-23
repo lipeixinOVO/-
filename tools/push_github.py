@@ -24,9 +24,9 @@ LOCAL = Path(r"C:/Users/27576/Desktop/ai/定投台/dca-dashboard")
 CRED = Path(os.path.expanduser("~")) / ".git-credentials"
 API = "https://api.github.com"
 
-# 不进仓库的：接口缓存（易变、体积大）、每日完整快照（本地复盘用）
-SKIP_DIRS = {"cache", "__pycache__", ".git", "node_modules"}
-SKIP_NAMES = {".DS_Store", "_selfcheck.js"}   # 自检临时产物不进仓库
+# 不进仓库的：接口缓存（易变、体积大）、每日完整快照（本地复盘用）、本地截图
+SKIP_DIRS = {"cache", "__pycache__", ".git", "node_modules", "_shots", "_shot_profile"}
+SKIP_NAMES = {".DS_Store", "_selfcheck.js", "_shot_wrap.html"}   # 临时产物不进仓库
 
 
 def token():

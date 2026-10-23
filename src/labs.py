@@ -16,9 +16,12 @@
   MA90 需要 90 个月，所以均线从 2012 年前后才有值，早期是空白。
 - ② 创业板指用新浪 sz399006，接口单次上限 3000 条 → 历史只到 2014-06；
   因此分位数是「近 12 年」分位，不是全历史。
-- ③ 原始图用的是万得全A(800707.WI)，属 Wind 商业数据、公开接口取不到，
-  改用中证全指全收益 (H00985) 替代：同为全市场口径、含分红再投、
-  同样以 2004-01-01 = 1000 为基点，与万得全A 的起点只差一天，形态可比但不完全等价。
+- ③ 原图的黑线是万得全A(800707.WI)，属 Wind 商业数据、公开接口取不到
+  （2026-10-23 实测：东财搜索 TotalCount=0、东财行情 3 个 secid 全 Remote end closed、
+   同花顺 404、腾讯 pv_none_match、雪球 400）。黑线改用**中证全指 000985 价格指数**
+   （同为价格口径、同基点 1000、覆盖全部 A 股，量级与截图一致）。
+  蓝线照原样用沪深300 **全收益** H00300。两条线一条含分红、一条不含，
+  只能比形态与斜率，不能直接比"谁赚得多"；同口径对比另给 H00985（全指全收益）的年化数字。
 """
 import datetime as dt
 
@@ -144,25 +147,68 @@ def cyb_ratio(cyb_rows, div_rows, cap=620):
     }
 
 
-def equity_long(h300_rows, hall_rows, start="2004-01-01", cap=300):
-    """沪深300全收益 vs 全市场全收益，月度采样。"""
-    a = dict(_monthly([r for r in h300_rows if str(r[0]) >= start]))
-    b = dict(_monthly([r for r in hall_rows if str(r[0]) >= start]))
+def equity_long(h300_rows, market_rows, mkt_tr_rows=None, start="2004-01-01"):
+    """沪深300全收益 vs 全市场，**日频**（对齐到共同交易日），按窗口分别抽稀。
+
+    口径务必看清（两条线不是一回事）：
+      · 沪深300：H00300 **全收益**，含分红再投
+      · 全市场  ：原图用万得全A 800707.WI。它是 Wind 商业数据，公开接口取不到。
+                  改用中证全指 000985 **价格指数**近似（基点同为 1000，覆盖全 A 股）。
+      一条含分红、一条不含 → 只能比形态和斜率，不能直接比收益高低。
+      同口径对比看 cagr_market_tr（H00985）与 cagr300 两个数字。
+
+    窗口单位是「交易日」而不是自然日：5296 个交易日 ≈ 22 年，
+    取近 245/1215/2430 个交易日分别约等于近 1/5/10 年。
+    """
+    a = {str(r[0]): float(r[1]) for r in h300_rows if str(r[0]) >= start}
+    b = {str(r[0]): float(r[1]) for r in market_rows if str(r[0]) >= start}
     keys = sorted(set(a) & set(b))
-    if len(keys) < 60:
-        raise RuntimeError(f"长期曲线可用月份不足（{len(keys)}）")
-    series = [[k, round(a[k], 2), round(b[k], 2)] for k in keys]
-    f, l = series[0], series[-1]
-    return {
-        "as_of": f"{l[0]}（月末）",
+    if len(keys) < 1000:
+        raise RuntimeError(f"长期曲线可用交易日不足（{len(keys)}）")
+
+    full = [[k, round(a[k], 2), round(b[k], 2)] for k in keys]
+    f, l = full[0], full[-1]
+
+    # 每个窗口单独抽稀：窗口越短越保留细节，窗口越长抽得越狠。
+    # 宽屏画布 1060px、窄屏 430px，两者点数上限不同（pts=宽屏、pts_n=窄屏），
+    # 服务端两份都生成，前端用 CSS 媒体查询二选一 —— 手机上不缩字。
+    plans = [("1y", 245, 245, 245), ("5y", 1215, 500, 300),
+             ("10y", 2430, 700, 340), ("all", len(full), 900, 380)]
+    win = {}
+    for key, days, capw, capn in plans:
+        cut = full[-days:] if len(full) > days else full
+        win[key] = {"from": cut[0][0], "to": cut[-1][0], "n": len(cut),
+                    "pts": _downsample(cut, capw),
+                    # 没被抽稀就不用再存一份，模板里回落到 pts
+                    "pts_n": None if capn >= len(cut) else _downsample(cut, capn)}
+    # 去掉首尾相同的重复窗口（历史还不够长时会出现）
+    seen, win2 = set(), {}
+    for key, _d, _cw, _cn in plans:
+        sig = (win[key]["from"], win[key]["n"])
+        if sig in seen:
+            continue
+        seen.add(sig)
+        win2[key] = win[key]
+
+    out = {
+        "as_of": l[0],
         "from": f[0],
+        "to": l[0],
         "h300": l[1],
-        "hall": l[2],
-        "cagr300": _cagr(f[1], l[1], f[0] + "-01", l[0] + "-01"),
-        "cagr_all": _cagr(f[2], l[2], f[0] + "-01", l[0] + "-01"),
-        "months": len(series),
-        "series": _downsample(series, cap),
+        "market": l[2],
+        "cagr300": _cagr(f[1], l[1], f[0], l[0]),
+        "cagr_market": _cagr(f[2], l[2], f[0], l[0]),
+        "days": len(full),
+        "win": win2,
     }
+    # 统一到全收益口径的年化（只给数字，不画线）：全市场 H00985
+    if mkt_tr_rows:
+        c = {str(r[0]): float(r[1]) for r in mkt_tr_rows if str(r[0]) >= start}
+        k2 = sorted(set(a) & set(c))
+        if len(k2) > 1000:
+            out["cagr_market_tr"] = _cagr(c[k2[0]], c[k2[-1]], k2[0], k2[-1])
+            out["market_tr"] = round(c[k2[-1]], 2)
+    return out
 
 
 # ------------------------------------------------------------------ 组装
@@ -184,7 +230,10 @@ def run():
     div = _try(lambda: S.csindex_perf("000922", start="2004-01-01"), errors, "中证红利日线")
     cyb = _try(lambda: S.sina_cn_daily("sz399006"), errors, "创业板指日线")
     h300 = _try(lambda: S.csindex_perf("H00300", start="2004-01-01"), errors, "沪深300全收益")
-    hall = _try(lambda: S.csindex_perf("H00985", start="2004-01-01"), errors, "中证全指全收益")
+    # 黑线：全市场。原图是万得全A（拿不到），用中证全指价格指数 000985 近似
+    market = _try(lambda: S.csindex_perf("000985", start="2004-01-01"), errors, "中证全指(价格)")
+    # 同口径对比用的数字（不画线）：中证全指全收益 H00985
+    mkt_tr = _try(lambda: S.csindex_perf("H00985", start="2004-01-01"), errors, "中证全指全收益")
 
     if div:
         v = _try(dividend_anchor, errors, "红利月线锚", div)
@@ -201,16 +250,16 @@ def run():
         h300 = _try(lambda: S.csindex_perf("000300", start="2004-01-01"), errors, "沪深300价格(备用)")
         if h300:
             out["notes"].append("沪深300全收益(H00300)取不到，图上用的是价格指数 000300，年化会偏低约 2 个百分点")
-    if not hall:
-        hall = _try(lambda: S.csindex_perf("000985", start="2004-01-01"), errors, "中证全指价格(备用)")
-        if hall:
-            out["notes"].append("中证全指全收益(H00985)取不到，图上用的是价格指数 000985，年化会偏低约 2 个百分点")
+    if not market:
+        market = mkt_tr
+        if market:
+            out["notes"].append("中证全指价格(000985)取不到，黑线用的其实是全收益 H00985，与蓝线同为全收益口径")
 
-    if h300 and hall:
-        v = _try(equity_long, errors, "长期双线", h300, hall)
+    if h300 and market:
+        v = _try(equity_long, errors, "长期双线", h300, market, mkt_tr)
         if v:
             out["equity_long"] = v
 
-    out["notes"].append("· 万得全A(800707.WI) 属 Wind 商业数据、公开接口取不到，"
-                        "此线改用中证全指全收益 H00985 替代（同口径、同基点）")
+    out["notes"].append("万得全A(800707.WI) 是 Wind 商业数据，公开接口取不到（东财/雪球/同花顺/腾讯/新浪全试过），"
+                        "黑线改用中证全指 000985 价格指数近似")
     return out

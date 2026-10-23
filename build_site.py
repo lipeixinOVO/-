@@ -85,7 +85,8 @@ def main():
 
     os.makedirs(SITE_DIR, exist_ok=True)
     with open(os.path.join(SITE_DIR, "data.json"), "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+        # 紧凑写：labs 里现在带几千个日频点，indent=2 会把每个数字拆成一行，体积翻三倍
+        json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
 
     from src import site_template as T
     html = T.render(payload)

@@ -201,7 +201,7 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 .chartbar button{font-family:inherit;font-size:11.5px;letter-spacing:.05em;padding:5px 14px;
   border-radius:20px;border:1px solid var(--line-2);background:transparent;color:#3d4048;
   cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease;
-  -webkit-tap-highlight-color:transparent}
+  white-space:nowrap;-webkit-tap-highlight-color:transparent}
 .chartbar button:hover{border-color:var(--gold);color:var(--gold-l)}
 .chartbar button.on{background:rgba(156,120,47,.14);border-color:var(--gold);color:#5c4519;font-weight:600}
 .chartbar .delta{margin-left:auto;display:flex;align-items:center;gap:13px;font-size:10.5px;
@@ -252,6 +252,31 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 .lab svg{width:100%;height:auto;display:block;margin-top:8px}
 .lab .cap{font-size:9.5px;color:var(--dim3);margin-top:6px;letter-spacing:.04em;line-height:1.7}
 
+/* 二十二年：标题 + 两条线口径 + 年化数字 */
+.chart .cap{font-size:10px;color:var(--dim3);margin-top:9px;letter-spacing:.03em;line-height:1.9}
+.chart .cap b{color:#3f434c;font-weight:600}
+.chart .cap code{background:rgba(20,22,27,.06);padding:1px 4px;border-radius:3px;
+  font-family:ui-monospace,monospace;font-size:9.5px;color:#2f333c}
+.eqhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;
+  flex-wrap:wrap;margin-bottom:12px}
+.eqhead .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
+.eqhead .sub{font-size:10.5px;color:var(--dim2);margin-top:5px;line-height:1.8;letter-spacing:.01em}
+.eqhead .sub b{font-weight:600;color:#3f434c}
+.eqleg{display:inline-flex;align-items:center;gap:6px;margin-right:16px;white-space:nowrap}
+.eqleg i{width:16px;height:2.5px;border-radius:2px;display:inline-block}
+.eqnums{font-size:11px;color:var(--dim2);text-align:right;line-height:1.95;
+  font-variant-numeric:tabular-nums}
+.eqnums b{font-weight:600;font-size:13px}
+.eqnums .r{color:var(--dim3);font-size:9.5px;letter-spacing:.1em;margin-bottom:2px}
+/* 服务端画两份画布：宽屏用 1060 单位画布、窄屏用 430 —— 手机上字号不会被缩成 3px */
+.eqw .v-w{display:block} .eqw .v-n{display:none}
+@media (max-width:760px){
+  .eqw .v-w{display:none} .eqw .v-n{display:block}
+  .eqhead{align-items:flex-start}
+  .eqnums{text-align:left;font-size:10.5px}
+  .eqnums b{font-size:12.5px}
+}
+
 @media(max-width:760px){
   .labs{grid-template-columns:1fr}
 }
@@ -299,6 +324,9 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
   .swipehint{display:block}
   .chartbar{gap:8px}
   .chartbar button{font-size:12.5px;padding:6px 15px}
+  /* 二十二年四个窗口按钮要在一行里排开，手机上把内边距收紧 */
+  .eqw .chartbar button{font-size:11.5px;padding:5px 9px;letter-spacing:.02em}
+  .eqw .chartbar .delta{margin-left:0;font-size:10px}
   .charthint{font-size:11.5px;gap:12px}
 }
 """
@@ -637,8 +665,11 @@ def _esc(s):
 
 # ---------------------------------------------------------------- 观察型模块
 # 手绘 SVG：不用图表库（Pages 静态托管，外部 CDN 一旦被墙整页白屏）
-def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 28)):
-    """多线折线图。layers=[{pts:[(idx, val)], color, width, dash}]，x 轴用索引。"""
+def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 28), fs=10):
+    """多线折线图。layers=[{pts:[(idx, val)], color, width, dash}]，x 轴用索引。
+
+    fs 是字号（用户单位）。窄屏画布用较大的 fs，因为它被缩小的倍数更少。
+    """
     import math
 
     allv = [v for L in layers for _i, v in L["pts"] if v] + [r[1] for r in refs]
@@ -657,13 +688,23 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
     o = [f'<svg viewBox="0 0 {w} {h}" preserveAspectRatio="xMidYMid meet">']
     # 对数轴用 1-2-3-5-7 优选刻度（等比、等距），线性轴均分四段
     if log:
+        # 分档选取刻度：跨度大（22 年全貌）用 1-2-3-5-7 的粗刻度；
+        # 跨度小（只看近 1 年）粗刻度常常只剩 1 根，得换成更细的 1.5/2.5/4/6/8
+        ms = (1, 2, 3, 5, 7) if (vmax / max(vmin, 1e-9)) > 2.5 \
+            else (1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.5,
+                  4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5)
         ticks, p = [], int(math.floor(math.log10(max(vmin, 1e-9))))
         while 10 ** p <= vmax * 10:
-            for mm in (1, 2, 3, 5, 7):
+            for mm in ms:
                 v = mm * 10 ** p
                 if vmin * 0.999 <= v <= vmax * 1.001:
                     ticks.append(v)
             p += 1
+        if len(ticks) > 7:                  # 太密就隔一根取一根，末根必留
+            thin = ticks[::2]
+            if ticks[-1] not in thin:
+                thin.append(ticks[-1])
+            ticks = thin
         if len(ticks) < 2:
             ticks = [vmin, vmax]
     else:
@@ -673,7 +714,7 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
         txt = f"{v:,.0f}" if vmax >= 100 else f"{v:.2f}"
         o.append(f'<line x1="{PL}" y1="{yy:.1f}" x2="{w - PR}" y2="{yy:.1f}" '
                  'stroke="rgba(20,22,27,.11)" stroke-width="1"/>')
-        o.append(f'<text x="{PL - 8}" y="{yy + 3.5:.1f}" fill="#6b6e78" font-size="10" '
+        o.append(f'<text x="{PL - 8}" y="{yy + 3.5:.1f}" fill="#6b6e78" font-size="{fs}" '
                  f'text-anchor="end">{txt}</text>')
     for lbl, rv, rc in refs:
         yy = Y(rv)
@@ -681,7 +722,7 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
                  'stroke-width="1" stroke-dasharray="3 4"/>')
         # 标签放左侧起点上方：右下角会和小数点很多的 x 轴末标签撞在一起，
         # 右移 30px 是为了跟 y 轴刻度数字拉开，否则看起来像"0.30 参考 0.3"
-        o.append(f'<text x="{PL + 30}" y="{yy - 6:.1f}" fill="{rc}" font-size="10.5" '
+        o.append(f'<text x="{PL + 30}" y="{yy - 6:.1f}" fill="{rc}" font-size="{fs + 0.5}" '
                  f'text-anchor="start" letter-spacing=".4">{lbl}</text>')
     for L in layers:
         seg = [(i, v) for i, v in L["pts"] if v]
@@ -697,7 +738,7 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
         anchor = "start" if i == 0 else ("end" if i >= n - 1 else "middle")
         # 首个标签右移 8px，避开 y 轴刻度数字（否则 "0.30" 和 "2024-06-19" 会粘在一起）
         xx = X(i) + (12 if i == 0 else 0)
-        o.append(f'<text x="{xx:.1f}" y="{h - 6}" fill="#6b6e78" font-size="10" '
+        o.append(f'<text x="{xx:.1f}" y="{h - 6}" fill="#6b6e78" font-size="{fs}" '
                  f'text-anchor="{anchor}" letter-spacing=".3">{txt}</text>')
     o.append("</svg>")
     return "".join(o)
@@ -705,6 +746,52 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
 
 def _num(v, nd=2):
     return "—" if v is None else f"{v:,.{nd}f}"
+
+
+def _xlabels(pts, maxn=5):
+    """按窗口跨度自动选横轴标签：跨度 ≤ 14 个月用「年-月」，否则用整数年。"""
+    import datetime as _dt
+    if not pts:
+        return []
+    n = len(pts)
+    try:
+        span = (_dt.date.fromisoformat(pts[-1][0]) - _dt.date.fromisoformat(pts[0][0])).days
+    except Exception:  # noqa: BLE001
+        span = 0
+
+    if span <= 430:                     # 一年半以内 → 月份刻度
+        idx = {}
+        for j, r in enumerate(pts):
+            idx.setdefault(r[0][:7], j)
+        keys = sorted(idx)
+        step = max(1, (len(keys) - 1) // 4)
+        pick = keys[::step]
+        if pick[-1] != keys[-1]:
+            pick.append(keys[-1])
+        return [(idx[k], k[2:]) for k in pick]      # 2026-07 → 26-07
+
+    idx = {}
+    for j, r in enumerate(pts):
+        idx.setdefault(r[0][:4], j)
+    yrs = sorted(idx)
+    # 优先取 5 的整数倍年份（2005/2010/…），首尾年份必留
+    cand = sorted({yrs[0], yrs[-1]} | {y for y in yrs if int(y) % 5 == 0},
+                  key=lambda y: idx[y])
+    # 离两端太近的刻度会和首尾标签叠在一起，但只在标签足够多时才开始剔
+    if len(cand) > 3:
+        cand = [y for y in cand
+                if (y == yrs[0] or int(y) - int(yrs[0]) >= 2)
+                and (y == yrs[-1] or int(yrs[-1]) - int(y) >= 2)]
+    if len(cand) < 3 and len(yrs) >= 3:
+        # 短窗口里 5 的倍数太少，退回等间隔
+        step = (len(yrs) - 1) / float(min(maxn, len(yrs)) - 1)
+        cand = sorted({yrs[int(round(i * step))] for i in range(min(maxn, len(yrs)))},
+                      key=lambda y: idx[y])
+    if len(cand) > maxn:
+        step = (len(cand) - 1) / float(maxn - 1)
+        cand = sorted({cand[int(round(i * step))] for i in range(maxn)},
+                      key=lambda y: idx[y])
+    return [(idx[y], y) for y in cand]
 
 
 def _dev_html(dev, pct):
@@ -769,58 +856,71 @@ def _labs_html(labs):
 </div>"""
 
     b = ""
-    if el:
-        s = el["series"]
-        n = len(s)
-        # 月频数据：「近一个月」只有 1 个点，画不出线，所以最小窗口给到近 3 年
-        wins = [("近 3 年", 36), ("近 5 年", 60), ("近 10 年", 120), (f"全部 {n} 期", n)]
-        seen, ws = set(), []
-        for lab, k in wins:
-            k = min(k, n)
-            if k in seen:
-                continue
-            seen.add(k)
-            ws.append((lab, k))
+    if el and el.get("win"):
+        wins = el["win"]
+        order = [k for k in ("1y", "5y", "10y", "all") if k in wins]
+        names = {"1y": "近 1 年", "5y": "近 5 年", "10y": "近 10 年"}
+        try:
+            _y0 = int(el["from"][:4])
+            _y1 = int(el["to"][:4])
+            all_lab = f"全部 {_y1 - _y0} 年"
+        except Exception:  # noqa: BLE001
+            all_lab = "全部"
+        names["all"] = all_lab
+
         btns, panes = [], []
-        for i, (lab, k) in enumerate(ws):
-            ss = s[-k:]
-            m = len(ss)
-            L = [
-                {"pts": [(j, r[1]) for j, r in enumerate(ss)], "color": "#111827", "width": 2.4},
-                {"pts": [(j, r[2]) for j, r in enumerate(ss)], "color": "#2f6fb0", "width": 2.4},
-            ]
-            yrs = sorted({r[0][:4] for r in ss})
-            step = max(1, (len(yrs) + 4) // 5)
-            xl = [(next(j for j, r in enumerate(ss) if r[0][:4] == y), y)
-                  for y in yrs[::step]]
-            if xl[-1][0] != m - 1:
-                xl.append((m - 1, ss[-1][0][:4]))
-            on = (i == len(ws) - 1)
+        for k in order:
+            w = wins[k]
+            pw = w["pts"]
+            pn = w.get("pts_n") or pw
+            on = (k == "all")
+
+            def _layers(pts):
+                return [
+                    {"pts": [(j, r[2]) for j, r in enumerate(pts)], "color": "#111827", "width": 2.2},
+                    {"pts": [(j, r[1]) for j, r in enumerate(pts)], "color": "#2f6fb0", "width": 2.2},
+                ]
+
+            wide = _svg(_layers(pw), w=1060, h=336, log=True,
+                        pad=(54, 14, 16, 26), xlabels=_xlabels(pw), fs=10)
+            narrow = _svg(_layers(pn), w=430, h=330, log=True,
+                          pad=(44, 8, 14, 24), xlabels=_xlabels(pn), fs=11)
             cls = ' class="on"' if on else ""
-            btns.append(f'<button type="button" data-k="{k}"{cls}>{lab}</button>')
+            btns.append(f'<button type="button" data-k="{k}"{cls}>{names[k]}</button>')
             panes.append(f'<div class="sw" data-k="{k}"{"" if on else " hidden"}>'
-                         f'{_svg(L, w=1060, h=330, log=True, pad=(52, 14, 16, 26), xlabels=xl)}</div>')
-        note = ""
-        if labs.get("notes"):
-            note = "　·　" + labs["notes"][-1]
+                         f'<div class="v-w">{wide}</div>'
+                         f'<div class="v-n">{narrow}</div></div>')
+
+        # 三个年化数字：画线口径（黑线不含分红、蓝线含分红）在前，同口径对比在后
+        tr = el.get("cagr_market_tr")
+        same = ""
+        if tr is not None:
+            same = (f'<div>同口径全收益：全市场 <b style="color:#111827">{_num(tr, 2)}%</b>'
+                    f' · 沪深300 <b style="color:#2f6fb0">{_num(el["cagr300"], 2)}%</b></div>')
         b = f"""<div class="chart eqw" id="eqw">
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:10px">
+  <div class="eqhead">
     <div>
-      <div style="font-size:13.5px;font-weight:600;color:#0e1013">二十二年，两条线</div>
-      <div style="font-size:10.5px;color:var(--dim2);margin-top:4px">
-        <span style="color:#111827">黑</span>=全市场全收益（中证全指 H00985，替代万得全A）　
-        <span style="color:#2f6fb0">蓝</span>=沪深300全收益（H00300）　·　纵轴为对数刻度
+      <div class="t">二十二年，两条线</div>
+      <div class="sub">
+        <span class="eqleg"><i style="background:#111827"></i>全市场 · 中证全指 <b>000985</b>（价格口径）</span>
+        <span class="eqleg"><i style="background:#2f6fb0"></i>沪深300 <b>H00300</b>（全收益，含分红）</span>
+        <div style="margin-top:3px">纵轴对数刻度 · 共 {el['days']} 个交易日（{el['from']} → {el['to']}）</div>
       </div>
     </div>
-    <div style="font-size:11.5px;color:var(--dim2);text-align:right;line-height:1.8">
-      年化 <b style="color:#111827">{_num(el['cagr_all'], 2)}%</b>（全市场）
-      vs <b style="color:#2f6fb0">{_num(el['cagr300'], 2)}%</b>（沪深300）
+    <div class="eqnums">
+      <div class="r">年化 · 画线口径</div>
+      <div>全市场 <b style="color:#111827">{_num(el['cagr_market'], 2)}%</b>（{_num(el['market'], 0)} 点）</div>
+      <div>沪深300 <b style="color:#2f6fb0">{_num(el['cagr300'], 2)}%</b>（{_num(el['h300'], 0)} 点）</div>
+      {same}
     </div>
   </div>
   <div class="chartbar"><div class="btns">{''.join(btns)}</div>
-    <div class="delta"><span class="lb">月频数据</span>「近一个月」只有 1 个点，最小窗口给到近 3 年</div></div>
+    <div class="delta"><span class="lb">日频数据</span>每个点一个交易日，按窗口抽稀</div></div>
   {''.join(panes)}
-  <div class="cap">月度采样 {el['months']} 期（{el['from']} 起，基点 1000）· 全市场 {_num(el['hall'])} · 沪深300 {_num(el['h300'])}{_esc(note)}</div>
+  <div class="cap">左轴对数刻度（1 · 2 · 3 · 5 · 7 优选，等距离散）。黑线原图是<b>万得全A 800707.WI</b>，
+    属 Wind 商业数据、公开接口取不到 → 改用中证全指 <code>000985</code> 价格指数近似（同为价格口径、基点 1000、覆盖全 A 股）；
+    蓝线照原样为沪深300全收益 H00300。一条不含分红、一条含分红，所以只能比形态和斜率，
+    比收益高低请看右上的「同口径全收益」。</div>
 </div>"""
     return a, b, ""
 
@@ -845,11 +945,34 @@ def _signals_html(sg):
     return f"<div class='sigs'>{''.join(rows)}</div>{tail}"
 
 
+def _js_payload(payload):
+    """内联给 JS 的那份数据：去掉 labs 里只给服务端画 SVG 用的大数组。
+
+    前端一行都不读 labs（图是服务端画好的），但 equity_long.win 里有两千多个
+    日频点，原样内联等于每次打开都白下载几十 KB。数字类字段保留，删数组。
+    """
+    p = dict(payload)
+    latest = dict(p.get("latest") or {})
+    labs = dict(latest.get("labs") or {})
+    for k in ("div_anchor", "cyb_ratio", "equity_long"):
+        if isinstance(labs.get(k), dict):
+            blk = dict(labs[k])
+            blk.pop("series", None)
+            if isinstance(blk.get("win"), dict):
+                blk["win"] = {kk: {x: y for x, y in vv.items() if not x.startswith("pts")}
+                              for kk, vv in blk["win"].items()}
+            labs[k] = blk
+    if labs:
+        latest["labs"] = labs
+    p["latest"] = latest
+    return p
+
+
 def render(payload):
     latest = payload["latest"]
     hist = payload["history"]
     # JSON 内联：转义 </script> 防止提前闭合
-    data_js = json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")
+    data_js = json.dumps(_js_payload(payload), ensure_ascii=False).replace("</", "<\\/")
 
     # 结论摘要（服务端先算好，避免 JS 失效时页面空白）
     rows = []
@@ -891,7 +1014,7 @@ def render(payload):
         labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small></h2>\n'
                      f'<div class="labs">{labs_a}</div>\n')
     if labs_b:
-        labs_sec += ('<h2>二十二年 <small>全收益口径 · 对数轴</small></h2>\n'
+        labs_sec += ('<h2>二十二年 <small>日频 · 对数轴 · 两条线口径不同</small></h2>\n'
                      f'{labs_b}\n')
 
     return f"""<!DOCTYPE html>
