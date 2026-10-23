@@ -95,8 +95,17 @@ dca-dashboard/
 │  ├─ sources.py            各数据源封装，只负责取到干净数据
 │  ├─ engine.py             分位/回撤/波动/对数趋势残差 + 综合分 + 倍数 + 闸门
 │  ├─ compute.py            五个标的的维度组装
+│  ├─ recent.py             近一月涨跌轨迹 + 近 7 天涨跌（纯展示，不参与打分）
+│  ├─ labs.py               长期锚 / 创红比 / 二十二年双线（纯展示，不参与打分）
+│  ├─ signals.py            阈值提示条（纯派生，不改分数）
+│  ├─ history.py            分数历史累积与序列化
 │  ├─ render.py             Markdown 报告
 │  └─ site_template.py      HTML 模板（手写 SVG 图表，不引 CDN）
+├─ tools/
+│  ├─ selfcheck.py          交付前自检
+│  ├─ push_github.py        走 REST API 推送（本机到 github.com 被代理拦）
+│  ├─ shot.py               本地截图：定位到某个区块（JS 渲染的也能拍）
+│  └─ peek.py               本地截图：单独渲染某个静态区块
 ├─ data/
 │  ├─ cache/                接口缓存（6 小时 TTL）
 │  └─ out/                  每日快照 YYYY-MM-DD.json + latest.json + report.md
@@ -214,6 +223,34 @@ run_daily.py  →  src/history.py::append()  写/覆盖当日一条 {d, a:{id:{s
 措辞只用「低于 / 逼近 / 换档 / 未触及」，不出现买入卖出抄底字样；页脚也写明它不构成投资建议。
 `build_site.py` 里调用 `SG.compute(latest, rows)`，结果进 `data.json` 的 `signals` 字段，可程序化取用。
 
+### 近一月涨跌（`src/recent.py`，只展示价格、不参与打分）
+
+两处呈现，数据同源（`latest.assets[].month`）：
+
+1. **每张标的卡片**里的走势条：近一月累计涨跌曲线 + 近 7 天那一段加粗 + 末点，前端 JS 画。
+2. **「近一月涨跌」板块**的对比图：5 条线归一化到 0%，右侧灰底标出最近 7 个自然日，服务端出 SVG。
+
+口径：
+
+- 窗口按 **自然日 30 天**回溯，取窗口内所有交易日。基准 = 窗口**首个交易日**的收盘，
+  所以曲线首点恒为 0% —— 和「近一月涨幅 = 现在 / 一个月前 − 1」的通行定义一致。
+- **近 7 天也按自然日算**，页面上同时给出覆盖的交易日数（本期是 5 个）。
+  把它当成「7 个交易日」会多出 3～4 天，是这类图最常见的口径错位。
+- 涨红跌绿（A 股习惯），和分数那套金色/灰色配色**完全无关** —— 分数是「贵不贵」，这条线是「最近涨没涨」。
+
+写这块踩过的点：
+
+- **横轴必须按真实日期铺，不能按数据点索引**。同样「近一个月」，美股 23 个点、中证红利只有 17 个点
+  （10 月长假）。按索引画会把两条线压成同样长度，看着「同起点同终点」，其实时间跨度根本不一样 ——
+  这是这类对比图最容易骗人的画法。
+- **末值标签会叠**：两条线末端差 0.9 个点（≈13px）就糊成一坨。所以标签单独一轮画：
+  按 y 排序后逐个压开最小间距，推到底边外再整组上移。
+- **y 轴刻度不能「均分四段」**：均分出来是 -10.2% / -5.5% / -0.8% / +3.9% 这种读不出信息的数。
+  改成 1/2/2.5/5 ×10^k 的整齐步长（`_nice_ticks`），末位是整数就不带小数点。
+- 卡片里的走势条用 `preserveAspectRatio="none"`（横向铺满卡片）+ `vector-effect="non-scaling-stroke"`
+  （线宽不跟着拉伸）。末点不能用 `<circle>`——会被横向拉成椭圆，改用零长度路径 + 圆头描边。
+- 卡片是 JS 拼 `innerHTML` 出来的，SVG 直接串进字符串最省事；用 `<canvas>` 反而要额外管尺寸和重绘。
+
 ### 观察型模块（`src/labs.py`，不参与打分）
 
 页面下半部分的三块长期指标，来自用户给的两张图，每天随跑批重算：
@@ -243,12 +280,26 @@ run_daily.py  →  src/history.py::append()  写/覆盖当日一条 {d, a:{id:{s
 ### 看效果：本地截图
 
 ```bash
-python tools/shot.py _shots/eq-desktop.png "#eqw" 1200 760   # 滚到 二十二年 这张图
-python tools/shot.py _shots/eq-mobile.png  "#eqw" 390 640    # 用手机宽度再拍一张
+# 整页 + 定位到某个区块（卡片、图表这类 JS 渲染出来的区块只能这么截）
+python tools/shot.py _shots/card-mobile.png ".card" 390 640
+python tools/shot.py _shots/eq-desktop.png "#eqw" 1200 760
+
+# 只渲染某一个静态区块（带原样式、不带别的），不受页面滚动影响
+python tools/peek.py _shots/mth-desktop.png "chart mchart" 1160 560
 ```
 
 Chrome headless 的 `--screenshot` 只拍视口，页面很长时抓不到下半部分；`--window-size=390` 还会被最小窗口宽度顶到 497，
-看着像横向溢出（实际没有）。这个脚本把页面塞进一个固定视口的 iframe、用锚点滚到目标元素，宽高完全可控。
+看着像横向溢出（实际没有）。
+
+`shot.py` 把页面塞进 iframe、把目标元素顶到视口顶端（用**负 margin**，不是 `scrollTo`）。两个坑：
+
+- 大部分区块是 **class 不是 id**（`.grid` / `.mchart`），`index.html#mchart` 找不到元素就停在页首，截出来完全无关。
+- file:// 下每个文件都是独立 origin，父页拿不到 `iframe.contentDocument` → 必须加
+  `--allow-file-access-from-files`（否则定位脚本静默失效，也永远停在页首）。
+- 用 `scrollTo` 也不稳：`--virtual-time-budget` 下滚动常常在截图之后才生效。
+
+`peek.py` 是另一条路：把目标 `<div>` 单独摘出来、套上原 CSS 渲染，**没有时序问题**，图多高就多高。
+静态区块（labs、近一月对比图）优先用它；卡片是 JS 渲染的，只能走 `shot.py`。
 
 ### 交付前自检
 

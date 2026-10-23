@@ -14,4 +14,5 @@ __pycache__/
 # 本地截图与预览，不进仓库
 _shots/
 _shot_wrap.html
+_peek.html
 _shot_profile/

@@ -208,7 +208,9 @@ def _macro_us(ctx, as_of=None, w_real=70, w_nom=30):
 
 
 def _out(ser, dims):
-    return {"closes": ser["closes"], "dims": dims,
+    # dates 一定要一起带出来：页面上的「近一月涨跌线」要按真实日期铺横轴，
+    # 只给 closes 的话各市场交易日不同（A 股长假、美股节假日）会画错位。
+    return {"closes": ser["closes"], "dates": ser["dates"], "dims": dims,
             "price": ser["closes"][-1], "price_date": ser["date"]}
 
 

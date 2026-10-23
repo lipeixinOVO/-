@@ -137,6 +137,19 @@ body{
 .dim .t{height:2.5px;background:rgba(20,22,27,.1);border-radius:2px;overflow:hidden}
 .dim .f{height:100%;border-radius:2px;transition:width .3s ease}
 
+/* 近一月走势（价格口径，和分数无关，所以单独一条带分隔线） */
+.spark{margin:0 0 12px;padding-top:11px;border-top:1px solid var(--line)}
+.spark .hh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  font-size:9.5px;color:var(--dim3);letter-spacing:.1em;margin-bottom:5px}
+.spark .hh .v{font-size:13px;font-weight:600;letter-spacing:0;
+  font-variant-numeric:tabular-nums;margin-left:5px}
+.spark .v.up{color:#b4452e}
+.spark .v.dn{color:#2f7d54}
+.spark .v.mid{color:var(--dim2)}
+.spark svg{display:block;width:100%;height:52px}
+.spark .ax{display:flex;justify-content:space-between;font-size:9px;color:var(--dim3);
+  letter-spacing:.06em;margin-top:2px;font-variant-numeric:tabular-nums}
+
 /* 底部 */
 .fund{font-size:10.5px;color:var(--dim2);padding-top:12px;border-top:1px solid var(--line);
   display:flex;justify-content:space-between;gap:8px;align-items:center;letter-spacing:.02em}
@@ -257,6 +270,27 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 .chart .cap b{color:#3f434c;font-weight:600}
 .chart .cap code{background:rgba(20,22,27,.06);padding:1px 4px;border-radius:3px;
   font-family:ui-monospace,monospace;font-size:9.5px;color:#2f333c}
+/* 近一月涨跌对比：图例 + 宽窄两份画布（同 .eqw 的理由，手机上一份固定宽画布会被缩糊） */
+.mhead .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
+.mhead .sub{font-size:10.5px;color:var(--dim2);margin-top:5px;line-height:1.85}
+.mhead .sub b{font-weight:600;color:#3f434c}
+.mlegs{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));
+  gap:8px 20px;margin:13px 0 8px;font-size:11px;color:var(--dim2)}
+.mleg{display:flex;align-items:baseline;gap:6px;min-width:0}
+.mleg i{width:13px;height:2.5px;border-radius:2px;display:inline-block;flex:0 0 13px;
+  position:relative;top:-3px}
+.mleg .n{font-style:normal;color:#3f434c;flex:0 1 auto;min-width:0}
+.mleg b{font-weight:600;font-variant-numeric:tabular-nums;flex:0 0 auto}
+.mleg b.up{color:#b4452e}
+.mleg b.dn{color:#2f7d54}
+.mleg em{font-style:normal;color:var(--dim3);font-size:10.5px;letter-spacing:.02em;flex:0 0 auto}
+.mchart .v-w{display:block} .mchart .v-n{display:none}
+@media (max-width:760px){
+  .mchart .v-w{display:none} .mchart .v-n{display:block}
+  .mlegs{grid-template-columns:1fr;gap:4px;font-size:10.5px;margin:11px 0 6px}
+  .mleg{line-height:1.5}
+  .mleg em{font-size:10px}
+}
 .eqhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;
   flex-wrap:wrap;margin-bottom:12px}
 .eqhead .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
@@ -351,6 +385,72 @@ function dimColor(sc){
   if(sc>=35) return 'linear-gradient(90deg,#7f8b9a,#aab4c1)';
   return 'linear-gradient(90deg,#a4a7b0,#c6c9cf)';
 }
+// 近一月涨跌走势条。涨红跌绿（A 股习惯，和分数配色无关）。
+// 用 SVG 串进 innerHTML 而不是 canvas：卡片本来就是这个方式拼的，
+// 而且 vector-effect 能让线宽在任意卡宽下都稳稳 1.5px，不被横向拉伸带粗。
+// 近 7 天那一段用更粗的实线压在淡色全段之上，起点再画一根竖虚线 → 一眼看出"这一截是最近一周"。
+function sparkSvg(m, key){
+  if(!m || !m.pts || m.pts.length < 4) return '';
+  var W = 320, H = 52, PX = 1, PY = 6;
+  var vs = m.pts.map(function(p){ return p[1]; });
+  var mn = Math.min.apply(null, vs), mx = Math.max.apply(null, vs);
+  // 平盘时给一个最小幅度：否则一条直线贴着顶边，看着像没渲染出来
+  if(mx - mn < 1.2){ var c0 = (mx + mn) / 2; mn = c0 - 0.6; mx = c0 + 0.6; }
+  var pad = (mx - mn) * 0.12, lo = mn - pad, hi = mx + pad;
+  var n = m.pts.length;
+  var X = function(i){ return PX + (W - 2 * PX) * i / (n - 1); };
+  var Y = function(v){ return PY + (H - 2 * PY) * (1 - (v - lo) / (hi - lo)); };
+  var col = m.chg_month >= 0 ? '#b4452e' : '#2f7d54';
+  var gid = 'sg-' + key;
+  var line = '';
+  m.pts.forEach(function(p, i){
+    line += (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(p[1]).toFixed(1) + ' ';
+  });
+  var area = line + 'L' + X(n - 1).toFixed(1) + ' ' + (H - PY) + ' L' + X(0).toFixed(1) + ' ' + (H - PY) + ' Z';
+  var i7 = 0;
+  for(var i = 0; i < n; i++){ if(m.pts[i][0] === m.week_from){ i7 = i; break; } }
+  var w7 = '';
+  for(var j = i7; j < n; j++){
+    w7 += (j === i7 ? 'M' : 'L') + X(j).toFixed(1) + ' ' + Y(m.pts[j][1]).toFixed(1) + ' ';
+  }
+  var NS = ' vector-effect="non-scaling-stroke"';
+  var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">';
+  o += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+       '<stop offset="0%" stop-color="' + col + '" stop-opacity=".24"/>' +
+       '<stop offset="100%" stop-color="' + col + '" stop-opacity="0"/></linearGradient></defs>';
+  o += '<path d="' + area + '" fill="url(#' + gid + ')"/>';
+  if(0 > lo && 0 < hi){
+    o += '<line x1="0" y1="' + Y(0).toFixed(1) + '" x2="' + W + '" y2="' + Y(0).toFixed(1) +
+         '" stroke="rgba(20,22,27,.24)" stroke-width="1" stroke-dasharray="3 4"' + NS + '/>';
+  }
+  o += '<path d="' + line + '" fill="none" stroke="' + col + '" stroke-opacity=".62" stroke-width="1.5" ' +
+       'stroke-linejoin="round" stroke-linecap="round"' + NS + '/>';
+  if(i7 < n - 1){
+    o += '<line x1="' + X(i7).toFixed(1) + '" y1="' + PY + '" x2="' + X(i7).toFixed(1) +
+         '" y2="' + (H - PY) + '" stroke="rgba(20,22,27,.16)" stroke-width="1" stroke-dasharray="2 3"' + NS + '/>';
+  }
+  o += '<path d="' + w7 + '" fill="none" stroke="' + col + '" stroke-width="2.2" ' +
+       'stroke-linejoin="round" stroke-linecap="round"' + NS + '/>';
+  // 末点：用一条零长度 + 圆头描边的路径代替 circle（circle 会被横向拉伸成椭圆）
+  o += '<path d="M' + X(n - 1).toFixed(1) + ' ' + Y(m.pts[n - 1][1]).toFixed(1) + ' l0 0" ' +
+       'stroke="' + col + '" stroke-width="5" stroke-linecap="round"' + NS + '/>';
+  return o + '</svg>';
+}
+
+function sparkBlock(a){
+  var m = a.month;
+  if(!m || !m.pts || m.pts.length < 4) return '';
+  var cls = function(v){ return v > 0 ? 'up' : (v < 0 ? 'dn' : 'mid'); };
+  var fmt = function(v){ return v == null ? '—' : (v > 0 ? '+' : '') + v.toFixed(2) + '%'; };
+  var mm = function(d){ return String(d || '').slice(5); };      // 2026-10-22 → 10-22
+  return '<div class="spark"><div class="hh">' +
+    '<span>近一月涨跌<b class="v ' + cls(m.chg_month) + '">' + fmt(m.chg_month) + '</b></span>' +
+    '<span>近 7 天<b class="v ' + cls(m.chg_week) + '">' + fmt(m.chg_week) + '</b></span>' +
+    '</div>' + sparkSvg(m, a.id) +
+    '<div class="ax"><span>' + mm(m.base_date) + ' 起</span><span>' + mm(m.end_date) + ' 止</span></div>' +
+    '</div>';
+}
+
 function render(){
   const L = P.latest;
   // 数据新鲜度：用 epoch 秒算（没有就退回解析本地时间字符串），
@@ -430,7 +530,7 @@ function render(){
       '<div class="lbl">'+(a.advisory_only?'不执行':esc(a.label))+'<br>档内 '+bp.toFixed(0)+'%</div></div>'+
       '<div class="band"><div class="track"><div class="fill" style="width:'+Math.max(2,bp)+'%"></div></div>'+
       '<div class="cap"><span>本档下沿</span><span>越靠右越接近上调</span></div></div>'+
-      '<div class="dims">'+dims+'</div>'+fund+'</div>';
+      '<div class="dims">'+dims+'</div>'+sparkBlock(a)+fund+'</div>';
   }).join('');
 
   renderChart();
@@ -824,6 +924,201 @@ def _dev_html(dev, pct):
     return tag
 
 
+def _nice_ticks(lo, hi, n=4):
+    """把 [lo, hi] 切成整齐刻度（步长取 1/2/2.5/5 ×10^k）。
+
+    为什么不用「均分四段」：均分出来是 -10.2% / -5.5% / -0.8% / +3.9% 这种读不出信息的数，
+    而原值是「近一月涨跌」，读者只需要知道「大概跌了几个点」。
+    """
+    import math
+    span = hi - lo
+    if span <= 0:
+        return [lo, hi]
+    raw = span / max(1, n)
+    p = 10 ** math.floor(math.log10(raw))
+    step = 10 * p
+    for m in (1, 2, 2.5, 5, 10):
+        if m * p >= raw:
+            step = m * p
+            break
+    v = math.ceil(lo / step) * step
+    ticks = []
+    while v <= hi + 1e-9:
+        ticks.append(round(v, 6))
+        v += step
+    return ticks or [lo, hi]
+
+
+def _pct_txt(v):
+    """刻度标签：整数就不带小数点（+5% 而不是 +5.0%），小数才保留一位。"""
+    return (f"{v:+.0f}%" if abs(v - round(v)) < 0.01 else f"{v:+.1f}%")
+
+
+def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
+    """近一月累计涨跌对比图。**横轴按真实日期铺，不按数据点索引**。
+
+    为什么不能用索引：各市场的交易日不同 —— 本期 A 股 17 个点、美股 23 个点
+    （10 月长假让中证红利少了 6 天）。按索引画会把两条线压成同样长度，
+    看着「同起点同终点」，实际时间跨度并不一样，这是最容易骗人的画法。
+
+    items = [(name, month_dict, color), ...]
+    """
+    import datetime as dt
+
+    ser = []
+    for name, m, col in items:
+        pts = []
+        for p in m.get("pts") or []:
+            try:
+                pts.append((dt.date.fromisoformat(str(p[0])[:10]), float(p[1])))
+            except (ValueError, TypeError):
+                continue
+        if len(pts) >= 4:
+            ser.append((name, m, col, pts))
+    if len(ser) < 2:
+        return ""
+
+    days = [d for _, _, _, pts in ser for d, _ in pts]
+    d0, d1 = min(days), max(days)
+    span = max(1, (d1 - d0).days)
+
+    vals = [v for _, _, _, pts in ser for _, v in pts] + [0.0]
+    vmin, vmax = min(vals), max(vals)
+    if vmax - vmin < 1.5:            # 集体横盘时给个最小跨度，否则几条线糊成一根
+        mid = (vmax + vmin) / 2
+        vmin, vmax = mid - 0.75, mid + 0.75
+    pad = (vmax - vmin) * 0.16
+    ticks = _nice_ticks(vmin - pad, vmax + pad, 4)
+    vmin, vmax = min(ticks[0], vmin - pad), max(ticks[-1], vmax + pad)
+
+    PL, PR, PT, PB = 50, 54, 18, 26
+    X = lambda d: PL + (w - PL - PR) * ((d - d0).days / span)
+    Y = lambda v: PT + (h - PT - PB) * (1 - (v - vmin) / (vmax - vmin))
+
+    o = [f'<svg viewBox="0 0 {w} {h}" preserveAspectRatio="xMidYMid meet">']
+
+    # 近 7 天竖带（各标的 week_from 最多差一天，取最早的做统一边界）
+    try:
+        wk = min(dt.date.fromisoformat(str(m["week_from"])[:10])
+                 for _, m, _, _ in ser if m.get("week_from"))
+    except ValueError:
+        wk = d1
+    xw = X(wk)
+    if d1 > wk:
+        o.append(f'<rect x="{xw:.1f}" y="{PT}" width="{X(d1) - xw:.1f}" '
+                 f'height="{h - PT - PB}" fill="rgba(20,22,27,.055)"/>')
+        o.append(f'<line x1="{xw:.1f}" y1="{PT}" x2="{xw:.1f}" y2="{h - PB}" '
+                 'stroke="rgba(20,22,27,.18)" stroke-width="1" stroke-dasharray="3 4"/>')
+        if X(d1) - xw > fs * 5.4:
+            o.append(f'<text x="{(xw + X(d1)) / 2:.1f}" y="{PT - 6}" fill="#6b6e78" '
+                     f'font-size="{fs}" text-anchor="middle" letter-spacing=".9">近 7 天</text>')
+
+    for v in ticks:
+        yy = Y(v)
+        o.append(f'<line x1="{PL}" y1="{yy:.1f}" x2="{w - PR}" y2="{yy:.1f}" '
+                 'stroke="rgba(20,22,27,.09)" stroke-width="1"/>')
+        o.append(f'<text x="{PL - 8}" y="{yy + 3.5:.1f}" fill="#6b6e78" font-size="{fs}" '
+                 f'text-anchor="end">{_pct_txt(v)}</text>')
+
+    if vmin < 0 < vmax:              # 0% = 窗口起点，涨跌分水岭
+        o.append(f'<line x1="{PL}" y1="{Y(0):.1f}" x2="{w - PR}" y2="{Y(0):.1f}" '
+                 'stroke="rgba(20,22,27,.32)" stroke-width="1" stroke-dasharray="5 4"/>')
+
+    for name, m, col, pts in ser:
+        d = " ".join(("M" if i == 0 else "L") + f"{X(dd):.1f} {Y(v):.1f}"
+                     for i, (dd, v) in enumerate(pts))
+        o.append(f'<path d="{d}" fill="none" stroke="{col}" stroke-width="2" '
+                 'stroke-linejoin="round" stroke-linecap="round"/>')
+
+    # 末值标签单独一轮画：两条线末端靠得近时会糊成一坨（本期纳指综合 -4.10% 与
+    # 纳指100 -5.00% 只差 0.9 个点 ≈ 13px），先按 y 排序再逐个压开最小间距。
+    ends = sorted((Y(pts[-1][1]), pts[-1][1], col, X(pts[-1][0])) for _, _, col, pts in ser)
+    gap = fs * 1.62
+    fixed = []
+    for y, lv, col, xx in ends:
+        if fixed and y - fixed[-1][0] < gap:
+            y = fixed[-1][0] + gap
+        fixed.append((y, lv, col, xx))
+    over = (fixed[-1][0] + fs * 0.35) - (h - PB + fs)
+    if over > 0:                     # 推到底边外就整组上移
+        fixed = [(y - over, lv, col, xx) for y, lv, col, xx in fixed]
+    for y, lv, col, xx in fixed:
+        o.append(f'<text x="{xx + 7:.1f}" y="{y + fs * 0.35:.1f}" fill="{col}" '
+                 f'font-size="{fs + 1}" font-weight="600" text-anchor="start" '
+                 'paint-order="stroke fill" stroke="#fff" stroke-width="3" '
+                 f'stroke-linejoin="round">{lv:+.2f}%</text>')
+
+    # 横轴：首尾必标，中间按自然日等分（不按数据点等分）
+    xl = [(d0, d0.strftime("%m-%d")), (d1, d1.strftime("%m-%d"))]
+    for i in range(1, max(1, maxx - 1)):
+        dd = d0 + dt.timedelta(days=round(span * i / float(maxx - 1)))
+        if d0 < dd < d1:
+            xl.append((dd, dd.strftime("%m-%d")))
+    for dd, txt in sorted(set(xl)):
+        anchor = "start" if dd == d0 else ("end" if dd == d1 else "middle")
+        xx = X(dd) + (2 if dd == d0 else 0)
+        o.append(f'<text x="{xx:.1f}" y="{h - 8}" fill="#6b6e78" font-size="{fs}" '
+                 f'text-anchor="{anchor}" letter-spacing=".3">{txt}</text>')
+
+    o.append("</svg>")
+    return "".join(o)
+
+
+# 每个标的固定一个颜色（不按数组顺序轮）：黄金是金色、红利是砖红，读者看图例就能对上线。
+# 顺序轮换的话，以后在 config 里插一个标的，后面所有线的颜色都会跟着平移，历史印象全乱。
+MONTH_COLORS = {
+    "IXIC": "#111827",
+    "NDX": "#2f6fb0",
+    "GOLD": "#a8752a",
+    "MSCI_HEALTH": "#2f7d5e",
+    "CSI_DIVIDEND": "#b4512f",
+}
+MONTH_FALLBACK = ["#5b4b8a", "#7a7f8c", "#3f7f9e", "#8a6b25", "#9c4f4f"]
+
+
+def _month_html(latest):
+    """近一月涨跌板块（价格口径，**不参与打分**）。两个以上标的才画。"""
+    assets = [a for a in (latest.get("assets") or []) if a.get("month")]
+    if len(assets) < 2:
+        return ""
+    items = []
+    for i, a in enumerate(assets):
+        col = MONTH_COLORS.get(a["id"]) or MONTH_FALLBACK[i % len(MONTH_FALLBACK)]
+        items.append((a["name"], a["month"], col))
+
+    wide = _month_svg(items, w=1060, h=310, fs=10, maxx=6)
+    narrow = _month_svg(items, w=430, h=290, fs=11, maxx=3)
+    if not wide:
+        return ""
+
+    legs = "".join(
+        '<span class="mleg"><i style="background:%s"></i><em class="n">%s</em>'
+        '<b class="%s">%+.2f%%</b><em>7 日 %+.2f%%</em></span>'
+        % (c, _esc(n), "up" if m["chg_month"] >= 0 else "dn",
+           m["chg_month"], m["chg_week"])
+        for n, m, c in items)
+
+    ends = sorted({str(a["month"].get("end_date") or "")[5:10] for a in assets})
+    wks = sorted({str(a["month"].get("week_from") or "")[5:10] for a in assets})
+    # 别在 f-string 里写嵌套引号的表达式（Python 3.12 之前是语法错误，Actions 上的版本不确定）
+    ends_txt = "、".join(ends)
+    wks_txt = "、".join(wks)
+    cap = (f"截止 {ends_txt}　·　近 7 天从 {wks_txt} 起　·　"
+           "各市场交易日不同，横轴按真实日期铺，不按数据点等分")
+
+    return f"""<div class="chart mchart">
+  <div class="mhead">
+    <div class="t">近一月累计涨跌</div>
+    <div class="sub">以窗口首日收盘为 0%　·　<b>价格口径，不是分数</b>　·　
+      右侧灰底 = 最近 7 个自然日</div>
+  </div>
+  <div class="mlegs">{legs}</div>
+  <div class="v-w">{wide}</div>
+  <div class="v-n">{narrow}</div>
+  <div class="cap">{_esc(cap)}</div>
+</div>"""
+
+
 def _labs_html(labs):
     """两张「长期锚」卡片 + 一张二十二年双线图。数据缺失时整块不渲染。"""
     if not labs:
@@ -1028,6 +1323,7 @@ def render(payload):
                "<div class='swipehint'>← 左右滑动看倍数 / 建议金额 / 落地基金 →</div>")
 
     # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
+    month_sec = _month_html(latest)
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
     sig_sec = _signals_html(payload.get("signals") or {})
     labs_sec = ""
@@ -1068,6 +1364,9 @@ def render(payload):
 
 <h2>本期结论 <small>分数越高越该买 · 50 分 = 1.0 倍</small></h2>
 <div class="notes">{summary}</div>
+
+<h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small></h2>
+{month_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
 <h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small></h2>
 <div class="charthint">

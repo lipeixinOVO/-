@@ -18,6 +18,7 @@ from src import sources as S          # noqa: E402
 from src import engine as E           # noqa: E402
 from src import compute as C          # noqa: E402
 from src import labs as LB            # noqa: E402
+from src import recent as RC          # noqa: E402
 
 DJ_H = {"Referer": "https://danjuanfunds.com/"}
 
@@ -77,6 +78,14 @@ def load_ctx():
     print("· 拉取指数估值（蛋卷）…", flush=True)
     C.load_valuation_anchors(ctx)
     return ctx
+
+
+def _month(r):
+    """近一月涨跌轨迹。纯展示用途，任何异常都吞掉返回 None —— 不许拖累评分跑批。"""
+    try:
+        return RC.month_track(r.get("dates") or [], r.get("closes") or [])
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def explain(a):
@@ -146,6 +155,8 @@ def run(dry=False):
             "advisory_only": a.get("advisory_only", False),
             "price": r.get("price"),
             "price_date": r.get("price_date"),
+            # 近一月涨跌轨迹（纯展示，不参与打分）。算法单独算，失败就不画，不能影响评分。
+            "month": _month(r),
             "score": score,
             "multiplier": round(mult, 2),
             "label": label,

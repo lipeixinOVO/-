@@ -92,6 +92,31 @@ for a in assets:
             if m.get("pct") is not None and not (0 <= m["pct"] <= 100):
                 bad(f"{a.get('name')}/{m.get('name')} 分位越界 {m['pct']}")
 
+# ---------- 4b. 近一月涨跌轨迹（纯展示，但错了会直接画歪） ----------
+for a in assets:
+    m = a.get("month")
+    if not m:
+        warn(f"{a.get('name')} 没有近一月轨迹，该卡片会少一条走势")
+        continue
+    pts = m.get("pts") or []
+    if len(pts) < 8:
+        bad(f"{a.get('name')} 轨迹点数过少 {len(pts)}")
+    # 首点必须是 0%（基准 = 窗口前一日收盘），否则「近一月涨跌」和图对不上
+    if pts and abs(pts[0][1]) > 0.011:
+        bad(f"{a.get('name')} 轨迹首点应为 0%，实际 {pts[0][1]}")
+    ds = [p[0] for p in pts]
+    if ds != sorted(ds):
+        bad(f"{a.get('name')} 轨迹日期非升序")
+    if m.get("chg_week") is None:
+        bad(f"{a.get('name')} 缺近 7 天涨跌")
+    if m.get("week_from") not in ds:
+        bad(f"{a.get('name')} week_from={m.get('week_from')} 不在轨迹里，前端高亮段会从 0 画起")
+    if abs((pts[-1][1] if pts else 0) - (m.get("chg_month") or 0)) > 0.011:
+        bad(f"{a.get('name')} 轨迹末点与 chg_month 不一致")
+
+if 'class="chart mchart"' not in h:
+    warn("页面上没有近一月对比图（标的轨迹不足两条时会自动隐藏）")
+
 # ---------- 5. 曲线与当天一致性 ----------
 # payload.history 每项只有 trade_date（画 x 轴用），分数末点在 series 里
 if hist and hist[-1].get("trade_date") != latest.get("trade_date"):
