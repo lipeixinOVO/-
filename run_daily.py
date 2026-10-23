@@ -192,9 +192,16 @@ def run(dry=False):
         labs = {"errors": [f"labs: {e}"], "notes": []}
         print(f"  ✗ 整体失败：{e}", flush=True)
 
+    # 时间戳一律带上时区信息：
+    #  - generated_at 按北京时间显示（Actions 的 runner 是 UTC，直接 now() 会差 8 小时，页面上很误导）
+    #  - generated_at_ts 是机器可读的 epoch 秒，页面用它算「几小时前更新的」
+    _now_utc = dt.datetime.now(dt.timezone.utc)
+    _now_cn = _now_utc.astimezone(dt.timezone(dt.timedelta(hours=8)))
     out = {
-        "generated_at": dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "trade_date": dt.date.today().isoformat(),
+        "generated_at": _now_cn.strftime("%Y-%m-%d %H:%M:%S"),
+        "generated_at_ts": int(_now_utc.timestamp()),
+        "generated_tz": "Asia/Shanghai",
+        "trade_date": _now_cn.date().isoformat(),
         "base_amount": cfg["base_amount"],
         "scoring_basis": cfg.get("scoring_basis", "index"),
         "multiplier_table": cfg["multiplier_table"],

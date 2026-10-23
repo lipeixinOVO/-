@@ -152,26 +152,68 @@ h2{font-size:12px;font-weight:500;margin:44px 0 14px;padding-bottom:11px;
   letter-spacing:.2em;text-transform:uppercase;color:#14161b}
 h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em;text-transform:none}
 
+/* ---------- 分数方向说明条 ---------- */
+.dirbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 0;padding:11px 16px;
+  border:1px solid rgba(156,120,47,.32);border-radius:10px;
+  background:linear-gradient(90deg,rgba(198,168,96,.18),rgba(198,168,96,.04) 58%,transparent);
+  font-size:12.5px;color:#14161b;letter-spacing:.01em}
+.dirbar .tagk{flex:none;font-size:9.5px;letter-spacing:.14em;color:#6f5520;font-weight:600;
+  border:1px solid rgba(156,120,47,.42);padding:2.5px 8px;border-radius:4px;background:rgba(198,168,96,.16)}
+.dirbar b{font-weight:600;color:#0e1013}
+.dirbar .arw{color:#8a6b25;font-weight:600}
+.dirbar .q{color:var(--dim2)}
+.dirbar .sep{color:rgba(20,22,27,.28)}
+
+/* ---------- 实时行情条 ---------- */
+/* 用 flex 而不是 grid：grid 的 auto-fit 在列数除不尽时会留一格灰底，看起来像少了个标的 */
+.live{display:flex;flex-wrap:wrap;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden;margin:14px 0 4px}
+.live .cell{flex:1 1 150px;background:linear-gradient(180deg,var(--card-a),var(--card-b));
+  padding:10px 14px 11px;min-width:0}
+.live .nm{font-size:9.5px;color:var(--dim2);letter-spacing:.08em;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.live .nm i{font-style:normal;font-size:8.5px;color:#8a6b25;border:1px solid rgba(156,120,47,.3);
+  border-radius:3px;padding:0 4px;margin-left:5px;letter-spacing:.06em}
+.live .px{font-size:15px;font-weight:600;color:#0e1013;margin-top:3px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.live .ch{font-size:11px;font-weight:600;margin-left:7px;font-variant-numeric:tabular-nums}
+.live .ch.up{color:#b4452e}
+.live .ch.dn{color:#2f7d54}
+.live .ch.mid{color:var(--dim2)}
+.live .stamp{flex:1 1 100%;background:linear-gradient(180deg,var(--card-a),var(--card-b));
+  padding:7px 14px 8px;font-size:10px;color:var(--dim2);letter-spacing:.03em;
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.live .stamp b{color:#14161b;font-weight:500}
+
 /* ---------- 图表 ---------- */
+.charthint{display:flex;gap:18px;flex-wrap:wrap;margin:0 2px 10px;font-size:11px;
+  color:var(--dim2);letter-spacing:.02em}
+.charthint span{display:inline-flex;align-items:center;gap:6px}
+.charthint i{width:14px;height:2px;border-radius:2px;display:inline-block;background:currentColor;opacity:.55}
+.charthint .up{color:#8a6b25}
+.charthint .dn{color:#5d6069}
 .chart{background:linear-gradient(180deg,var(--card-a),var(--card-b));border:1px solid var(--line);
   border-radius:var(--r);padding:20px 18px 16px}
 .chart svg{width:100%;height:auto;display:block}
 /* 图表工具条：窗口切换 + 「较上一期」差值（让每天的变化看得出来） */
 .chartbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 11px}
 .chartbar .btns{display:flex;gap:6px}
-.chartbar button{font-family:inherit;font-size:10.5px;letter-spacing:.06em;padding:3.5px 11px;
-  border-radius:20px;border:1px solid var(--line-2);background:transparent;color:var(--dim2);
-  cursor:pointer;transition:all .18s ease}
+.chartbar button{font-family:inherit;font-size:11.5px;letter-spacing:.05em;padding:5px 14px;
+  border-radius:20px;border:1px solid var(--line-2);background:transparent;color:#3d4048;
+  cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease;
+  -webkit-tap-highlight-color:transparent}
 .chartbar button:hover{border-color:var(--gold);color:var(--gold-l)}
-.chartbar button.on{background:rgba(156,120,47,.12);border-color:var(--gold);color:var(--gold-l)}
+.chartbar button.on{background:rgba(156,120,47,.14);border-color:var(--gold);color:#5c4519;font-weight:600}
 .chartbar .delta{margin-left:auto;display:flex;align-items:center;gap:13px;font-size:10.5px;
   color:var(--dim2);letter-spacing:.04em;flex-wrap:wrap}
 .chartbar .delta .lb{color:var(--dim3);letter-spacing:.1em}
 .chartbar .dd{display:inline-flex;align-items:center;gap:5px}
-.chartbar .dd i{width:9px;height:2px;border-radius:2px;display:inline-block}
+.chartbar .dd i{width:9px;height:3px;border-radius:2px;display:inline-block}
 .chartbar .dd b{font-weight:600;color:var(--txt);font-variant-numeric:tabular-nums}
+.sw[hidden]{display:none}
 
 /* ---------- 文字块 ---------- */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .notes{background:linear-gradient(180deg,#fdfcf9,#f7f5f0);border:1px solid var(--line);
   border-radius:var(--r);padding:20px 22px;font-size:12.5px;color:var(--dim);
   line-height:1.95;letter-spacing:.01em}
@@ -244,6 +286,16 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
   .notes{font-size:12px;color:#3d4048}
   .notes code{color:#2f333c}
   .sig .tx{font-size:12.5px}
+  /* 实时行情与图表工具条：手机上要能一眼看清、手指点得中 */
+  .live .cell{flex:1 1 46%;padding:9px 12px 10px}
+  .live .px{font-size:16px}
+  .live .nm{font-size:10px;color:#4a4d56}
+  .dirbar{font-size:12px;padding:10px 13px;gap:8px}
+  .dirbar .sep{display:none}
+  .tscroll table{min-width:540px}
+  .chartbar{gap:8px}
+  .chartbar button{font-size:12.5px;padding:6px 15px}
+  .charthint{font-size:11.5px;gap:12px}
 }
 """
 
@@ -269,8 +321,23 @@ function dimColor(sc){
 }
 function render(){
   const L = P.latest;
+  // 数据新鲜度：用 epoch 秒算（没有就退回解析本地时间字符串），
+  // 页面上直接告诉你「这次数据是几小时前的」，比只写一个生成时刻有用
+  let ageH = null;
+  if(L.generated_at_ts){ ageH = (Date.now()/1000 - L.generated_at_ts)/3600; }
+  else if(L.generated_at){
+    const t = Date.parse(String(L.generated_at).replace(/-/g,'/'));
+    if(!isNaN(t)) ageH = (Date.now()-t)/3600000;
+  }
+  let fresh = '';
+  if(ageH!=null && ageH>=0){
+    if(ageH < 2) fresh = ' · <b style="color:#2f7d54">刚更新</b>';
+    else if(ageH < 14) fresh = ' · <span style="color:#5d6069">'+ageH.toFixed(0)+' 小时前</span>';
+    else fresh = ' · <b style="color:#b4452e">已 '+ageH.toFixed(0)+' 小时未更新</b>';
+  }
   document.getElementById('meta').innerHTML =
     '<span class="dot"></span>数据日 <b>'+(L.trade_date||'')+'</b> · 生成 '+(L.generated_at||'').slice(11,16)+
+    ' 北京时间'+fresh+
     '<br>基准 <b>'+L.base_amount.toLocaleString('zh-CN')+' 元/月</b> · 历史 <b>'+
     P.history.length+'</b> 期';
 
@@ -356,8 +423,14 @@ function renderChart(){
   }
   const n = (CHART_WIN && CHART_WIN < full) ? CHART_WIN : full;   // 窗口内期数
   const off = full - n;                                          // 窗口起点在历史数组里的下标
-  const W=1100, H=330, PL=40, PR=16, PT=22, PB=30;
-  const colors = ['#8a6b25','#1f2937','#3b6ea5','#5c7a6b','#a15b3d'];
+  // 手机上按窄视口重设画布：viewBox 宽 1100 缩到 375px 会把线和字一起压成 1/3，
+  // 这也是「手机上图太浅」的真正原因，不只是配色淡。
+  const narrow = (window.innerWidth || 1200) < 640;
+  const W = narrow ? 430 : 1100, H = narrow ? 340 : 330;
+  const PL = narrow ? 26 : 40, PR = narrow ? 10 : 16, PT = narrow ? 16 : 22,
+        PB = narrow ? 26 : 30;
+  // 五条线要能在手机上分开：金 / 近黑 / 靛蓝 / 墨绿 / 砖红，明度与色相都拉开
+  const colors = ['#a8752a','#111827','#2f6fb0','#2f7d5e','#b4512f'];
   // 每条约曲线只取「窗口内的尾部」：某天某标的缺数据时不会把整条线整体左移
   const tail = function(id){
     const a = S.data[id]||[];
@@ -378,8 +451,8 @@ function renderChart(){
   svg += '<defs>';
   ids.forEach(function(id,ci){
     svg += '<linearGradient id="g'+ci+'" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="'+colors[ci%colors.length]+'" stop-opacity=".52"/>'+
-      '<stop offset="55%" stop-color="'+colors[ci%colors.length]+'" stop-opacity=".92"/>'+
+      '<stop offset="0%" stop-color="'+colors[ci%colors.length]+'" stop-opacity=".7"/>'+
+      '<stop offset="55%" stop-color="'+colors[ci%colors.length]+'" stop-opacity=".96"/>'+
       '<stop offset="100%" stop-color="'+colors[ci%colors.length]+'" stop-opacity="1"/></linearGradient>';
   });
   svg += '</defs>';
@@ -392,9 +465,12 @@ function renderChart(){
   }
   if(50>mn && 50<mx){
     svg += '<line x1="'+PL+'" y1="'+y(50)+'" x2="'+(W-PR)+'" y2="'+y(50)+
-      '" stroke="rgba(156,120,47,.55)" stroke-width="1" stroke-dasharray="3 5"/>';
-    svg += '<text x="'+(W-PR)+'" y="'+(y(50)-7)+'" fill="#96762f" font-size="9.5" '+
-      'text-anchor="end" letter-spacing="1.5">1.0× BASELINE · 50</text>';
+      '" stroke="rgba(140,105,40,.7)" stroke-width="1.2" stroke-dasharray="5 5"/>';
+    // 标签放左端：原来放右端会被收口的四条线压住，手机上完全看不见。
+    // 加白色描边（paint-order）让它在曲线上也能读出来
+    svg += '<text x="'+(PL+8)+'" y="'+(y(50)-8)+'" fill="#7d5f20" font-size="11.5" '+
+      'stroke="#ffffff" stroke-width="3" stroke-linejoin="round" paint-order="stroke fill" '+
+      'text-anchor="start" letter-spacing=".6">1.0× 基准 · 50 分</text>';
   }
   ids.forEach(function(id,ci){
     const pts = tail(id);
@@ -402,7 +478,7 @@ function renderChart(){
     const w0 = n - pts.length;   // 不足 n 点时右对齐，末点始终落在「今天」
     const d = pts.map(function(p,i){
       return (i?'L':'M')+x(w0+i).toFixed(1)+' '+y(p.s).toFixed(1); }).join(' ');
-    svg += '<path d="'+d+'" fill="none" stroke="url(#g'+ci+')" stroke-width="2" '+
+    svg += '<path d="'+d+'" fill="none" stroke="url(#g'+ci+')" stroke-width="3" '+
       'stroke-linejoin="round" stroke-linecap="round"/>';
     const last = pts[pts.length-1];
     svg += '<circle cx="'+x(n-1).toFixed(1)+'" cy="'+y(last.s).toFixed(1)+
@@ -456,7 +532,97 @@ function renderChart(){
 
   box.innerHTML = svg + leg;
 }
+
+/* ---------- 实时行情条 ----------
+   浏览器直连腾讯行情（script 跨域，不需要 CORS）。取不到就整块隐藏，
+   绝不因为外部接口挂了把页面搞白 —— 分数和倍数一律来自服务端快照。 */
+const LIVE = [
+  {c:'usIXIC',  nm:'纳斯达克综合'},
+  {c:'usNDX',   nm:'纳斯达克100'},
+  {c:'hf_GC',   nm:'黄金 COMEX'},
+  {c:'sh000922',nm:'中证红利'},
+  {c:'sh000300',nm:'沪深300'}
+];
+function qcls(v){ return v>0.0001?'up':(v<-0.0001?'dn':'mid'); }
+function renderLive(){
+  const box=document.getElementById('live'); if(!box) return;
+  let cells=[], stamp='';
+  LIVE.forEach(function(it){
+    const raw=window['v_'+it.c]; if(!raw) return;
+    let px=null, pct=null, t='';
+    if(it.c.indexOf('hf_')===0){
+      const q=String(raw).split(',');
+      px=parseFloat(q[0]); pct=parseFloat(q[1]); t=(q[12]||'')+' '+(q[6]||'');
+    }else{
+      const p=String(raw).split('~');
+      px=parseFloat(p[3]);
+      // 从后往前找时间戳：A 股是 14 位紧凑时间(20261023120549)，美股带横线。
+      // 不能从前往后找 —— 成交量字段(37926310)也是 8 位数字，会被误判成日期。
+      let ti=-1;
+      for(let i=p.length-1;i>=3;i--){
+        if(/^[0-9]{14}$/.test(p[i])||/^[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(p[i])){ ti=i; break; }
+      }
+      if(ti>0){ pct=parseFloat(p[ti+2]); t=p[ti]; }
+    }
+    if(px==null||isNaN(px)) return;
+    if(t&&!stamp) stamp=t;
+    cells.push('<div class="cell"><div class="nm">'+esc(it.nm)+'<i>实时</i></div>'+
+      '<div class="px">'+fmtPx(px)+
+      (pct==null||isNaN(pct)?'':'<span class="ch '+qcls(pct)+'">'+
+        (pct>0?'+':'')+pct.toFixed(2)+'%</span>')+'</div></div>');
+  });
+  // MSCI 全球医疗没有公开实时源：显示最近收盘价，明确标「收盘」，不冒充实时
+  const h=(P.latest.assets||[]).filter(function(a){ return /医疗/.test(a.name); })[0];
+  if(h&&h.price!=null){
+    const md=String(h.price_date||'').slice(5);
+    cells.push('<div class="cell"><div class="nm">MSCI 全球医疗<i>收盘'+(md?' '+md:'')+'</i></div>'+
+      '<div class="px">'+fmtPx(h.price)+'</div></div>');
+  }
+  if(!cells.length){ box.style.display='none'; return; }
+  box.innerHTML = cells.join('')+
+    '<div class="stamp"><span>行情时间 <b>'+(stamp?esc(stamp):'—')+
+    '</b> · 浏览器直连腾讯行情，每 60 秒刷新</span>'+
+    '<span><b>实时价只用来感受当下位置，不参与打分</b>；分数与倍数按已收盘数据算，每交易日刷新 4 次</span></div>';
+}
+function loadLive(){
+  const s=document.createElement('script');
+  s.charset='gbk';
+  s.src='https://qt.gtimg.cn/q='+LIVE.map(function(x){return x.c;}).join(',')+'&_='+Date.now();
+  s.onload=function(){ renderLive(); };
+  s.onerror=function(){ const b=document.getElementById('live'); if(b) b.style.display='none'; };
+  document.head.appendChild(s);
+  setTimeout(renderLive, 4000);   // 兜底：脚本静默失败时也试一次
+}
+
+/* 二十二年那张图的窗口切换（服务端已生成好几份 SVG，这里只切显示） */
+function bindEqw(){
+  const roots=document.querySelectorAll('.eqw');
+  Array.prototype.forEach.call(roots,function(root){
+    const btns=root.querySelectorAll('.chartbar button');
+    const panes=root.querySelectorAll('.sw');
+    Array.prototype.forEach.call(btns,function(b){
+      b.onclick=function(){
+        Array.prototype.forEach.call(btns,function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        Array.prototype.forEach.call(panes,function(p){
+          p.hidden = (p.getAttribute('data-k')!==b.getAttribute('data-k'));
+        });
+      };
+    });
+  });
+}
+
 render();
+bindEqw();
+loadLive();
+setInterval(loadLive, 60000);
+
+// 横竖屏切换 / 窗口缩放时重画分数图（窄屏和宽屏用不同画布尺寸）
+let _rz = null;
+window.addEventListener('resize', function(){
+  clearTimeout(_rz);
+  _rz = setTimeout(function(){ renderChart(); }, 200);
+});
 """
 
 
@@ -502,8 +668,8 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
         yy = Y(v)
         txt = f"{v:,.0f}" if vmax >= 100 else f"{v:.2f}"
         o.append(f'<line x1="{PL}" y1="{yy:.1f}" x2="{w - PR}" y2="{yy:.1f}" '
-                 'stroke="rgba(20,22,27,.08)" stroke-width="1"/>')
-        o.append(f'<text x="{PL - 8}" y="{yy + 3.5:.1f}" fill="#8b8e97" font-size="9.5" '
+                 'stroke="rgba(20,22,27,.11)" stroke-width="1"/>')
+        o.append(f'<text x="{PL - 8}" y="{yy + 3.5:.1f}" fill="#6b6e78" font-size="10" '
                  f'text-anchor="end">{txt}</text>')
     for lbl, rv, rc in refs:
         yy = Y(rv)
@@ -511,7 +677,7 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
                  'stroke-width="1" stroke-dasharray="3 4"/>')
         # 标签放左侧起点上方：右下角会和小数点很多的 x 轴末标签撞在一起，
         # 右移 30px 是为了跟 y 轴刻度数字拉开，否则看起来像"0.30 参考 0.3"
-        o.append(f'<text x="{PL + 30}" y="{yy - 6:.1f}" fill="{rc}" font-size="9" '
+        o.append(f'<text x="{PL + 30}" y="{yy - 6:.1f}" fill="{rc}" font-size="10.5" '
                  f'text-anchor="start" letter-spacing=".4">{lbl}</text>')
     for L in layers:
         seg = [(i, v) for i, v in L["pts"] if v]
@@ -527,7 +693,7 @@ def _svg(layers, w=520, h=210, log=False, refs=(), xlabels=(), pad=(46, 12, 18, 
         anchor = "start" if i == 0 else ("end" if i >= n - 1 else "middle")
         # 首个标签右移 8px，避开 y 轴刻度数字（否则 "0.30" 和 "2024-06-19" 会粘在一起）
         xx = X(i) + (12 if i == 0 else 0)
-        o.append(f'<text x="{xx:.1f}" y="{h - 6}" fill="#8b8e97" font-size="9.5" '
+        o.append(f'<text x="{xx:.1f}" y="{h - 6}" fill="#6b6e78" font-size="10" '
                  f'text-anchor="{anchor}" letter-spacing=".3">{txt}</text>')
     o.append("</svg>")
     return "".join(o)
@@ -560,9 +726,9 @@ def _labs_html(labs):
         s = da["series"]
         n = len(s)
         L = [
-            {"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#14161b", "width": 1.5},
-            {"pts": [(i, r[2]) for i, r in enumerate(s)], "color": "#9c782f", "width": 1.7},
-            {"pts": [(i, r[3]) for i, r in enumerate(s)], "color": "#3b6ea5", "width": 1.7},
+            {"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#111827", "width": 2.0},
+            {"pts": [(i, r[2]) for i, r in enumerate(s)], "color": "#a8752a", "width": 2.3},
+            {"pts": [(i, r[3]) for i, r in enumerate(s)], "color": "#2f6fb0", "width": 2.3},
         ]
         xl = [(0, s[0][0]), (n // 2, s[n // 2][0]), (n - 1, s[-1][0])]
         a += f"""<div class="lab">
@@ -574,14 +740,14 @@ def _labs_html(labs):
     <div class="c"><div class="k">vs 90 月均线 {_num(da['ma90'])}</div><div class="v">{_dev_html(da['dev90'], da['dev90_pct'])}</div></div>
   </div>
   {_svg(L, xlabels=xl)}
-  <div class="cap">月线 {da['months']} 期（2005-01 起）· <span style="color:#14161b">黑</span>=月收盘　<span style="color:#9c782f">金</span>=MA40　<span style="color:#3b6ea5">蓝</span>=MA90</div>
+  <div class="cap">月线 {da['months']} 期（2005-01 起）· <span style="color:#111827">黑</span>=月收盘　<span style="color:#a8752a">金</span>=MA40　<span style="color:#2f6fb0">蓝</span>=MA90</div>
 </div>"""
 
     if cy:
         s = cy["series"]
         n = len(s)
-        L = [{"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#9c782f", "width": 1.8}]
-        refs = [(f"参考 {cy['ref']}", cy["ref"], "#b4452e")]
+        L = [{"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#a8752a", "width": 2.6}]
+        refs = [(f"参考 {cy['ref']}", cy["ref"], "#b4512f")]
         xl = [(0, s[0][0]), (n // 2, s[n // 2][0]), (n - 1, s[-1][0])]
         gap = (cy["ratio"] / cy["ref"] - 1) * 100 if cy["ref"] else None
         gap_html = (f'<i class="{"up" if gap > 0 else "dn"}">{gap:+.1f}%</i>'
@@ -602,31 +768,54 @@ def _labs_html(labs):
     if el:
         s = el["series"]
         n = len(s)
-        L = [
-            {"pts": [(i, r[1]) for i, r in enumerate(s)], "color": "#3b6ea5", "width": 1.6},
-            {"pts": [(i, r[2]) for i, r in enumerate(s)], "color": "#14161b", "width": 1.7},
-        ]
-        yrs = sorted({r[0][:4] for r in s})
-        xl = [(next(i for i, r in enumerate(s) if r[0][:4] == y), y)
-              for y in yrs[::4]] + [(n - 1, s[-1][0][:4])]
+        # 月频数据：「近一个月」只有 1 个点，画不出线，所以最小窗口给到近 3 年
+        wins = [("近 3 年", 36), ("近 5 年", 60), ("近 10 年", 120), (f"全部 {n} 期", n)]
+        seen, ws = set(), []
+        for lab, k in wins:
+            k = min(k, n)
+            if k in seen:
+                continue
+            seen.add(k)
+            ws.append((lab, k))
+        btns, panes = [], []
+        for i, (lab, k) in enumerate(ws):
+            ss = s[-k:]
+            m = len(ss)
+            L = [
+                {"pts": [(j, r[1]) for j, r in enumerate(ss)], "color": "#111827", "width": 2.4},
+                {"pts": [(j, r[2]) for j, r in enumerate(ss)], "color": "#2f6fb0", "width": 2.4},
+            ]
+            yrs = sorted({r[0][:4] for r in ss})
+            step = max(1, (len(yrs) + 4) // 5)
+            xl = [(next(j for j, r in enumerate(ss) if r[0][:4] == y), y)
+                  for y in yrs[::step]]
+            if xl[-1][0] != m - 1:
+                xl.append((m - 1, ss[-1][0][:4]))
+            on = (i == len(ws) - 1)
+            cls = ' class="on"' if on else ""
+            btns.append(f'<button type="button" data-k="{k}"{cls}>{lab}</button>')
+            panes.append(f'<div class="sw" data-k="{k}"{"" if on else " hidden"}>'
+                         f'{_svg(L, w=1060, h=330, log=True, pad=(52, 14, 16, 26), xlabels=xl)}</div>')
         note = ""
         if labs.get("notes"):
             note = "　·　" + labs["notes"][-1]
-        b = f"""<div class="chart">
+        b = f"""<div class="chart eqw" id="eqw">
   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:10px">
     <div>
       <div style="font-size:13.5px;font-weight:600;color:#0e1013">二十二年，两条线</div>
       <div style="font-size:10.5px;color:var(--dim2);margin-top:4px">
-        <span style="color:#14161b">黑</span>=全市场全收益（中证全指 H00985，替代万得全A）　
-        <span style="color:#3b6ea5">蓝</span>=沪深300全收益（H00300）　·　纵轴为对数刻度
+        <span style="color:#111827">黑</span>=全市场全收益（中证全指 H00985，替代万得全A）　
+        <span style="color:#2f6fb0">蓝</span>=沪深300全收益（H00300）　·　纵轴为对数刻度
       </div>
     </div>
     <div style="font-size:11.5px;color:var(--dim2);text-align:right;line-height:1.8">
-      年化 <b style="color:#14161b">{_num(el['cagr_all'], 2)}%</b>（全市场）
-      vs <b style="color:#3b6ea5">{_num(el['cagr300'], 2)}%</b>（沪深300）
+      年化 <b style="color:#111827">{_num(el['cagr_all'], 2)}%</b>（全市场）
+      vs <b style="color:#2f6fb0">{_num(el['cagr300'], 2)}%</b>（沪深300）
     </div>
   </div>
-  {_svg(L, w=1060, h=330, log=True, pad=(52, 14, 16, 26), xlabels=xl)}
+  <div class="chartbar"><div class="btns">{''.join(btns)}</div>
+    <div class="delta"><span class="lb">月频数据</span>「近一个月」只有 1 个点，最小窗口给到近 3 年</div></div>
+  {''.join(panes)}
   <div class="cap">月度采样 {el['months']} 期（{el['from']} 起，基点 1000）· 全市场 {_num(el['hall'])} · 沪深300 {_num(el['h300'])}{_esc(note)}</div>
 </div>"""
     return a, b, ""
@@ -677,7 +866,7 @@ def render(payload):
             f"<td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>"
             f"{_esc(ex.get('fund_code') or '—')}</td>"
             "</tr>")
-    summary = ("<table style='width:100%;border-collapse:collapse;font-size:12.5px'>"
+    summary = ("<div class='tscroll'><table style='width:100%;border-collapse:collapse;font-size:12.5px'>"
                "<thead><tr style='color:var(--dim3);font-size:9.5px;text-align:left;"
                "letter-spacing:.16em;text-transform:uppercase'>"
                "<th style='padding:0 10px 9px;font-weight:400'>标的</th>"
@@ -686,7 +875,8 @@ def render(payload):
                "<th style='padding:0 10px 9px;font-weight:400'>倍数</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>建议金额</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>落地基金</th>"
-               "</tr></thead><tbody style='color:var(--txt)'>" + "".join(rows) + "</tbody></table>")
+               "</tr></thead><tbody style='color:var(--txt)'>" + "".join(rows) +
+               "</tbody></table></div>")
 
     # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
@@ -714,6 +904,15 @@ def render(payload):
 </div>
 
 <div class="hero" id="hero"></div>
+
+<div class="dirbar">
+  <span class="tagk">分数怎么读</span>
+  <span><b>分数越高 → 越便宜 → 建议买得越多</b></span>
+  <span class="sep">|</span>
+  <span class="q">50 分 = 1.0×　·　≥ 56 分加仓　·　&lt; 40 分减仓　·　分数是「贵不贵」，不是价格涨跌</span>
+</div>
+
+<div class="live" id="live"></div>
 {sig_sec}
 <div class="macro" id="macro"></div>
 <div class="grid" id="grid"></div>
@@ -721,7 +920,12 @@ def render(payload):
 <h2>本期结论 <small>分数越高越该买 · 50 分 = 1.0 倍</small></h2>
 <div class="notes">{summary}</div>
 
-<h2>分数历史 <small>中性带宽 40–56 分 · 虚线为 1.0 倍基准 · 每交易日累积 1 期</small></h2>
+<h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small></h2>
+<div class="charthint">
+  <span class="up"><i></i>↑ 分数越高 = 越便宜 = 建议买得越多</span>
+  <span class="dn"><i></i>↓ 分数越低 = 越贵 = 建议买得越少</span>
+  <span>金色虚线 = 50 分 = 1.0× 基准</span>
+</div>
 <div class="chartbar" id="chartbar"></div>
 <div class="chart" id="chart"></div>
 
