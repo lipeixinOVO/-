@@ -101,6 +101,59 @@ body{
 .sigrule{font-size:10.5px;color:var(--dim2);letter-spacing:.02em;line-height:1.95;margin:10px 2px 0}
 @media(max-width:640px){.sig{flex-wrap:wrap}.sig .num{margin-left:0}}
 
+/* ---------- 美股市场情绪（CNN 恐惧与贪婪）----------
+   配色沿用 CNN 原版：红=恐惧、绿=贪婪。这跟 A 股"涨红跌绿"是两套语义，
+   所以色条只表示"情绪温度"，不代表涨跌方向 —— 页面上靠「不参与打分」和区间文字说明。 */
+.mood{display:grid;grid-template-columns:198px 1fr;margin:14px 0 0;
+  background:linear-gradient(180deg,var(--card-a),var(--card-b));
+  border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mood .ml{padding:15px 17px 16px;border-right:1px solid var(--line)}
+.mood .k{font-size:9.5px;letter-spacing:.16em;color:#6b6e78;text-transform:uppercase}
+.mood .src{font-size:9.5px;color:var(--dim3);margin-top:4px;letter-spacing:.02em}
+.mood .sc{font-size:38px;line-height:1;font-weight:500;margin-top:13px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.mood .sc small{font-size:11px;color:var(--dim3);margin-left:2px;font-weight:400;letter-spacing:0}
+.mood .lb{font-size:13.5px;font-weight:600;margin-top:7px;letter-spacing:.08em}
+.mood .delta{font-size:10px;color:var(--dim3);margin-top:11px;line-height:1.75;
+  font-variant-numeric:tabular-nums}
+.mood .mr{padding:15px 17px 14px}
+.mood .gauge{position:relative;margin:6px 0 4px}
+.mood .gb{display:flex;height:9px;border-radius:5px;overflow:hidden}
+.mood .gb i{display:block;height:100%}
+.mood .gp{position:absolute;top:-5px;width:2px;height:19px;background:#14161b;
+  border-radius:2px;transform:translateX(-1px)}
+.mood .gp span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+  font-size:10px;font-weight:600;color:#14161b;background:var(--card-a);padding:0 3px;
+  font-variant-numeric:tabular-nums}
+.mood .gt{position:relative;height:13px;margin-top:6px;font-size:9px;color:var(--dim3);
+  font-variant-numeric:tabular-nums}
+.mood .gt span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.mood .gt span:first-child{transform:none}
+.mood .gt span:last-child{transform:translateX(-100%)}
+.mood .zl{list-style:none;margin:11px 0 0;padding:0;display:grid;gap:5px;
+  font-size:11.5px;line-height:1.6}
+.mood .zl li{display:flex;gap:9px;color:var(--dim2);padding-left:11px;position:relative}
+.mood .zl li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;
+  border-radius:50%;background:currentColor;opacity:.3}
+.mood .zl li.on{color:#14161b}
+.mood .zl li.on::before{width:6px;height:6px;top:6px;opacity:1;background:var(--mc)}
+.mood .zl b{flex:0 0 auto;font-weight:500;min-width:8.2em}
+.mood .zl li.on b{font-weight:700}
+.mood .zl em{font-style:normal;color:var(--dim3)}
+.mood .zl li.on em{color:#3f434c}
+.mood .drive{font-size:10px;color:var(--dim3);margin-top:10px;padding-top:9px;
+  border-top:1px solid var(--line);letter-spacing:.02em;line-height:1.7}
+.mood .drive b{color:#3f434c;font-weight:500;font-variant-numeric:tabular-nums}
+@media(max-width:720px){
+  .mood{grid-template-columns:1fr}
+  .mood .ml{border-right:0;border-bottom:1px solid var(--line);padding-bottom:13px}
+  .mood .sc{font-size:32px;margin-top:9px;display:inline-block;margin-right:12px}
+  .mood .lb{display:inline-block}
+  .mood .zl{font-size:11px}
+  .mood .zl b{min-width:0}
+  .mood .zl li{flex-wrap:wrap;gap:1px 9px}
+}
+
 /* ---------- 宏观条 ---------- */
 .macro{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:var(--r);
@@ -1264,6 +1317,84 @@ def _month_html(latest):
 </div>"""
 
 
+# 每个区间对应什么情况，一句话。措辞只描述"情绪处在什么状态、历史上多出现在哪"，
+# 不写买卖建议 —— 情绪指数只能说明"大家怎么想"，不能说明"接下来怎么走"。
+MOOD_ZONE_TEXT = {
+    0: "恐慌性抛售、避险情绪拉满。长期看常是布局区，但短期可能继续跌 —— 便宜还能更便宜。",
+    25: "多数人观望，情绪偏谨慎。通常还没到最悲观的时点。",
+    45: "多空接近平衡，情绪本身不构成信号。",
+    56: "追高的人变多，最容易在「再涨一点就加仓」的预期里买在高位。",
+    76: "几乎没人相信会跌，历史上多出现在阶段性顶部附近。",
+}
+
+
+def _mood_html(mood):
+    """美股市场情绪（CNN 恐惧与贪婪）。纯展示，不参与任何标的的打分。"""
+    if not mood:
+        return ""
+    zones = mood.get("zones") or []
+    if not zones:
+        return ""
+
+    sc = float(mood.get("score") or 0)
+    col = mood.get("color") or "#8a8d96"
+    cur_lo = (mood.get("zone") or [0, 0])[0]
+
+    # 色条：每段宽度 = 该区间包含的整数分数个数（0-24 是 25 个，45-55 是 11 个…），
+    # 这样指针位置 score/101 与分段边界严丝合缝，不会出现"指针在恐惧、标签却写极度恐惧"。
+    # 段之间不留 gap：刻度是按容器宽度百分比绝对定位的，留 gap 会让标签和实际边界错开几像素。
+    segs = "".join(f'<i style="flex:{hi - lo + 1};background:{c}"></i>'
+                   for lo, hi, _cn, c in zones)
+    pos = max(0.0, min(100.0, sc)) / 101.0 * 100.0
+
+    # 刻度必须按累计宽度定位，不能用 space-between 均分：
+    # 均分会让 "25" 落在 20% 处，而它真实的边界在 24.75%，读图会以为 25 分还在极度恐惧区。
+    acc, marks = 0, [(0.0, "0")]
+    for lo, hi, _cn, _c in zones:
+        acc += hi - lo + 1
+        marks.append((acc / 101.0 * 100.0, str(hi + 1)))
+    marks[-1] = (100.0, "100")      # 最后一段的右边界是 101 格，标签仍写 100
+    ticks = "".join(f'<span style="left:{p:.2f}%">{t}</span>' for p, t in marks)
+
+    rows = []
+    for lo, hi, cn, c in zones:
+        cls = ' class="on"' if lo == cur_lo else ""
+        rows.append(f'<li{cls} style="--mc:{c}"><b>{lo}-{hi} {cn}</b>'
+                    f'<em>{_esc(MOOD_ZONE_TEXT.get(lo, ""))}</em></li>')
+
+    def _v(k):
+        v = mood.get(k)
+        return "—" if v is None else f"{v:.1f}"
+
+    parts = mood.get("parts") or []
+    drive = ""
+    if parts:
+        weak = min(parts, key=lambda p: p["score"])
+        strong = max(parts, key=lambda p: p["score"])
+        drive = (f'<div class="drive">往下拉最多：<b>{_esc(weak["name"])} {weak["score"]:.1f}</b>'
+                 f'　·　最不悲观：<b>{_esc(strong["name"])} {strong["score"]:.1f}</b></div>')
+
+    return f"""<div class="mood">
+  <div class="ml">
+    <div class="k">美股市场情绪<i class="fqmini">不参与打分</i></div>
+    <div class="src">CNN Fear &amp; Greed · {_esc(mood.get('date') or '')} 数据</div>
+    <div class="sc" style="color:{col}">{sc:.1f}<small>/100</small></div>
+    <div class="lb" style="color:{col}">{_esc(mood.get('label') or '')}</div>
+    <div class="delta">昨收 {_v('prev_close')} · 一周前 {_v('prev_week')}<br>
+      一月前 {_v('prev_month')} · 一年前 {_v('prev_year')}</div>
+  </div>
+  <div class="mr">
+    <div class="gauge">
+      <div class="gb">{segs}</div>
+      <div class="gp" style="left:{pos:.2f}%"><span>{sc:.0f}</span></div>
+      <div class="gt">{ticks}</div>
+    </div>
+    <ul class="zl">{''.join(rows)}</ul>
+    {drive}
+  </div>
+</div>"""
+
+
 def _labs_html(labs):
     """两张「长期锚」卡片 + 一张二十二年双线图。数据缺失时整块不渲染。"""
     if not labs:
@@ -1425,6 +1556,12 @@ def _js_payload(payload):
             labs[k] = blk
     if labs:
         latest["labs"] = labs
+    # 情绪指数的 251 个历史点只给服务端判断用，前端一行都不读（图是服务端画的），
+    # 内联进去等于每次打开白下载 5KB
+    if isinstance(latest.get("mood"), dict):
+        m = dict(latest["mood"])
+        m.pop("history", None)
+        latest["mood"] = m
     p["latest"] = latest
     return p
 
@@ -1469,6 +1606,7 @@ def render(payload):
 
     # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
     month_sec = _month_html(latest)
+    mood_sec = _mood_html(latest.get("mood") or {})
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
     sig_sec = _signals_html(payload.get("signals") or {})
     labs_sec = ""
@@ -1510,6 +1648,7 @@ def render(payload):
 </div>
 
 <div class="live" id="live"></div>
+{mood_sec}
 {sig_sec}
 <div class="macro" id="macro"></div>
 

@@ -130,6 +130,24 @@ else:
         if t.endswith(":00") or t.endswith(":30"):
             warn(f"cron 时刻 {t} 踩在整点/半点上，GitHub 高峰期容易丢触发")
 
+# ---------- 4d. 美股市场情绪（纯展示，缺了不影响分数） ----------
+mood = latest.get("mood")
+if not mood:
+    warn("没有 CNN 恐惧与贪婪数据（仅展示项；该区块会自动隐藏，其它内容不受影响）")
+else:
+    s = mood.get("score")
+    if not isinstance(s, (int, float)) or not (0 <= s <= 100):
+        bad(f"情绪指数分数异常 {s}")
+    if not mood.get("label") or not mood.get("zones"):
+        bad("情绪指数缺 label / zones，页面上的区间条画不出来")
+    else:
+        lo, hi = mood.get("zone") or [-1, -1]
+        # 分数必须落在它自己声明的区间里：否则指针停在"恐惧"、文字却写"极度恐惧"，自相矛盾
+        if not (lo <= (s or -1) <= hi):
+            bad(f"情绪指数 {s} 不在声明的区间 {lo}-{hi} 内")
+        if len(mood.get("zones") or []) != 5:
+            bad(f"情绪指数区间应为 5 档，实际 {len(mood.get('zones') or [])}")
+
 # ---------- 5. 曲线与当天一致性 ----------
 # payload.history 每项只有 trade_date（画 x 轴用），分数末点在 series 里
 if hist and hist[-1].get("trade_date") != latest.get("trade_date"):

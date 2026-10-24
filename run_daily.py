@@ -75,6 +75,17 @@ def load_ctx():
     except Exception:  # noqa: BLE001
         ctx["gold_spot"] = {}
 
+    # 美股市场情绪（CNN 恐惧与贪婪）。**纯展示项**：失败只记 note，不进 errors，
+    # 更不影响任何标的的分数 —— 它是美股情绪，不是本站标的的估值输入。
+    print("· 拉取 CNN 恐惧与贪婪指数…", flush=True)
+    try:
+        ctx["fng"] = S.cnn_fear_greed()
+        print(f"  → {ctx['fng']['score']}（{ctx['fng']['label']}，{ctx['fng']['date']}）", flush=True)
+    except Exception as e:  # noqa: BLE001
+        ctx["fng"] = None
+        ctx.setdefault("notes", []).append(
+            f"CNN 恐惧与贪婪指数本期取不到（仅展示项，不影响分数）：{str(e)[:90]}")
+
     print("· 拉取指数估值（蛋卷）…", flush=True)
     C.load_valuation_anchors(ctx)
     return ctx
@@ -239,6 +250,8 @@ def run(dry=False):
         "data_notes": ctx.get("notes", []),
         # 观察型模块（红利月线锚 / 创红比 / 二十二年曲线），不参与打分
         "labs": labs,
+        # 美股市场情绪（CNN 恐惧与贪婪），纯展示
+        "mood": ctx.get("fng"),
     }
 
     if not dry:

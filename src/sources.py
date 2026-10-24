@@ -417,3 +417,133 @@ def treasury_curve(kind, years):
             continue
     out.sort(key=lambda x: x[0])
     return out
+
+
+# ---------------------------------------------------------------- CNN 恐惧与贪婪
+
+# CNN 官方分档。边界不是照抄网页，是从 251 天历史数据反推验证的：
+# extreme fear 实测最高 24.77、fear 25.26~44.86、neutral 45.23~54.97、greed 56.20~71.17，
+# 所以边界就是 24 / 44 / 55 / 75。（网上常见的 0-25/26-49/50/51-74 是旧版口径。）
+FNG_ZONES = [
+    (0, 24, "extreme fear", "极度恐惧", "#a8321f"),
+    (25, 44, "fear", "恐惧", "#c2703c"),
+    (45, 55, "neutral", "中性", "#8a8d96"),
+    (56, 75, "greed", "贪婪", "#5f8f6a"),
+    (76, 100, "extreme greed", "极度贪婪", "#2f7d54"),
+]
+
+# 返回体里 9 个 key，但 sp500/sp125、vix/vix_50 是同一指标的两个版本，取一个就够
+FNG_PARTS = {
+    "market_momentum_sp500": ("股价动能", "标普500 相对 125 日均线的偏离"),
+    "stock_price_strength": ("股价强度", "纽交所创新高与创新低的股票数对比"),
+    "stock_price_breadth": ("市场宽度", "上涨股与下跌股的成交量对比"),
+    "put_call_options": ("看跌/看涨", "期权市场 5 日看跌看涨比率"),
+    "market_volatility_vix": ("波动率", "VIX 相对其 50 日均线的位置"),
+    "junk_bond_demand": ("垃圾债需求", "高收益债与国债的利差"),
+    "safe_haven_demand": ("避险需求", "股票与国债近 20 日回报之差"),
+}
+
+_CNN_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+           "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
+
+
+def _cnn_get(path):
+    """CNN 的 WAF 会拦 urllib，只能用 http.client 手写请求。
+
+    踩过的三点（2026-10-24 实测）：
+      1. urllib 把 header 名规范成 "User-agent"（大写 A 小写 g），大小写一变就判 bot → HTTP 418；
+      2. urllib 默认追加 Accept-Encoding: identity，同样触发拦截；
+      3. ssl.create_default_context() 对这个域名握手会超时，必须 set_ciphers("DEFAULT:@SECLEVEL=1")。
+    满足这三条后稳定 200。别改成 net.fetch，会直接挂。
+    """
+    import http.client
+    import ssl
+
+    ctx = ssl.create_default_context()
+    ctx.set_ciphers("DEFAULT:@SECLEVEL=1")
+    conn = http.client.HTTPSConnection("production.dataviz.cnn.io", 443,
+                                       timeout=30, context=ctx)
+    try:
+        conn.putrequest("GET", path, skip_accept_encoding=True)
+        conn.putheader("User-Agent", _CNN_UA)
+        conn.putheader("Accept", "application/json, text/plain, */*")
+        conn.putheader("Accept-Language", "en-US,en;q=0.9")
+        conn.putheader("Referer", "https://www.cnn.com/")
+        conn.putheader("Origin", "https://www.cnn.com")
+        conn.putheader("Connection", "close")
+        conn.endheaders()
+        resp = conn.getresponse()
+        body = resp.read()
+        if resp.status != 200:
+            raise RuntimeError(f"HTTP {resp.status}")
+        return json.loads(body)
+    finally:
+        conn.close()
+
+
+def cnn_fear_greed():
+    """CNN Business 恐惧与贪婪指数（Fear & Greed Index）。日频，美东收盘后更新。
+
+    **纯展示，不参与打分**：它衡量的是美股情绪，不是估值；本站五个标的的分数口径
+    一律是指数自身的估值/趋势/情绪/宏观四维，把 F&G 混进去会让口径变成大杂烩。
+    """
+    def _go():
+        j = _cnn_get("/index/fearandgreed/graphdata")
+        fg = j.get("fear_and_greed") or {}
+        raw = fg.get("score")
+        if raw is None:
+            raise RuntimeError("返回体里没有 fear_and_greed.score")
+        score = float(raw)
+
+        rating = str(fg.get("rating") or "").strip().lower()
+        # 优先用 CNN 自己给的 rating 定档（它是权威）；万一文案变了再按分数区间兜底
+        zone = next((z for z in FNG_ZONES if z[2] == rating), None)
+        if zone is None:
+            zone = next((z for z in FNG_ZONES if z[0] <= score <= z[1]), FNG_ZONES[2])
+
+        ts = str(fg.get("timestamp") or "")
+        try:
+            utc = dt.datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            date_cn = (utc + dt.timedelta(hours=8)).strftime("%Y-%m-%d")
+        except ValueError:
+            date_cn = ts[:10]
+
+        def _f(k):
+            v = fg.get(k)
+            return round(float(v), 1) if v is not None else None
+
+        parts = []
+        for key, (nm, why) in FNG_PARTS.items():
+            v = j.get(key) or {}
+            if v.get("score") is None:
+                continue
+            parts.append({"name": nm, "why": why, "score": round(float(v["score"]), 1),
+                          "rating": str(v.get("rating") or "").strip().lower()})
+
+        hist = ((j.get("fear_and_greed_historical") or {}).get("data")) or []
+        pts = []
+        for p in hist:
+            try:
+                pts.append([int(p["x"]), round(float(p["y"]), 2)])
+            except (KeyError, TypeError, ValueError):
+                continue
+
+        return {
+            "score": round(score, 1),
+            "rating": rating,
+            "label": zone[3],
+            "color": zone[4],
+            "zone": [zone[0], zone[1]],
+            "zones": [[z[0], z[1], z[3], z[4]] for z in FNG_ZONES],
+            "date": date_cn,
+            "ts": ts,
+            "prev_close": _f("previous_close"),
+            "prev_week": _f("previous_1_week"),
+            "prev_month": _f("previous_1_month"),
+            "prev_year": _f("previous_1_year"),
+            "parts": parts,
+            "history": pts,
+            "source": "CNN Business Fear & Greed（production.dataviz.cnn.io）",
+        }
+
+    return _cached("cnn_fng", _go)
