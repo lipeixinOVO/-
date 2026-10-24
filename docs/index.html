@@ -166,8 +166,18 @@ body{
 /* ---------- 区块标题 ---------- */
 h2{font-size:12px;font-weight:500;margin:44px 0 14px;padding-bottom:11px;
   border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;
-  letter-spacing:.2em;text-transform:uppercase;color:#14161b}
+  flex-wrap:wrap;letter-spacing:.2em;text-transform:uppercase;color:#14161b}
 h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em;text-transform:none}
+/* 每个区块的「数据时效」徽章：一眼分清哪些是每分钟在动、哪些是跑批快照。
+   类名别用 .live —— 那是实时行情条容器的样式，组合选择器也会被它的 background 污染。 */
+h2 .fq{font-style:normal;font-size:9px;font-weight:400;letter-spacing:.08em;
+  padding:2.5px 8px;border-radius:20px;border:1px solid rgba(20,22,27,.13);
+  color:var(--dim3);white-space:nowrap;text-transform:none;margin-left:auto}
+h2 .fq.rt{color:#2f7d54;border-color:rgba(47,125,84,.32);background:rgba(47,125,84,.05)}
+h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,120,47,.05)}
+.fqmini{font-style:normal;font-size:8.5px;letter-spacing:.06em;color:var(--dim3);
+  border:1px solid rgba(20,22,27,.12);border-radius:3px;padding:0 4px;margin-left:6px;
+  vertical-align:1px;white-space:nowrap}
 
 /* ---------- 分数方向说明条 ---------- */
 .dirbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 0;padding:11px 16px;
@@ -329,6 +339,13 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 @media(max-width:560px){
   .wrap{padding:0 15px 64px}
   .grid{grid-template-columns:1fr}
+  /* 区块标题 + 时效徽章：手机上放不下一行就换行，别把徽章挤出屏幕 */
+  h2{flex-wrap:wrap;gap:6px 10px;letter-spacing:.14em}
+  h2 small{font-size:9.5px;letter-spacing:.02em}
+  h2 .fq{font-size:8.5px;padding:2px 7px;margin-left:0}
+  /* 5 个宏观格子排 2 列时最后一行会空一格，露出容器的灰底像块脏斑 → 让末格跨满。
+     :nth-child(odd) 是为了只在「奇数个格子」时才跨，偶数个正好填满不用管。 */
+  .macro>div:last-child:nth-child(odd){grid-column:1/-1}
   /* 手机上分数是主角：字号别缩太小，字重加粗，纯色不透明 */
   .score{font-size:40px;font-weight:500;color:#0b0e12;-webkit-text-fill-color:#0b0e12}
   .score small{font-size:12px;color:#4a4d56;-webkit-text-fill-color:#4a4d56}
@@ -390,12 +407,14 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 <div class="live" id="live"></div>
 <div class='sigs'><div class='sig hi'><span class='tag'>换档</span><div class='tx'><b>纳斯达克100指数</b> 从 0.8× 调到 <b>1.0×</b>（分数 37.2 → 45.8，上跨一档）</div><span class='num'>0.8× → 1.0×</span></div><div class='sig mid'><span class='tag'>临界</span><div class='tx'><b>MSCI 全球医疗保健指数</b> 38.4 分，距 1.0× 档（40 分）还差 1.6 分，当前 0.8×</div><span class='num'>1.6 分</span></div><div class='sig calm'><span class='tag'>创红比</span><div class='tx'>创业板指÷中证红利 <b>0.4972</b>，距 0.4 提示线还有 <b>+24.3%</b>（历史分位 52.8%，区间 0.3045–0.8647）</div><span class='num'>0.4972</span></div><div class='sig calm'><span class='tag'>月线锚</span><div class='tx'>中证红利 5,398.82：vs 40 月线 -0.16%、vs 90 月线 +7.00%，两条提示线（-8% / -10%）都未触及</div><span class='num'>+7.0%</span></div></div><div class='sigrule'>阈值口径：A 倍数变化 ≥0.15 即报　·　B 距档位边界 ≤2 分　·　C 分数 ≤28 或 ≥82　·　D 连续 3 期 ≤28 分　·　E 创红比 ≤0.4（≤0.35 加重）/ ≥0.75　·　F 红利 vs 90 月线 ≤-10% 或 ≥+40% / vs 40 月线 ≤-8%　·　提示只描述「现在处在哪个位置」，不构成买卖指令，也不改变上面的倍数</div>
 <div class="macro" id="macro"></div>
+
+<h2>标的评分 <small>卡片内的分数与点位一律按最近收盘算</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="grid" id="grid"></div>
 
-<h2>本期结论 <small>分数越高越该买 · 50 分 = 1.0 倍</small></h2>
+<h2>本期结论 <small>分数越高越该买 · 50 分 = 1.0 倍</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="notes"><div class='tscroll'><table style='width:100%;border-collapse:collapse;font-size:12.5px'><thead><tr style='color:var(--dim3);font-size:9.5px;text-align:left;letter-spacing:.16em;text-transform:uppercase'><th style='padding:0 10px 9px;font-weight:400'>标的</th><th style='padding:0 10px 9px;font-weight:400'>分数</th><th style='padding:0 10px 9px;font-weight:400'>档内</th><th style='padding:0 10px 9px;font-weight:400'>倍数</th><th style='padding:0 10px 9px;font-weight:400'>建议金额</th><th style='padding:0 10px 9px;font-weight:400'>落地基金</th></tr></thead><tbody style='color:var(--txt)'><tr><td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>纳斯达克综合指数</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>43.0</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>19%</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'><b style='font-weight:550'>—</b></td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>—</td><td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>—</td></tr><tr><td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>纳斯达克100指数</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>45.8</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>36%</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'><b style='font-weight:550'>1.0×</b></td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>1,000 元</td><td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>000055</td></tr><tr><td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>黄金（COMEX 主力连续）</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>53.8</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>86%</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'><b style='font-weight:550'>1.0×</b></td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>1,000 元</td><td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>000216</td></tr><tr><td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>MSCI 全球医疗保健指数</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>38.4</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>86%</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'><b style='font-weight:550'>0.8×</b></td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>800 元</td><td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>000369</td></tr><tr><td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>中证红利指数</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>44.6</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>28%</td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'><b style='font-weight:550'>1.0×</b></td><td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>1,000 元</td><td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>009051</td></tr></tbody></table></div><div class='swipehint'>← 左右滑动看倍数 / 建议金额 / 落地基金 →</div></div>
 
-<h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small></h2>
+<h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small><em class="fq snap">随跑批刷新</em></h2>
 <div class="chart mchart">
   <div class="mhead">
     <div class="t">近一月累计涨跌</div>
@@ -408,7 +427,7 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
   <div class="cap">截止 10-23　·　近 7 天从 10-16 起　·　各市场交易日不同，横轴按真实日期铺，不按数据点等分</div>
 </div>
 
-<h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small></h2>
+<h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="charthint">
   <span class="up"><i></i>↑ 分数越高 = 越便宜 = 建议买得越多</span>
   <span class="dn"><i></i>↓ 分数越低 = 越贵 = 建议买得越少</span>
@@ -417,7 +436,7 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 <div class="chartbar" id="chartbar"></div>
 <div class="chart" id="chart"></div>
 
-<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small></h2>
+<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small><em class="fq snap">随跑批刷新</em></h2>
 <div class="labs"><div class="lab">
   <div class="t">中证红利 · 月线锚</div>
   <div class="sub">40 月均线当估值中枢、90 月均线当深度低估参考点 —— 民间经验规则，非学术结论，这里只量「现在离这两条线多远」</div>
@@ -439,7 +458,7 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
   <svg viewBox="0 0 520 210" preserveAspectRatio="xMidYMid meet"><line x1="46" y1="182.0" x2="508" y2="182.0" stroke="rgba(20,22,27,.11)" stroke-width="1"/><text x="38" y="185.5" fill="#6b6e78" font-size="10" text-anchor="end">0.30</text><line x1="46" y1="141.0" x2="508" y2="141.0" stroke="rgba(20,22,27,.11)" stroke-width="1"/><text x="38" y="144.5" fill="#6b6e78" font-size="10" text-anchor="end">0.44</text><line x1="46" y1="100.0" x2="508" y2="100.0" stroke="rgba(20,22,27,.11)" stroke-width="1"/><text x="38" y="103.5" fill="#6b6e78" font-size="10" text-anchor="end">0.58</text><line x1="46" y1="59.0" x2="508" y2="59.0" stroke="rgba(20,22,27,.11)" stroke-width="1"/><text x="38" y="62.5" fill="#6b6e78" font-size="10" text-anchor="end">0.72</text><line x1="46" y1="18.0" x2="508" y2="18.0" stroke="rgba(20,22,27,.11)" stroke-width="1"/><text x="38" y="21.5" fill="#6b6e78" font-size="10" text-anchor="end">0.86</text><line x1="46" y1="182.0" x2="508" y2="182.0" stroke="#b4512f" stroke-width="1" stroke-dasharray="3 4"/><text x="76" y="176.0" fill="#b4512f" font-size="10.5" text-anchor="start" letter-spacing=".4">参考 0.3</text><path d="M46.0 91.4 L46.7 86.3 L47.5 87.5 L48.2 92.2 L49.0 100.8 L49.7 110.7 L50.5 109.8 L51.2 109.1 L52.0 108.5 L52.7 103.7 L53.5 101.1 L54.2 100.2 L55.0 98.1 L55.7 100.7 L56.4 99.9 L57.2 98.3 L57.9 99.2 L58.7 99.5 L59.4 101.1 L60.2 106.8 L60.9 113.4 L61.7 111.9 L62.4 112.6 L63.2 117.6 L63.9 126.8 L64.7 121.9 L65.4 140.9 L66.2 141.8 L66.9 146.1 L67.6 135.2 L68.4 125.9 L69.1 126.3 L69.9 120.9 L70.6 117.3 L71.4 110.1 L72.1 107.0 L72.9 103.3 L73.6 106.0 L74.4 104.3 L75.1 110.7 L75.9 106.2 L76.6 114.5 L77.3 114.9 L78.1 110.2 L78.8 101.6 L79.6 79.0 L80.3 77.3 L81.1 84.1 L81.8 75.3 L82.6 92.3 L83.3 94.6 L84.1 90.7 L84.8 106.9 L85.6 105.7 L86.3 98.2 L87.1 90.7 L87.8 89.2 L88.5 109.8 L89.3 104.3 L90.0 110.6 L90.8 106.2 L91.5 115.9 L92.3 111.6 L93.0 117.0 L93.8 105.8 L94.5 98.7 L95.3 94.6 L96.0 90.7 L96.8 87.0 L97.5 89.9 L98.2 85.3 L99.0 80.7 L99.7 84.4 L100.5 85.7 L101.2 85.2 L102.0 84.7 L102.7 81.4 L103.5 87.9 L104.2 91.2 L105.0 106.4 L105.7 95.5 L106.5 97.6 L107.2 100.3 L107.9 93.9 L108.7 90.5 L109.4 101.1 L110.2 116.5 L110.9 111.1 L111.7 104.5 L112.4 96.2 L113.2 97.7 L113.9 97.5 L114.7 95.9 L115.4 103.9 L116.2 102.5 L116.9 102.1 L117.7 107.7 L118.4 103.0 L119.1 102.9 L119.9 98.1 L120.6 103.7 L121.4 101.7 L122.1 95.7 L122.9 95.5 L123.6 97.0 L124.4 98.9 L125.1 96.5 L125.9 108.6 L126.6 109.7 L127.4 112.8 L128.1 109.9 L128.8 108.6 L129.6 108.8 L130.3 108.4 L131.1 108.7 L131.8 110.4 L132.6 107.9 L133.3 110.2 L134.1 112.0 L134.8 113.0 L135.6 114.7 L136.3 117.5 L137.1 117.1 L137.8 121.2 L138.5 122.6 L139.3 122.7 L140.0 127.3 L140.8 127.5 L141.5 127.6 L142.3 130.0 L143.0 133.2 L143.8 138.1 L144.5 137.4 L145.3 136.1 L146.0 139.4 L146.8 139.1 L147.5 138.1 L148.3 135.6 L149.0 136.8 L149.7 137.7 L150.5 139.4 L151.2 140.9 L152.0 144.5 L152.7 146.0 L153.5 145.5 L154.2 144.3 L155.0 146.5 L155.7 146.4 L156.5 151.1 L157.2 150.6 L158.0 153.6 L158.7 149.1 L159.4 152.3 L160.2 151.1 L160.9 152.9 L161.7 162.0 L162.4 162.1 L163.2 159.2 L163.9 159.3 L164.7 156.5 L165.4 153.5 L166.2 155.8 L166.9 153.7 L167.7 151.2 L168.4 152.4 L169.2 153.0 L169.9 153.6 L170.6 152.7 L171.4 154.7 L172.1 153.0 L172.9 154.5 L173.6 155.9 L174.4 156.4 L175.1 159.9 L175.9 159.7 L176.6 161.3 L177.4 157.5 L178.1 158.1 L178.9 161.1 L179.6 161.8 L180.3 163.3 L181.1 169.2 L181.8 169.8 L182.6 167.2 L183.3 175.4 L184.1 167.8 L184.8 164.1 L185.6 160.0 L186.3 157.4 L187.1 157.4 L187.8 155.9 L188.6 148.6 L189.3 153.9 L190.0 152.2 L190.8 153.1 L191.5 151.1 L192.3 151.6 L193.0 153.1 L193.8 152.1 L194.5 156.9 L195.3 158.6 L196.0 160.4 L196.8 165.8 L197.5 159.7 L198.3 157.9 L199.0 157.1 L199.8 154.9 L200.5 157.4 L201.2 160.7 L202.0 163.7 L202.7 160.2 L203.5 162.3 L204.2 161.6 L205.0 163.4 L205.7 164.3 L206.5 167.2 L207.2 167.9 L208.0 170.4 L208.7 173.6 L209.5 170.7 L210.2 172.0 L210.9 168.5 L211.7 166.1 L212.4 168.5 L213.2 170.0 L213.9 168.1 L214.7 169.4 L215.4 173.0 L216.2 172.7 L216.9 174.7 L217.7 174.8 L218.4 176.1 L219.2 177.4 L219.9 179.4 L220.6 176.2 L221.4 173.2 L222.1 169.3 L222.9 165.9 L223.6 159.1 L224.4 163.7 L225.1 165.2 L225.9 164.3 L226.6 169.5 L227.4 171.1 L228.1 168.4 L228.9 168.7 L229.6 172.1 L230.4 171.4 L231.1 173.4 L231.8 172.0 L232.6 172.4 L233.3 171.5 L234.1 171.3 L234.8 169.3 L235.6 170.0 L236.3 168.7 L237.1 166.7 L237.8 165.4 L238.6 164.3 L239.3 162.8 L240.1 161.3 L240.8 158.5 L241.5 157.5 L242.3 156.1 L243.0 154.8 L243.8 156.9 L244.5 155.0 L245.3 158.0 L246.0 157.7 L246.8 155.9 L247.5 154.7 L248.3 153.5 L249.0 153.8 L249.8 152.5 L250.5 155.2 L251.3 153.6 L252.0 151.2 L252.7 150.0 L253.5 151.7 L254.2 151.3 L255.0 148.7 L255.7 145.3 L256.5 141.3 L257.2 133.0 L258.0 129.0 L258.7 123.7 L259.5 118.5 L260.2 126.7 L261.0 126.9 L261.7 131.8 L262.4 131.9 L263.2 133.4 L263.9 130.1 L264.7 129.9 L265.4 123.1 L266.2 124.1 L266.9 119.9 L267.7 118.5 L268.4 117.5 L269.2 120.0 L269.9 117.0 L270.7 112.4 L271.4 107.9 L272.1 99.6 L272.9 103.7 L273.6 94.7 L274.4 92.7 L275.1 88.4 L275.9 89.3 L276.6 90.1 L277.4 101.0 L278.1 105.0 L278.9 99.5 L279.6 94.7 L280.4 106.3 L281.1 104.8 L281.9 101.9 L282.6 100.6 L283.3 95.1 L284.1 97.2 L284.8 95.9 L285.6 93.9 L286.3 104.3 L287.1 110.0 L287.8 111.4 L288.6 108.6 L289.3 102.5 L290.1 97.4 L290.8 92.4 L291.6 88.9 L292.3 74.5 L293.0 68.4 L293.8 77.0 L294.5 60.3 L295.3 61.3 L296.0 57.2 L296.8 80.2 L297.5 88.0 L298.3 102.7 L299.0 111.0 L299.8 109.2 L300.5 105.4 L301.3 97.9 L302.0 107.0 L302.7 99.3 L303.5 93.9 L304.2 95.0 L305.0 98.7 L305.7 90.7 L306.5 88.4 L307.2 88.3 L308.0 88.5 L308.7 85.0 L309.5 84.7 L310.2 73.2 L311.0 74.9 L311.7 69.5 L312.5 65.5 L313.2 68.3 L313.9 57.4 L314.7 66.0 L315.4 82.3 L316.2 80.3 L316.9 95.8 L317.7 100.3 L318.4 103.4 L319.2 104.3 L319.9 90.6 L320.7 88.1 L321.4 85.8 L322.2 79.0 L322.9 74.0 L323.6 69.0 L324.4 70.1 L325.1 70.1 L325.9 67.9 L326.6 78.0 L327.4 68.7 L328.1 81.5 L328.9 84.7 L329.6 90.1 L330.4 103.9 L331.1 96.9 L331.9 98.7 L332.6 111.8 L333.4 117.8 L334.1 117.7 L334.8 108.8 L335.6 124.2 L336.3 120.1 L337.1 112.2 L337.8 119.6 L338.6 124.6 L339.3 129.9 L340.1 135.6 L340.8 138.1 L341.6 136.7 L342.3 130.1 L343.1 131.7 L343.8 136.5 L344.5 127.9 L345.3 124.5 L346.0 116.5 L346.8 106.2 L347.5 109.3 L348.3 106.3 L349.0 103.3 L349.8 105.9 L350.5 110.8 L351.3 108.1 L352.0 110.4 L352.8 108.2 L353.5 113.0 L354.2 120.1 L355.0 125.2 L355.7 132.0 L356.5 134.3 L357.2 131.1 L358.0 130.9 L358.7 125.4 L359.5 123.8 L360.2 121.7 L361.0 121.7 L361.7 126.8 L362.5 130.2 L363.2 136.7 L364.0 133.5 L364.7 133.8 L365.4 132.3 L366.2 130.3 L366.9 131.1 L367.7 124.5 L368.4 122.2 L369.2 122.1 L369.9 123.9 L370.7 122.9 L371.4 130.1 L372.2 135.1 L372.9 136.0 L373.7 138.0 L374.4 141.0 L375.1 136.3 L375.9 134.5 L376.6 132.8 L377.4 137.2 L378.1 143.4 L378.9 148.3 L379.6 149.6 L380.4 145.7 L381.1 144.0 L381.9 146.9 L382.6 151.2 L383.4 148.7 L384.1 139.5 L384.8 144.2 L385.6 143.2 L386.3 142.1 L387.1 145.1 L387.8 145.9 L388.6 146.0 L389.3 144.0 L390.1 148.5 L390.8 152.7 L391.6 148.9 L392.3 150.7 L393.1 154.5 L393.8 157.6 L394.6 157.5 L395.3 154.5 L396.0 158.6 L396.8 160.8 L397.5 155.2 L398.3 150.9 L399.0 152.2 L399.8 154.2 L400.5 157.1 L401.3 159.6 L402.0 160.2 L402.8 163.2 L403.5 161.7 L404.3 161.8 L405.0 168.9 L405.7 168.8 L406.5 167.8 L407.2 177.8 L408.0 178.7 L408.7 175.4 L409.5 172.7 L410.2 171.7 L411.0 166.2 L411.7 164.7 L412.5 169.7 L413.2 168.4 L414.0 173.8 L414.7 177.1 L415.5 176.1 L416.2 170.0 L416.9 172.2 L417.7 173.9 L418.4 175.7 L419.2 176.7 L419.9 177.2 L420.7 172.7 L421.4 175.0 L422.2 177.8 L422.9 179.5 L423.7 176.1 L424.4 172.7 L425.2 173.9 L425.9 174.4 L426.6 176.5 L427.4 178.3 L428.1 179.8 L428.9 178.3 L429.6 176.8 L430.4 172.9 L431.1 175.4 L431.9 166.9 L432.6 155.8 L433.4 151.7 L434.1 149.1 L434.9 151.0 L435.6 146.5 L436.3 142.9 L437.1 148.6 L437.8 151.5 L438.6 151.3 L439.3 150.5 L440.1 154.4 L440.8 154.1 L441.6 159.7 L442.3 159.7 L443.1 157.9 L443.8 154.3 L444.6 152.8 L445.3 151.0 L446.1 147.0 L446.8 146.7 L447.5 147.4 L448.3 152.7 L449.0 151.0 L449.8 155.7 L450.5 157.6 L451.3 165.3 L452.0 166.1 L452.8 165.0 L453.5 163.2 L454.3 158.9 L455.0 161.2 L455.8 161.8 L456.5 162.7 L457.2 160.7 L458.0 159.1 L458.7 160.8 L459.5 153.5 L460.2 157.5 L461.0 154.8 L461.7 149.5 L462.5 146.0 L463.2 146.1 L464.0 148.4 L464.7 136.6 L465.5 130.0 L466.2 117.6 L466.9 113.2 L467.7 109.6 L468.4 103.4 L469.2 96.4 L469.9 106.5 L470.7 116.8 L471.4 106.3 L472.2 100.8 L472.9 106.1 L473.7 108.9 L474.4 112.9 L475.2 110.2 L475.9 108.7 L476.7 99.1 L477.4 99.3 L478.1 97.7 L478.9 100.1 L479.6 96.3 L480.4 91.4 L481.1 97.1 L481.9 102.5 L482.6 102.6 L483.4 101.1 L484.1 104.1 L484.9 109.1 L485.6 107.7 L486.4 103.4 L487.1 103.2 L487.8 108.7 L488.6 93.2 L489.3 81.6 L490.1 84.7 L490.8 87.0 L491.6 71.2 L492.3 68.7 L493.1 58.6 L493.8 62.8 L494.6 64.8 L495.3 59.6 L496.1 41.2 L496.8 18.0 L497.6 52.3 L498.3 58.4 L499.0 70.6 L499.8 77.2 L500.5 96.3 L501.3 84.4 L502.0 71.6 L502.8 92.8 L503.5 94.5 L504.3 100.1 L505.0 96.2 L505.8 89.8 L506.5 101.5 L507.3 115.9 L508.0 124.7" fill="none" stroke="#a8752a" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><text x="58.0" y="204" fill="#6b6e78" font-size="10" text-anchor="start" letter-spacing=".3">2014-06-20</text><text x="277.4" y="204" fill="#6b6e78" font-size="10" text-anchor="middle" letter-spacing=".3">2020-08-13</text><text x="508.0" y="204" fill="#6b6e78" font-size="10" text-anchor="end" letter-spacing=".3">2026-10-23</text></svg>
   <div class="cap">历史低点 0.3045（2024-08-27）、高点 0.8647（2026-06-30）· 创业板指仅回溯到 2014-06-20，故分位是近 12 年口径</div>
 </div></div>
-<h2>二十二年 <small>日频 · 对数轴 · 两条线口径不同</small></h2>
+<h2>二十二年 <small>日频 · 对数轴 · 两条线口径不同</small><em class="fq snap">随跑批刷新</em></h2>
 <div class="chart eqw" id="eqw">
   <div class="eqhead">
     <div>
@@ -469,6 +488,16 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 <h2>口径与数据来源</h2>
 <div class="notes">
   <ul>
+    <li><b>更新频率分三层，不是所有数字都实时。</b>
+        ① <b>实时行情条</b>（页面顶部那一排）= 浏览器每 60 秒直连腾讯行情，只有「价格 + 当日涨跌幅」，
+        标着绿色「实时」；<br>
+        ② <b>分数 / 倍数 / 分数历史曲线 / 近一月涨跌 / 长期锚 / 二十二年</b> = 跑批时整体重算，
+        每交易日 6 次（北京 08:07 / 10:07 / 11:17 / 13:37 / 14:47 / 15:17），
+        区块标题右侧标着「每交易日 6 次」或「随跑批刷新」；<br>
+        ③ <b>宏观利率那排</b> = 日频数据，跟着跑批刷新，标着「日频」。<br>
+        所以：行情条每分钟在动，分数一天最多变 6 次。<b>分数不会每分钟变，也不该每分钟变</b>——
+        它的输入（PE、股息率、国债利率）本身就是日频/周频的，日内只有价格在动，
+        每分钟重算只会让同一个分数在几分钱的价格波动里来回抖。</li>
     <li><b>分数方向</b>：0–100，<b>越高表示当下越便宜/越恐慌、越该多买</b>。50 分 = 1.0 倍基准。</li>
     <li><b>带宽</b>：≥82→2.0×　68–82→1.5×　56–68→1.2×　<b>40–56→1.0×</b>　28–40→0.8×　14–28→0.5×　&lt;14→0.3×。
         中性带 16 分宽，避免分数抖 1 分就换档。</li>
@@ -681,13 +710,15 @@ function render(){
   const sorted = ex_.slice().sort((a,b)=>b.score-a.score);
   const top = sorted[0], low = sorted[sorted.length-1];
   const upN = ex_.filter(a=>a.multiplier>1.02).length;
+  // hero 三个数字全是分数派生的快照，不是实时值 —— 必须标出来，
+  // 否则上面正好有一条每分钟刷新的行情条，很容易被当成"整页都在实时跑"。
   document.getElementById('hero').innerHTML =
-    '<div><div class="k">本期最该加仓</div><div class="v pick">'+esc(top.name)+
+    '<div><div class="k">本期最该加仓<i class="fqmini">快照</i></div><div class="v pick">'+esc(top.name)+
       '</div><div class="hint">'+top.score.toFixed(1)+' 分 · '+top.multiplier.toFixed(1)+
       '× · '+(top.suggest_amount?top.suggest_amount.toLocaleString('zh-CN')+' 元':'—')+'</div></div>'+
-    '<div><div class="k">相对最贵</div><div class="v">'+esc(low.name)+
+    '<div><div class="k">相对最贵<i class="fqmini">快照</i></div><div class="v">'+esc(low.name)+
       '</div><div class="hint">'+low.score.toFixed(1)+' 分 · '+low.multiplier.toFixed(1)+'×</div></div>'+
-    '<div><div class="k">上调档位</div><div class="v">'+upN+' / '+ex_.length+
+    '<div><div class="k">上调档位<i class="fqmini">快照</i></div><div class="v">'+upN+' / '+ex_.length+
       '</div><div class="hint">超过 1.0 倍的标的数</div></div>';
 
   const m = L.macro||{};
@@ -700,7 +731,7 @@ function render(){
   ];
   document.getElementById('macro').innerHTML = cells.map(function(c){
     const k=c[0], v=c[1], u=c[2];
-    return '<div><div class="k">'+k+'</div><div class="v num">'+
+    return '<div><div class="k">'+k+'<i class="fqmini">日频</i></div><div class="v num">'+
     (v==null?'—':v.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:4}))+
     (u?'<small>'+u+'</small>':'')+'</div></div>'; }).join('');
 
@@ -726,7 +757,7 @@ function render(){
         : '<div class="fund"><span>该口径无对应场外基金</span><span class="st">仅指数评分</span></div>');
     return '<div class="card '+dir+'">'+
       '<div class="top"><div><div class="nm">'+esc(a.name)+'</div>'+
-      '<div class="px num">'+(a.kind==='commodity'?'':'点位 ')+fmtPx(a.price)+' · '+(a.price_date||'')+'</div></div>'+
+      '<div class="px num">收盘 '+fmtPx(a.price)+' · '+(a.price_date||'')+'</div></div>'+
       '<div class="tag">'+(a.advisory_only?'参考':'可执行')+'</div></div>'+
       '<div class="mid"><div class="score num">'+a.score.toFixed(1)+'<small>分</small></div>'+
       '<div class="mult '+multCls(a.multiplier)+' num">'+(a.advisory_only?'—':mult+'×')+'</div>'+

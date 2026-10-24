@@ -173,8 +173,18 @@ body{
 /* ---------- 区块标题 ---------- */
 h2{font-size:12px;font-weight:500;margin:44px 0 14px;padding-bottom:11px;
   border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:12px;
-  letter-spacing:.2em;text-transform:uppercase;color:#14161b}
+  flex-wrap:wrap;letter-spacing:.2em;text-transform:uppercase;color:#14161b}
 h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em;text-transform:none}
+/* 每个区块的「数据时效」徽章：一眼分清哪些是每分钟在动、哪些是跑批快照。
+   类名别用 .live —— 那是实时行情条容器的样式，组合选择器也会被它的 background 污染。 */
+h2 .fq{font-style:normal;font-size:9px;font-weight:400;letter-spacing:.08em;
+  padding:2.5px 8px;border-radius:20px;border:1px solid rgba(20,22,27,.13);
+  color:var(--dim3);white-space:nowrap;text-transform:none;margin-left:auto}
+h2 .fq.rt{color:#2f7d54;border-color:rgba(47,125,84,.32);background:rgba(47,125,84,.05)}
+h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,120,47,.05)}
+.fqmini{font-style:normal;font-size:8.5px;letter-spacing:.06em;color:var(--dim3);
+  border:1px solid rgba(20,22,27,.12);border-radius:3px;padding:0 4px;margin-left:6px;
+  vertical-align:1px;white-space:nowrap}
 
 /* ---------- 分数方向说明条 ---------- */
 .dirbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 0;padding:11px 16px;
@@ -336,6 +346,13 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
 @media(max-width:560px){
   .wrap{padding:0 15px 64px}
   .grid{grid-template-columns:1fr}
+  /* 区块标题 + 时效徽章：手机上放不下一行就换行，别把徽章挤出屏幕 */
+  h2{flex-wrap:wrap;gap:6px 10px;letter-spacing:.14em}
+  h2 small{font-size:9.5px;letter-spacing:.02em}
+  h2 .fq{font-size:8.5px;padding:2px 7px;margin-left:0}
+  /* 5 个宏观格子排 2 列时最后一行会空一格，露出容器的灰底像块脏斑 → 让末格跨满。
+     :nth-child(odd) 是为了只在「奇数个格子」时才跨，偶数个正好填满不用管。 */
+  .macro>div:last-child:nth-child(odd){grid-column:1/-1}
   /* 手机上分数是主角：字号别缩太小，字重加粗，纯色不透明 */
   .score{font-size:40px;font-weight:500;color:#0b0e12;-webkit-text-fill-color:#0b0e12}
   .score small{font-size:12px;color:#4a4d56;-webkit-text-fill-color:#4a4d56}
@@ -554,13 +571,15 @@ function render(){
   const sorted = ex_.slice().sort((a,b)=>b.score-a.score);
   const top = sorted[0], low = sorted[sorted.length-1];
   const upN = ex_.filter(a=>a.multiplier>1.02).length;
+  // hero 三个数字全是分数派生的快照，不是实时值 —— 必须标出来，
+  // 否则上面正好有一条每分钟刷新的行情条，很容易被当成"整页都在实时跑"。
   document.getElementById('hero').innerHTML =
-    '<div><div class="k">本期最该加仓</div><div class="v pick">'+esc(top.name)+
+    '<div><div class="k">本期最该加仓<i class="fqmini">快照</i></div><div class="v pick">'+esc(top.name)+
       '</div><div class="hint">'+top.score.toFixed(1)+' 分 · '+top.multiplier.toFixed(1)+
       '× · '+(top.suggest_amount?top.suggest_amount.toLocaleString('zh-CN')+' 元':'—')+'</div></div>'+
-    '<div><div class="k">相对最贵</div><div class="v">'+esc(low.name)+
+    '<div><div class="k">相对最贵<i class="fqmini">快照</i></div><div class="v">'+esc(low.name)+
       '</div><div class="hint">'+low.score.toFixed(1)+' 分 · '+low.multiplier.toFixed(1)+'×</div></div>'+
-    '<div><div class="k">上调档位</div><div class="v">'+upN+' / '+ex_.length+
+    '<div><div class="k">上调档位<i class="fqmini">快照</i></div><div class="v">'+upN+' / '+ex_.length+
       '</div><div class="hint">超过 1.0 倍的标的数</div></div>';
 
   const m = L.macro||{};
@@ -573,7 +592,7 @@ function render(){
   ];
   document.getElementById('macro').innerHTML = cells.map(function(c){
     const k=c[0], v=c[1], u=c[2];
-    return '<div><div class="k">'+k+'</div><div class="v num">'+
+    return '<div><div class="k">'+k+'<i class="fqmini">日频</i></div><div class="v num">'+
     (v==null?'—':v.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:4}))+
     (u?'<small>'+u+'</small>':'')+'</div></div>'; }).join('');
 
@@ -599,7 +618,7 @@ function render(){
         : '<div class="fund"><span>该口径无对应场外基金</span><span class="st">仅指数评分</span></div>');
     return '<div class="card '+dir+'">'+
       '<div class="top"><div><div class="nm">'+esc(a.name)+'</div>'+
-      '<div class="px num">'+(a.kind==='commodity'?'':'点位 ')+fmtPx(a.price)+' · '+(a.price_date||'')+'</div></div>'+
+      '<div class="px num">收盘 '+fmtPx(a.price)+' · '+(a.price_date||'')+'</div></div>'+
       '<div class="tag">'+(a.advisory_only?'参考':'可执行')+'</div></div>'+
       '<div class="mid"><div class="score num">'+a.score.toFixed(1)+'<small>分</small></div>'+
       '<div class="mult '+multCls(a.multiplier)+' num">'+(a.advisory_only?'—':mult+'×')+'</div>'+
@@ -1416,10 +1435,12 @@ def render(payload):
     sig_sec = _signals_html(payload.get("signals") or {})
     labs_sec = ""
     if labs_a:
-        labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small></h2>\n'
+        labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small>'
+                     '<em class="fq snap">随跑批刷新</em></h2>\n'
                      f'<div class="labs">{labs_a}</div>\n')
     if labs_b:
-        labs_sec += ('<h2>二十二年 <small>日频 · 对数轴 · 两条线口径不同</small></h2>\n'
+        labs_sec += ('<h2>二十二年 <small>日频 · 对数轴 · 两条线口径不同</small>'
+                     '<em class="fq snap">随跑批刷新</em></h2>\n'
                      f'{labs_b}\n')
 
     return f"""<!DOCTYPE html>
@@ -1448,15 +1469,17 @@ def render(payload):
 <div class="live" id="live"></div>
 {sig_sec}
 <div class="macro" id="macro"></div>
+
+<h2>标的评分 <small>卡片内的分数与点位一律按最近收盘算</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="grid" id="grid"></div>
 
-<h2>本期结论 <small>分数越高越该买 · 50 分 = 1.0 倍</small></h2>
+<h2>本期结论 <small>分数越高越该买 · 50 分 = 1.0 倍</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="notes">{summary}</div>
 
-<h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small></h2>
+<h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small><em class="fq snap">随跑批刷新</em></h2>
 {month_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
-<h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small></h2>
+<h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="charthint">
   <span class="up"><i></i>↑ 分数越高 = 越便宜 = 建议买得越多</span>
   <span class="dn"><i></i>↓ 分数越低 = 越贵 = 建议买得越少</span>
@@ -1469,6 +1492,16 @@ def render(payload):
 <h2>口径与数据来源</h2>
 <div class="notes">
   <ul>
+    <li><b>更新频率分三层，不是所有数字都实时。</b>
+        ① <b>实时行情条</b>（页面顶部那一排）= 浏览器每 60 秒直连腾讯行情，只有「价格 + 当日涨跌幅」，
+        标着绿色「实时」；<br>
+        ② <b>分数 / 倍数 / 分数历史曲线 / 近一月涨跌 / 长期锚 / 二十二年</b> = 跑批时整体重算，
+        每交易日 6 次（北京 08:07 / 10:07 / 11:17 / 13:37 / 14:47 / 15:17），
+        区块标题右侧标着「每交易日 6 次」或「随跑批刷新」；<br>
+        ③ <b>宏观利率那排</b> = 日频数据，跟着跑批刷新，标着「日频」。<br>
+        所以：行情条每分钟在动，分数一天最多变 6 次。<b>分数不会每分钟变，也不该每分钟变</b>——
+        它的输入（PE、股息率、国债利率）本身就是日频/周频的，日内只有价格在动，
+        每分钟重算只会让同一个分数在几分钱的价格波动里来回抖。</li>
     <li><b>分数方向</b>：0–100，<b>越高表示当下越便宜/越恐慌、越该多买</b>。50 分 = 1.0 倍基准。</li>
     <li><b>带宽</b>：≥82→2.0×　68–82→1.5×　56–68→1.2×　<b>40–56→1.0×</b>　28–40→0.8×　14–28→0.5×　&lt;14→0.3×。
         中性带 16 分宽，避免分数抖 1 分就换档。</li>
