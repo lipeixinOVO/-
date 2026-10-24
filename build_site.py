@@ -78,10 +78,14 @@ def main():
 
     # 阈值提示：纯派生（读分数/倍数/长期锚 + 历史累积），不改分数、不参与算分
     from src import signals as SG
+    from src import sched as SCH
     payload = {"latest": latest,
                "history": [{"trade_date": r["d"]} for r in rows],
                "series": {"ids": ids, "names": names, "data": series},
-               "signals": {"items": SG.compute(latest, rows), "rules": SG.RULE_TEXT}}
+               "signals": {"items": SG.compute(latest, rows), "rules": SG.RULE_TEXT},
+               # 跑批时刻表直接从 workflow 的 cron 解析出来，
+               # 前端用它算「下次自动更新」，避免手写一份 JS 时刻表和 yml 脱节
+               "schedule": SCH.from_workflow(HERE)}
 
     os.makedirs(SITE_DIR, exist_ok=True)
     with open(os.path.join(SITE_DIR, "data.json"), "w", encoding="utf-8") as f:

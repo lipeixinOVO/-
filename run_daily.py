@@ -208,11 +208,20 @@ def run(dry=False):
     #  - generated_at_ts 是机器可读的 epoch 秒，页面用它算「几小时前更新的」
     _now_utc = dt.datetime.now(dt.timezone.utc)
     _now_cn = _now_utc.astimezone(dt.timezone(dt.timedelta(hours=8)))
+
+    # 数据日 = 行情**实际截止日**，不是运行日。
+    # 用运行日的话，周六/节假日跑批会往历史里写一期「周六」的分数（内容与周五相同），
+    # 分数曲线就会多出一个不存在的点，而且周一的环比也会算错。
+    # 黄金是 24 小时交易、日期天然领先一天，算中位数时排除它，否则会把数据日往前拽。
+    _ds = sorted(a["price_date"] for a in results
+                 if a.get("price_date") and a.get("kind") != "commodity")
+    _tdate = _ds[len(_ds) // 2] if _ds else _now_cn.date().isoformat()
+
     out = {
         "generated_at": _now_cn.strftime("%Y-%m-%d %H:%M:%S"),
         "generated_at_ts": int(_now_utc.timestamp()),
         "generated_tz": "Asia/Shanghai",
-        "trade_date": _now_cn.date().isoformat(),
+        "trade_date": _tdate,
         "base_amount": cfg["base_amount"],
         "scoring_basis": cfg.get("scoring_basis", "index"),
         "multiplier_table": cfg["multiplier_table"],

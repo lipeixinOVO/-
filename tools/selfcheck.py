@@ -117,6 +117,19 @@ for a in assets:
 if 'class="chart mchart"' not in h:
     warn("页面上没有近一月对比图（标的轨迹不足两条时会自动隐藏）")
 
+# ---------- 4c. 跑批时刻表（决定页头显示「下次自动更新」） ----------
+sch = data.get("schedule")
+if not sch or not sch.get("runs"):
+    warn("payload 缺 schedule，页头不会显示「下次自动更新」（检查 workflow 的 cron 能否解析）")
+else:
+    tods = sch.get("tods") or []
+    if len(tods) < 2:
+        warn(f"从 cron 只解析出 {tods} 个时刻，工作流可能写错了")
+    # 整点/半点是最容易被 GitHub 丢弃的时段，出现就提醒（不阻断，理论上有意为之另说）
+    for t in tods:
+        if t.endswith(":00") or t.endswith(":30"):
+            warn(f"cron 时刻 {t} 踩在整点/半点上，GitHub 高峰期容易丢触发")
+
 # ---------- 5. 曲线与当天一致性 ----------
 # payload.history 每项只有 trade_date（画 x 轴用），分数末点在 series 里
 if hist and hist[-1].get("trade_date") != latest.get("trade_date"):

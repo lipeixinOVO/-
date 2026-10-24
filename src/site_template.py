@@ -47,6 +47,17 @@ body{
   text-transform:uppercase;padding-bottom:4px}
 .hd .meta{font-size:11.5px;color:var(--dim2);text-align:right;line-height:1.95;letter-spacing:.02em}
 .hd .meta b{color:var(--txt);font-weight:500}
+/* 三种节奏要一眼分开：分数每交易日 6 次 / 实时价每 60 秒 / 静态信息。
+   注意类名用 .rt 不能用 .live —— .live 是下面那条实时行情条的容器样式，
+   meta 里挂上会让整行变成灰底圆角条（踩过）。 */
+.hd .meta .ln{display:block}
+.hd .meta .k{display:inline-block;min-width:4.4em;margin-right:6px;color:var(--dim3);letter-spacing:.06em}
+.hd .meta .ln.rt .k{color:#2f7d54}
+.hd .meta .ok{color:#2f7d54}
+.hd .meta .warn{color:#b4452e;font-weight:600}
+.hd .meta .idle{color:var(--dim3)}
+/* 「下次 周一 08:07」被折成两行会读不通（周一 / 08:07 分居两行），整段锁住不换行 */
+.hd .meta .nw{white-space:nowrap}
 .hd .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);
   margin-right:6px;vertical-align:1px;box-shadow:0 0 0 3px rgba(156,120,47,.14)}
 
@@ -290,6 +301,9 @@ h2 small{font-size:10.5px;color:var(--dim3);font-weight:400;letter-spacing:.06em
   .mlegs{grid-template-columns:1fr;gap:4px;font-size:10.5px;margin:11px 0 6px}
   .mleg{line-height:1.5}
   .mleg em{font-size:10px}
+  /* 页头三行在手机上会折行，标签改成行内短标签，别留 4.4em 的空档 */
+  .hd .meta{font-size:10.5px;line-height:1.8;text-align:left}
+  .hd .meta .k{min-width:0;margin-right:5px}
 }
 .eqhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;
   flex-wrap:wrap;margin-bottom:12px}
@@ -451,6 +465,39 @@ function sparkBlock(a){
     '</div>';
 }
 
+/* ---------- 跑批时刻表（P.schedule，来源是 workflow 的 cron） ----------
+   页面顶部要回答一个问题：「现在这个数据是正常节奏，还是卡住了？」
+   只看「几小时前」会误判 —— 周五 15:17 到周六 08:07 本来就有 17 小时空档，
+   那是休市不是故障。所以拿 workflow 里的 cron 算出「上一次计划时刻」来对照。 */
+function schedSpan(S){
+  if(!S || !S.runs || !S.runs.length) return null;
+  var now = new Date(), prev = null, next = null;
+  for(var off = -8; off <= 8; off++){
+    var base = new Date(now.getFullYear(), now.getMonth(), now.getDate() + off);
+    var dw = base.getDay() === 0 ? 7 : base.getDay();     // JS 0=周日 → 统一成 7
+    for(var i = 0; i < S.runs.length; i++){
+      if(S.runs[i][0] !== dw) continue;
+      var hm = String(S.runs[i][1]).split(':');
+      var t = new Date(base.getFullYear(), base.getMonth(), base.getDate(), +hm[0], +hm[1], 0);
+      if(t.getTime() <= now.getTime()){ if(!prev || t > prev) prev = t; }
+      else { if(!next || t < next) next = t; }
+    }
+  }
+  return {prev: prev, next: next};
+}
+function hhmm(d){
+  return d ? ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2) : '—';
+}
+function dayLabel(d, now){
+  if(!d) return '';
+  var a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var b = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var diff = Math.round((b.getTime() - a.getTime()) / 86400000);
+  if(diff === 0) return '今天 ';
+  if(diff === 1) return '明天 ';
+  return ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()] + ' ';
+}
+
 function render(){
   const L = P.latest;
   // 数据新鲜度：用 epoch 秒算（没有就退回解析本地时间字符串），
@@ -461,17 +508,46 @@ function render(){
     const t = Date.parse(String(L.generated_at).replace(/-/g,'/'));
     if(!isNaN(t)) ageH = (Date.now()-t)/3600000;
   }
-  let fresh = '';
-  if(ageH!=null && ageH>=0){
-    if(ageH < 2) fresh = ' · <b style="color:#2f7d54">刚更新</b>';
-    else if(ageH < 14) fresh = ' · <span style="color:#5d6069">'+ageH.toFixed(0)+' 小时前</span>';
-    else fresh = ' · <b style="color:#b4452e">已 '+ageH.toFixed(0)+' 小时未更新</b>';
+  let genMs = null;
+  if(L.generated_at_ts) genMs = L.generated_at_ts * 1000;
+  else if(L.generated_at){
+    const t2 = Date.parse(String(L.generated_at).replace(/-/g,'/'));
+    if(!isNaN(t2)) genMs = t2;
   }
+
+  const span = schedSpan(P.schedule);
+  const now = new Date();
+  let stateTxt = '', stateCls = 'idle';
+  if(ageH != null && ageH >= 0){
+    // 计划点刚过 15 分钟内算「正在跑」：一次跑批实测 2~3 分钟，加上 GitHub 排队更久，
+    // 这时候标红说「没更新」是冤枉它。
+    const lateMin = span && span.prev ? (now.getTime() - span.prev.getTime()) / 60000 : null;
+    const missed = !!(span && span.prev && genMs != null && genMs < span.prev.getTime() - 60000);
+    if(lateMin != null && lateMin >= 0 && lateMin < 15){
+      stateTxt = '计划 ' + hhmm(span.prev) + ' 批次更新中';
+    }else if(missed){
+      stateTxt = '上次 ' + hhmm(span.prev) + ' 未触发'; stateCls = 'warn';
+    }else if(ageH < 1.5){
+      stateTxt = '刚更新'; stateCls = 'ok';
+    }else{
+      stateTxt = ageH.toFixed(0) + ' 小时前';
+    }
+  }
+  const nTxt = span && span.next
+    ? '下次 ' + dayLabel(span.next, now) + hhmm(span.next)
+    : '';
+  const perDay = (P.schedule && P.schedule.tods) ? P.schedule.tods.length : 0;
+
   document.getElementById('meta').innerHTML =
-    '<span class="dot"></span>数据日 <b>'+(L.trade_date||'')+'</b> · 生成 '+(L.generated_at||'').slice(11,16)+
-    ' 北京时间'+fresh+
-    '<br>基准 <b>'+L.base_amount.toLocaleString('zh-CN')+' 元/月</b> · 历史 <b>'+
-    P.history.length+'</b> 期';
+    '<span class="ln"><span class="dot"></span><span class="k">分数快照</span>' +
+      '<b>' + (L.trade_date || '') + '</b> · ' + (L.generated_at || '').slice(11, 16) + ' 生成' +
+      (stateTxt ? ' · <span class="' + stateCls + ' nw">' + stateTxt + '</span>' : '') +
+      (nTxt ? ' · <span class="idle nw">' + nTxt + '</span>' : '') + '</span>' +
+    '<span class="ln rt"><span class="k">实时价格</span>每 60 秒自动刷新' +
+      (perDay ? ' · 分数每交易日 ' + perDay + ' 次' : '') + '</span>' +
+    '<span class="ln"><span class="k">基准</span><b>' +
+      L.base_amount.toLocaleString('zh-CN') + ' 元/月</b> · 历史 <b>' +
+      P.history.length + '</b> 期</span>';
 
   // 结论条：全部标的里分数最高的（含参考指数则标注）
   const ex_ = L.assets.filter(a=>!a.advisory_only);
@@ -711,10 +787,17 @@ function renderLive(){
       '<div class="px">'+fmtPx(h.price)+'</div></div>');
   }
   if(!cells.length){ box.style.display='none'; return; }
+  // 「本次 HH:MM:SS」是刻意加的：页面挂在后台或接口静默失败时，这一行会停住不动，
+  // 用户一眼就能看出「是没刷新」还是「刷新了但价格没变」。
+  const nw = new Date();
+  const at = ('0'+nw.getHours()).slice(-2)+':'+('0'+nw.getMinutes()).slice(-2)+
+             ':'+('0'+nw.getSeconds()).slice(-2);
+  const perDay = (P.schedule && P.schedule.tods) ? P.schedule.tods.length : 4;
   box.innerHTML = cells.join('')+
     '<div class="stamp"><span>行情时间 <b>'+(stamp?esc(stamp):'—')+
-    '</b> · 浏览器直连腾讯行情，每 60 秒刷新</span>'+
-    '<span><b>实时价只用来感受当下位置，不参与打分</b>；分数与倍数按已收盘数据算，每交易日刷新 4 次</span></div>';
+    '</b> · 浏览器直连腾讯行情，每 60 秒刷新（本次 '+at+'）</span>'+
+    '<span><b>实时价只用来感受当下位置，不参与打分</b>；分数与倍数按已收盘数据算，每交易日 '+
+    perDay+' 次</span></div>';
 }
 function loadLive(){
   const s=document.createElement('script');
@@ -747,7 +830,12 @@ function bindEqw(){
 render();
 bindEqw();
 loadLive();
-setInterval(loadLive, 60000);
+// 每 60 秒拉一次实时价。页面在后台时跳过 —— 移动端浏览器会把后台定时器节流到几分钟一次，
+// 与其那样半死不活地拉，不如不拉；切回前台时立刻补一次，不用干等下一个整分钟。
+setInterval(function(){ if(!document.hidden) loadLive(); }, 60000);
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) loadLive();
+});
 
 // 横竖屏切换 / 窗口缩放时重画分数图（窄屏和宽屏用不同画布尺寸）
 let _rz = null;
