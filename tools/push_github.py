@@ -25,7 +25,10 @@ CRED = Path(os.path.expanduser("~")) / ".git-credentials"
 API = "https://api.github.com"
 
 # 不进仓库的：接口缓存（易变、体积大）、每日完整快照（本地复盘用）、本地截图
-SKIP_DIRS = {"cache", "__pycache__", ".git", "node_modules", "_shots", "_shot_profile"}
+SKIP_DIRS = {"cache", "__pycache__", ".git", "node_modules"}
+# 截图相关目录用**前缀**匹配：shot.py / peek.py 每次换个 _shot_profile<N> 名字，
+# 写死名单会漏（2026-10-24 就因为 _shot_profile2~5 各 13MB 被当成源码上传，推了 6 分钟）。
+SKIP_DIR_PREFIX = ("_shot", "_peek")
 SKIP_NAMES = {".DS_Store", "_selfcheck.js", "_shot_wrap.html", "_peek.html"}   # 临时产物不进仓库
 
 
@@ -50,6 +53,9 @@ def collect():
         rel = p.relative_to(LOCAL)
         parts = set(rel.parts)
         if parts & SKIP_DIRS or p.name in SKIP_NAMES:
+            continue
+        # 前缀匹配截图/调试目录（_shot_profile2、_shots、_peek…）
+        if any(part.startswith(SKIP_DIR_PREFIX) for part in rel.parts):
             continue
         # data/out 只留 latest 与 report，其余每日快照不进仓库
         if rel.parts[:2] == ("data", "out") and p.name not in ("latest.json", "report.md"):

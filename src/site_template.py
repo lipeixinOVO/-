@@ -110,8 +110,9 @@ body{
 .mood .ml{padding:15px 17px 16px;border-right:1px solid var(--line)}
 .mood .k{font-size:9.5px;letter-spacing:.16em;color:#6b6e78;text-transform:uppercase}
 .mood .src{font-size:9.5px;color:var(--dim3);margin-top:4px;letter-spacing:.02em}
-.mood .sc{font-size:38px;line-height:1;font-weight:500;margin-top:13px;
+.mood .sc{font-size:38px;line-height:1;margin-top:13px;
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.mood .sc b{font-weight:500}
 .mood .sc small{font-size:11px;color:var(--dim3);margin-left:2px;font-weight:400;letter-spacing:0}
 .mood .lb{font-size:13.5px;font-weight:600;margin-top:7px;letter-spacing:.08em}
 .mood .delta{font-size:10px;color:var(--dim3);margin-top:11px;line-height:1.75;
@@ -144,6 +145,15 @@ body{
 .mood .drive{font-size:10px;color:var(--dim3);margin-top:10px;padding-top:9px;
   border-top:1px solid var(--line);letter-spacing:.02em;line-height:1.7}
 .mood .drive b{color:#3f434c;font-weight:500;font-variant-numeric:tabular-nums}
+/* 直连状态：刷新成功会变成"直连 CNN 刷新 20:03:12"，失败就停在初始文案，
+   用户能看出"是在直连"还是"用的跑批快照" */
+.mood .at{font-size:9.5px;color:#2f7d54;margin-top:8px;letter-spacing:.03em;
+  display:flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.mood .at::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;
+  opacity:.85;flex:0 0 4px}
+.mood .at.idle{color:var(--dim3)}
+.mood .note{font-size:9.5px;color:var(--dim3);margin-top:9px;line-height:1.75;letter-spacing:.02em}
+.mood .note b{color:#6b6e78;font-weight:500}
 @media(max-width:720px){
   .mood{grid-template-columns:1fr}
   .mood .ml{border-right:0;border-bottom:1px solid var(--line);padding-bottom:13px}
@@ -581,6 +591,63 @@ function dayLabel(d, now){
   return ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()] + ' ';
 }
 
+/* ---------- 美股市场情绪：每分钟直连 CNN 检查 ----------
+   CNN 的接口带 Access-Control-Allow-Origin: *，浏览器能直接 fetch（实测 19ms，gzip 后 29KB）。
+   但这个指数本身是**日频**（美东收盘后更新一次），所以多数时候数字不会变 ——
+   每分钟轮询的意义是「它一更新页面就反映」，而不是「数字每分钟在跳」。
+   失败一律静默降级：继续显示服务端渲染的跑批快照，不弹错、不影响别的区块。 */
+function applyMood(score){
+  const m = P.latest && P.latest.mood;
+  if(!m || !m.zones || m.zones.length < 5) return false;
+  let zone = null;
+  for(let i = 0; i < m.zones.length; i++){
+    if(m.zones[i][0] <= score && score <= m.zones[i][1]){ zone = m.zones[i]; break; }
+  }
+  if(!zone) return false;
+
+  const sc = document.getElementById('mood-sc');
+  const lb = document.getElementById('mood-lb');
+  const pin = document.getElementById('mood-pin');
+  if(!sc || !lb || !pin) return false;
+
+  sc.textContent = score.toFixed(1);
+  sc.style.color = zone[3];
+  lb.textContent = zone[2];
+  lb.style.color = zone[3];
+  pin.style.left = (Math.max(0, Math.min(100, score)) / 101 * 100).toFixed(2) + '%';
+  const pinTxt = pin.querySelector('span');
+  if(pinTxt) pinTxt.textContent = Math.round(score);
+
+  const lis = document.querySelectorAll('#mood-zl li');
+  for(let j = 0; j < lis.length; j++){
+    if(+lis[j].getAttribute('data-lo') === zone[0]) lis[j].classList.add('on');
+    else lis[j].classList.remove('on');
+  }
+  return true;
+}
+
+function refreshMood(){
+  if(document.hidden) return;
+  if(!document.getElementById('mood-sc')) return;      // 本期没这块，不白拉
+  const at = document.getElementById('mood-at');
+  fetch('https://production.dataviz.cnn.io/index/fearandgreed/graphdata',
+        {mode:'cors', cache:'no-store'})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(j){
+      const fg = (j && j.fear_and_greed) || {};
+      if(fg.score == null || !applyMood(+fg.score)) return;
+      if(at){
+        const d = new Date();
+        at.textContent = '直连 CNN 刷新 ' + hhmm(d) + ':' + ('0' + d.getSeconds()).slice(-2);
+        at.className = 'at';
+      }
+    })
+    .catch(function(){
+      // 跨域被拦 / 网络抖动 / CNN 改接口 → 静默，页面上继续用跑批快照
+      if(at){ at.textContent = '直连 CNN 暂不可用，显示跑批快照'; at.className = 'at idle'; }
+    });
+}
+
 function render(){
   const L = P.latest;
   // 数据新鲜度：用 epoch 秒算（没有就退回解析本地时间字符串），
@@ -921,8 +988,11 @@ loadLive();
 // 每 60 秒拉一次实时价。页面在后台时跳过 —— 移动端浏览器会把后台定时器节流到几分钟一次，
 // 与其那样半死不活地拉，不如不拉；切回前台时立刻补一次，不用干等下一个整分钟。
 setInterval(function(){ if(!document.hidden) loadLive(); }, 60000);
+// 市场情绪也每分钟直连 CNN。首次延迟 12 秒，别和首屏的几个请求抢带宽。
+setTimeout(function(){ if(!document.hidden) refreshMood(); }, 12000);
+setInterval(function(){ if(!document.hidden) refreshMood(); }, 60000);
 document.addEventListener('visibilitychange', function(){
-  if(!document.hidden) loadLive();
+  if(!document.hidden){ loadLive(); refreshMood(); }
 });
 
 /* 页面是静态的：跑批在后台更新了 docs/data.json，但已经打开的页面还停在旧快照上。
@@ -1359,7 +1429,7 @@ def _mood_html(mood):
     rows = []
     for lo, hi, cn, c in zones:
         cls = ' class="on"' if lo == cur_lo else ""
-        rows.append(f'<li{cls} style="--mc:{c}"><b>{lo}-{hi} {cn}</b>'
+        rows.append(f'<li{cls} data-lo="{lo}" style="--mc:{c}"><b>{lo}-{hi} {cn}</b>'
                     f'<em>{_esc(MOOD_ZONE_TEXT.get(lo, ""))}</em></li>')
 
     def _v(k):
@@ -1378,19 +1448,22 @@ def _mood_html(mood):
   <div class="ml">
     <div class="k">美股市场情绪<i class="fqmini">不参与打分</i></div>
     <div class="src">CNN Fear &amp; Greed · {_esc(mood.get('date') or '')} 数据</div>
-    <div class="sc" style="color:{col}">{sc:.1f}<small>/100</small></div>
-    <div class="lb" style="color:{col}">{_esc(mood.get('label') or '')}</div>
-    <div class="delta">昨收 {_v('prev_close')} · 一周前 {_v('prev_week')}<br>
+    <div class="sc"><b id="mood-sc" style="color:{col}">{sc:.1f}</b><small>/100</small></div>
+    <div class="lb" id="mood-lb" style="color:{col}">{_esc(mood.get('label') or '')}</div>
+    <div class="delta" id="mood-delta">昨收 {_v('prev_close')} · 一周前 {_v('prev_week')}<br>
       一月前 {_v('prev_month')} · 一年前 {_v('prev_year')}</div>
+    <div class="at" id="mood-at">每 60 秒直连 CNN 检查</div>
   </div>
   <div class="mr">
     <div class="gauge">
       <div class="gb">{segs}</div>
-      <div class="gp" style="left:{pos:.2f}%"><span>{sc:.0f}</span></div>
+      <div class="gp" id="mood-pin" style="left:{pos:.2f}%"><span>{sc:.0f}</span></div>
       <div class="gt">{ticks}</div>
     </div>
-    <ul class="zl">{''.join(rows)}</ul>
+    <ul class="zl" id="mood-zl">{''.join(rows)}</ul>
     {drive}
+    <div class="note"><b>CNN 这个指数每天只更新一次</b>（美东收盘后）。这里每分钟检查一次，
+      是为了它一更新页面就能反映，而不是干等下一批跑批。</div>
   </div>
 </div>"""
 

@@ -11,8 +11,8 @@ __pycache__/
 *.js
 !docs/*.js
 
-# 本地截图与预览，不进仓库
+# 本地截图与预览，不进仓库（_shot_profile 每次截图会带序号后缀，用前缀通配）
 _shots/
+_shot_profile*/
 _shot_wrap.html
 _peek.html
-_shot_profile/

@@ -103,8 +103,9 @@ body{
 .mood .ml{padding:15px 17px 16px;border-right:1px solid var(--line)}
 .mood .k{font-size:9.5px;letter-spacing:.16em;color:#6b6e78;text-transform:uppercase}
 .mood .src{font-size:9.5px;color:var(--dim3);margin-top:4px;letter-spacing:.02em}
-.mood .sc{font-size:38px;line-height:1;font-weight:500;margin-top:13px;
+.mood .sc{font-size:38px;line-height:1;margin-top:13px;
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.mood .sc b{font-weight:500}
 .mood .sc small{font-size:11px;color:var(--dim3);margin-left:2px;font-weight:400;letter-spacing:0}
 .mood .lb{font-size:13.5px;font-weight:600;margin-top:7px;letter-spacing:.08em}
 .mood .delta{font-size:10px;color:var(--dim3);margin-top:11px;line-height:1.75;
@@ -137,6 +138,15 @@ body{
 .mood .drive{font-size:10px;color:var(--dim3);margin-top:10px;padding-top:9px;
   border-top:1px solid var(--line);letter-spacing:.02em;line-height:1.7}
 .mood .drive b{color:#3f434c;font-weight:500;font-variant-numeric:tabular-nums}
+/* 直连状态：刷新成功会变成"直连 CNN 刷新 20:03:12"，失败就停在初始文案，
+   用户能看出"是在直连"还是"用的跑批快照" */
+.mood .at{font-size:9.5px;color:#2f7d54;margin-top:8px;letter-spacing:.03em;
+  display:flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.mood .at::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;
+  opacity:.85;flex:0 0 4px}
+.mood .at.idle{color:var(--dim3)}
+.mood .note{font-size:9.5px;color:var(--dim3);margin-top:9px;line-height:1.75;letter-spacing:.02em}
+.mood .note b{color:#6b6e78;font-weight:500}
 @media(max-width:720px){
   .mood{grid-template-columns:1fr}
   .mood .ml{border-right:0;border-bottom:1px solid var(--line);padding-bottom:13px}
@@ -480,19 +490,22 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   <div class="ml">
     <div class="k">美股市场情绪<i class="fqmini">不参与打分</i></div>
     <div class="src">CNN Fear &amp; Greed · 2026-10-24 数据</div>
-    <div class="sc" style="color:#a8321f">21.0<small>/100</small></div>
-    <div class="lb" style="color:#a8321f">极度恐惧</div>
-    <div class="delta">昨收 19.8 · 一周前 22.1<br>
+    <div class="sc"><b id="mood-sc" style="color:#a8321f">21.0</b><small>/100</small></div>
+    <div class="lb" id="mood-lb" style="color:#a8321f">极度恐惧</div>
+    <div class="delta" id="mood-delta">昨收 19.8 · 一周前 22.1<br>
       一月前 32.5 · 一年前 27.6</div>
+    <div class="at" id="mood-at">每 60 秒直连 CNN 检查</div>
   </div>
   <div class="mr">
     <div class="gauge">
       <div class="gb"><i style="flex:25;background:#a8321f"></i><i style="flex:20;background:#c2703c"></i><i style="flex:11;background:#8a8d96"></i><i style="flex:20;background:#5f8f6a"></i><i style="flex:25;background:#2f7d54"></i></div>
-      <div class="gp" style="left:20.79%"><span>21</span></div>
+      <div class="gp" id="mood-pin" style="left:20.79%"><span>21</span></div>
       <div class="gt"><span style="left:0.00%">0</span><span style="left:24.75%">25</span><span style="left:44.55%">45</span><span style="left:55.45%">56</span><span style="left:75.25%">76</span><span style="left:100.00%">100</span></div>
     </div>
-    <ul class="zl"><li class="on" style="--mc:#a8321f"><b>0-24 极度恐惧</b><em>恐慌性抛售、避险情绪拉满。长期看常是布局区，但短期可能继续跌 —— 便宜还能更便宜。</em></li><li style="--mc:#c2703c"><b>25-44 恐惧</b><em>多数人观望，情绪偏谨慎。通常还没到最悲观的时点。</em></li><li style="--mc:#8a8d96"><b>45-55 中性</b><em>多空接近平衡，情绪本身不构成信号。</em></li><li style="--mc:#5f8f6a"><b>56-75 贪婪</b><em>追高的人变多，最容易在「再涨一点就加仓」的预期里买在高位。</em></li><li style="--mc:#2f7d54"><b>76-100 极度贪婪</b><em>几乎没人相信会跌，历史上多出现在阶段性顶部附近。</em></li></ul>
+    <ul class="zl" id="mood-zl"><li class="on" data-lo="0" style="--mc:#a8321f"><b>0-24 极度恐惧</b><em>恐慌性抛售、避险情绪拉满。长期看常是布局区，但短期可能继续跌 —— 便宜还能更便宜。</em></li><li data-lo="25" style="--mc:#c2703c"><b>25-44 恐惧</b><em>多数人观望，情绪偏谨慎。通常还没到最悲观的时点。</em></li><li data-lo="45" style="--mc:#8a8d96"><b>45-55 中性</b><em>多空接近平衡，情绪本身不构成信号。</em></li><li data-lo="56" style="--mc:#5f8f6a"><b>56-75 贪婪</b><em>追高的人变多，最容易在「再涨一点就加仓」的预期里买在高位。</em></li><li data-lo="76" style="--mc:#2f7d54"><b>76-100 极度贪婪</b><em>几乎没人相信会跌，历史上多出现在阶段性顶部附近。</em></li></ul>
     <div class="drive">往下拉最多：<b>避险需求 9.2</b>　·　最不悲观：<b>垃圾债需求 40.2</b></div>
+    <div class="note"><b>CNN 这个指数每天只更新一次</b>（美东收盘后）。这里每分钟检查一次，
+      是为了它一更新页面就能反映，而不是干等下一批跑批。</div>
   </div>
 </div>
 <div class='sigs'><div class='sig hi'><span class='tag'>换档</span><div class='tx'><b>纳斯达克100指数</b> 从 0.8× 调到 <b>1.0×</b>（分数 37.2 → 45.8，上跨一档）</div><span class='num'>0.8× → 1.0×</span></div><div class='sig mid'><span class='tag'>临界</span><div class='tx'><b>MSCI 全球医疗保健指数</b> 38.4 分，距 1.0× 档（40 分）还差 1.6 分，当前 0.8×</div><span class='num'>1.6 分</span></div><div class='sig calm'><span class='tag'>创红比</span><div class='tx'>创业板指÷中证红利 <b>0.4972</b>，距 0.4 提示线还有 <b>+24.3%</b>（历史分位 52.8%，区间 0.3045–0.8647）</div><span class='num'>0.4972</span></div><div class='sig calm'><span class='tag'>月线锚</span><div class='tx'>中证红利 5,398.82：vs 40 月线 -0.16%、vs 90 月线 +7.00%，两条提示线（-8% / -10%）都未触及</div><span class='num'>+7.0%</span></div></div><div class='sigrule'>阈值口径：A 倍数变化 ≥0.15 即报　·　B 距档位边界 ≤2 分　·　C 分数 ≤28 或 ≥82　·　D 连续 3 期 ≤28 分　·　E 创红比 ≤0.4（≤0.35 加重）/ ≥0.75　·　F 红利 vs 90 月线 ≤-10% 或 ≥+40% / vs 40 月线 ≤-8%　·　提示只描述「现在处在哪个位置」，不构成买卖指令，也不改变上面的倍数</div>
@@ -742,6 +755,63 @@ function dayLabel(d, now){
   if(diff === 0) return '今天 ';
   if(diff === 1) return '明天 ';
   return ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()] + ' ';
+}
+
+/* ---------- 美股市场情绪：每分钟直连 CNN 检查 ----------
+   CNN 的接口带 Access-Control-Allow-Origin: *，浏览器能直接 fetch（实测 19ms，gzip 后 29KB）。
+   但这个指数本身是**日频**（美东收盘后更新一次），所以多数时候数字不会变 ——
+   每分钟轮询的意义是「它一更新页面就反映」，而不是「数字每分钟在跳」。
+   失败一律静默降级：继续显示服务端渲染的跑批快照，不弹错、不影响别的区块。 */
+function applyMood(score){
+  const m = P.latest && P.latest.mood;
+  if(!m || !m.zones || m.zones.length < 5) return false;
+  let zone = null;
+  for(let i = 0; i < m.zones.length; i++){
+    if(m.zones[i][0] <= score && score <= m.zones[i][1]){ zone = m.zones[i]; break; }
+  }
+  if(!zone) return false;
+
+  const sc = document.getElementById('mood-sc');
+  const lb = document.getElementById('mood-lb');
+  const pin = document.getElementById('mood-pin');
+  if(!sc || !lb || !pin) return false;
+
+  sc.textContent = score.toFixed(1);
+  sc.style.color = zone[3];
+  lb.textContent = zone[2];
+  lb.style.color = zone[3];
+  pin.style.left = (Math.max(0, Math.min(100, score)) / 101 * 100).toFixed(2) + '%';
+  const pinTxt = pin.querySelector('span');
+  if(pinTxt) pinTxt.textContent = Math.round(score);
+
+  const lis = document.querySelectorAll('#mood-zl li');
+  for(let j = 0; j < lis.length; j++){
+    if(+lis[j].getAttribute('data-lo') === zone[0]) lis[j].classList.add('on');
+    else lis[j].classList.remove('on');
+  }
+  return true;
+}
+
+function refreshMood(){
+  if(document.hidden) return;
+  if(!document.getElementById('mood-sc')) return;      // 本期没这块，不白拉
+  const at = document.getElementById('mood-at');
+  fetch('https://production.dataviz.cnn.io/index/fearandgreed/graphdata',
+        {mode:'cors', cache:'no-store'})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(j){
+      const fg = (j && j.fear_and_greed) || {};
+      if(fg.score == null || !applyMood(+fg.score)) return;
+      if(at){
+        const d = new Date();
+        at.textContent = '直连 CNN 刷新 ' + hhmm(d) + ':' + ('0' + d.getSeconds()).slice(-2);
+        at.className = 'at';
+      }
+    })
+    .catch(function(){
+      // 跨域被拦 / 网络抖动 / CNN 改接口 → 静默，页面上继续用跑批快照
+      if(at){ at.textContent = '直连 CNN 暂不可用，显示跑批快照'; at.className = 'at idle'; }
+    });
 }
 
 function render(){
@@ -1084,8 +1154,11 @@ loadLive();
 // 每 60 秒拉一次实时价。页面在后台时跳过 —— 移动端浏览器会把后台定时器节流到几分钟一次，
 // 与其那样半死不活地拉，不如不拉；切回前台时立刻补一次，不用干等下一个整分钟。
 setInterval(function(){ if(!document.hidden) loadLive(); }, 60000);
+// 市场情绪也每分钟直连 CNN。首次延迟 12 秒，别和首屏的几个请求抢带宽。
+setTimeout(function(){ if(!document.hidden) refreshMood(); }, 12000);
+setInterval(function(){ if(!document.hidden) refreshMood(); }, 60000);
 document.addEventListener('visibilitychange', function(){
-  if(!document.hidden) loadLive();
+  if(!document.hidden){ loadLive(); refreshMood(); }
 });
 
 /* 页面是静态的：跑批在后台更新了 docs/data.json，但已经打开的页面还停在旧快照上。
