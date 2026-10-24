@@ -60,6 +60,17 @@ body{
 .hd .meta .nw{white-space:nowrap}
 .hd .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--gold);
   margin-right:6px;vertical-align:1px;box-shadow:0 0 0 3px rgba(156,120,47,.14)}
+/* 页面开着不动时，后台跑批已经出新数据了 —— 这个条负责告诉用户，并给一个刷新按钮。
+   只在 http(s) 下检测（file:// 的 fetch 会被同源策略拦掉）。 */
+.newbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 0;
+  padding:10px 14px;border-radius:8px;border:1px solid rgba(47,125,84,.32);
+  background:rgba(47,125,84,.07);font-size:12px;color:#2b5443;letter-spacing:.02em}
+.newbar[hidden]{display:none}
+.newbar b{font-weight:600;color:#1f4536}
+.newbar button{font-family:inherit;font-size:11.5px;letter-spacing:.04em;padding:5px 13px;
+  border-radius:16px;border:1px solid rgba(47,125,84,.45);background:var(--card-a);color:#2b5443;
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+.newbar button:hover{background:rgba(47,125,84,.08)}
 
 /* ---------- 结论条 ---------- */
 .hero{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:1px;background:var(--line);
@@ -216,7 +227,9 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .live .ch.mid{color:var(--dim2)}
 .live .stamp{flex:1 1 100%;background:linear-gradient(180deg,var(--card-a),var(--card-b));
   padding:7px 14px 8px;font-size:10px;color:var(--dim2);letter-spacing:.03em;
-  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  display:flex;justify-content:space-between;gap:3px 14px;flex-wrap:wrap}
+/* 三段说明各占一行：默认 flex 会把前两段排在一行左右分开，读起来像两个不相干的东西 */
+.live .stamp>span{flex:1 1 100%}
 .live .stamp b{color:#14161b;font-weight:500}
 
 /* ---------- 图表 ---------- */
@@ -798,11 +811,12 @@ function renderLive(){
       (pct==null||isNaN(pct)?'':'<span class="ch '+qcls(pct)+'">'+
         (pct>0?'+':'')+pct.toFixed(2)+'%</span>')+'</div></div>');
   });
-  // MSCI 全球医疗没有公开实时源：显示最近收盘价，明确标「收盘」，不冒充实时
+  // MSCI 全球医疗没有公开实时源：显示官方 EOD 收盘价，明确标「收盘」不冒充实时。
+  // 更新时机写在下面的 stamp 里 —— 否则那个日期看起来像永远卡住不动。
   const h=(P.latest.assets||[]).filter(function(a){ return /医疗/.test(a.name); })[0];
   if(h&&h.price!=null){
     const md=String(h.price_date||'').slice(5);
-    cells.push('<div class="cell"><div class="nm">MSCI 全球医疗<i>收盘'+(md?' '+md:'')+'</i></div>'+
+    cells.push('<div class="cell"><div class="nm">MSCI 全球医疗<i>EOD'+(md?' '+md:'')+'</i></div>'+
       '<div class="px">'+fmtPx(h.price)+'</div></div>');
   }
   if(!cells.length){ box.style.display='none'; return; }
@@ -811,12 +825,14 @@ function renderLive(){
   const nw = new Date();
   const at = ('0'+nw.getHours()).slice(-2)+':'+('0'+nw.getMinutes()).slice(-2)+
              ':'+('0'+nw.getSeconds()).slice(-2);
-  const perDay = (P.schedule && P.schedule.tods) ? P.schedule.tods.length : 4;
+  const perDay = (P.schedule && P.schedule.tods) ? P.schedule.tods.length : 6;
   box.innerHTML = cells.join('')+
-    '<div class="stamp"><span>行情时间 <b>'+(stamp?esc(stamp):'—')+
-    '</b> · 浏览器直连腾讯行情，每 60 秒刷新（本次 '+at+'）</span>'+
-    '<span><b>实时价只用来感受当下位置，不参与打分</b>；分数与倍数按已收盘数据算，每交易日 '+
-    perDay+' 次</span></div>';
+    '<div class="stamp">'+
+    '<span>行情时间 <b>'+(stamp?esc(stamp):'—')+
+    '</b> · 腾讯行情每 60 秒刷新（本次 '+at+'）</span>'+
+    '<span>MSCI 全球医疗无实时源，用官方 <b>EOD 收盘</b>；每交易日 06:37 / 08:07 跑批时更新</span>'+
+    '<span><b>实时价不参与打分</b>；分数、卡片收盘价、各类曲线每交易日 '+
+    perDay+' 次整体重算</span></div>';
 }
 function loadLive(){
   const s=document.createElement('script');
@@ -855,6 +871,28 @@ setInterval(function(){ if(!document.hidden) loadLive(); }, 60000);
 document.addEventListener('visibilitychange', function(){
   if(!document.hidden) loadLive();
 });
+
+/* 页面是静态的：跑批在后台更新了 docs/data.json，但已经打开的页面还停在旧快照上。
+   这里每 3 分钟探一次 data.json 的 generated_at_ts，比自己瞎猜"多久该刷新"可靠。
+   file:// 下 fetch 会被同源策略拒绝，直接跳过（本地预览不需要这个提示）。 */
+function checkNewer(){
+  if(!/^https?:$/.test(location.protocol)) return;
+  const cur = P.latest && P.latest.generated_at_ts;
+  if(!cur) return;
+  fetch('data.json?t=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      const t = j && j.latest && j.latest.generated_at_ts;
+      if(t && t > cur + 60){                       // 60 秒容差，避免同一次构建的抖动误报
+        document.getElementById('newat').textContent = String(j.latest.generated_at||'').slice(11,16);
+        document.getElementById('curat').textContent = String(P.latest.generated_at||'').slice(11,16);
+        document.getElementById('newbar').hidden = false;
+      }
+    })
+    .catch(function(){ /* 网络抖动/跨域失败都当没发生，不打扰用户 */ });
+}
+if(!document.hidden) setTimeout(checkNewer, 20000);   // 打开 20 秒后先探一次
+setInterval(function(){ if(!document.hidden) checkNewer(); }, 180000);
 
 // 横竖屏切换 / 窗口缩放时重画分数图（窄屏和宽屏用不同画布尺寸）
 let _rz = null;
@@ -1455,6 +1493,11 @@ def render(payload):
 <div class="hd">
   <div class="brand"><h1>定投台</h1><span class="en">DCA Dashboard</span></div>
   <div class="meta" id="meta"></div>
+</div>
+
+<div class="newbar" id="newbar" hidden>
+  <span>后台已更新到 <b id="newat">—</b> 的版本，你正在看的是 <b id="curat">—</b> 的快照</span>
+  <button type="button" onclick="location.reload()">加载新数据</button>
 </div>
 
 <div class="hero" id="hero"></div>
