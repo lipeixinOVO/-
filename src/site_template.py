@@ -8,6 +8,7 @@ GitHub Pages 是静态托管，引外部图表库一旦被墙整页白屏，手�
 视觉：纯黑底 + 香槟金点缀，细发丝描边，无圆角堆叠，走「高级感」路线。
 """
 import json
+import re
 
 # ---------------------------------------------------------------- 样式
 
@@ -1222,6 +1223,38 @@ def _pct_txt(v):
     return (f"{v:+.0f}%" if abs(v - round(v)) < 0.01 else f"{v:+.1f}%")
 
 
+def _tw(s, fs):
+    """粗略算一段文字有多宽（CJK/全角按 1em，ASCII 按 0.55em）。
+
+    SVG 里量不到真实字宽（服务端渲染，没有 measureText），但这里只需要
+    「给右侧留白留多少」这一个数，估得偏大一点反而安全（留白多点不会溢出）。
+    """
+    return sum(1.0 if ord(ch) > 0x2E80 else 0.55 for ch in str(s)) * fs
+
+
+def _chart_name(name):
+    """末值标签用的名字：去掉括号里的补充说明。
+
+    「黄金（COMEX 主力连续）」→「黄金」。右侧留白是按最长那个名字算的，
+    留着一个 12 字的括号尾巴会把绘图区挤掉 1/10 的宽度。
+    """
+    s = re.sub(r"[（(][^）)]*[）)]", "", str(name))
+    return " ".join(s.split()) or str(name)
+
+
+def _ellip(s, fs, maxw):
+    """名字超出可用宽度就截断加省略号 —— 宁可少两个字，也不能顶出 viewBox 被裁掉。"""
+    s = str(s)
+    if _tw(s, fs) <= maxw:
+        return s
+    out = ""
+    for ch in s:
+        if _tw(out + ch, fs) > maxw - _tw("…", fs):
+            break
+        out += ch
+    return (out or s[:1]) + "…"
+
+
 def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     """近一月累计涨跌对比图。**横轴按真实日期铺，不按数据点索引**。
 
@@ -1259,7 +1292,25 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     ticks = _nice_ticks(vmin - pad, vmax + pad, 4)
     vmin, vmax = min(ticks[0], vmin - pad), max(ticks[-1], vmax + pad)
 
-    PL, PR, PT, PB = 50, 54, 18, 26
+    # 右侧留白不再写死 54：末值标签现在要带指数名，按最长的那个名字算，
+    # 否则「MSCI 全球医疗保健指数 +6.02%」会直接跑出画布被裁掉。
+    # 窄画布（430 单位）一行放不下「名称 +x%」，改成名称在上、百分比在下两行。
+    stack = w < 600
+    nfs, pfs = fs, fs + 1            # 名称字号 / 百分比字号（百分比大一号、加粗）
+    pctw = _tw("-88.88%", pfs)       # 按最宽的百分比 "-88.88%" 算，别按本期的实际值算
+    room = max(54.0, w * 0.34)       # 右侧留白上限：再宽就把绘图区挤没了
+    # 名字可用宽度 = 留白上限 − 线端点左偏 7 − 间距 −（一行模式还要减掉百分比）
+    namecap = room - 12 - (0 if stack else 7 + 4 + pctw)
+    names = [_ellip(_chart_name(n), nfs, namecap) for n, _m, _c, _p in ser]
+    need = 0.0
+    for nm in names:
+        if stack:
+            need = max(need, _tw(nm, nfs), pctw)
+        else:
+            need = max(need, 7 + _tw(nm, nfs) + 4 + pctw)
+    # +12 = 标签相对线端点的左偏 7 加上安全余量，少了这几个单位字就顶出 viewBox
+    PR = min(max(54.0, need + 12), room)
+    PL, PT, PB = (40 if stack else 50), 18, 26
     X = lambda d: PL + (w - PL - PR) * ((d - d0).days / span)
     Y = lambda v: PT + (h - PT - PB) * (1 - (v - vmin) / (vmax - vmin))
 
@@ -1300,21 +1351,44 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
 
     # 末值标签单独一轮画：两条线末端靠得近时会糊成一坨（本期纳指综合 -4.10% 与
     # 纳指100 -5.00% 只差 0.9 个点 ≈ 13px），先按 y 排序再逐个压开最小间距。
-    ends = sorted((Y(pts[-1][1]), pts[-1][1], col, X(pts[-1][0])) for _, _, col, pts in ser)
-    gap = fs * 1.62
-    fixed = []
-    for y, lv, col, xx in ends:
-        if fixed and y - fixed[-1][0] < gap:
-            y = fixed[-1][0] + gap
-        fixed.append((y, lv, col, xx))
-    over = (fixed[-1][0] + fs * 0.35) - (h - PB + fs)
+    # 标签带指数名（原来是光秃秃的 +6.02%，读者对不上是哪条线）。
+    ends = sorted((Y(pts[-1][1]), pts[-1][1], col, X(pts[-1][0]), nm)
+                  for (_n, _m, col, pts), nm in zip(ser, names))
+    bh = (nfs * 1.16 + pfs * 1.16) if stack else pfs * 1.25   # 单个标签块的高度
+    # 两行模式下块与块之间要多留一截：名字和它自己的百分比贴紧、跟邻居拉开，
+    # 否则「上一块的数字」看着像「下一块的名字」——正是这次要修的那个毛病。
+    gap = bh * (1.5 if stack else 1.16)
+    fixed, prev = [], None
+    for y, lv, col, xx, nm in ends:
+        if prev is not None and y - prev < gap:
+            y = prev + gap
+        fixed.append((y, lv, col, xx, nm))
+        prev = y
+    over = (fixed[-1][0] + bh / 2) - (h - PB + fs * 0.55)
     if over > 0:                     # 推到底边外就整组上移
-        fixed = [(y - over, lv, col, xx) for y, lv, col, xx in fixed]
-    for y, lv, col, xx in fixed:
-        o.append(f'<text x="{xx + 7:.1f}" y="{y + fs * 0.35:.1f}" fill="{col}" '
-                 f'font-size="{fs + 1}" font-weight="600" text-anchor="start" '
-                 'paint-order="stroke fill" stroke="#fff" stroke-width="3" '
-                 f'stroke-linejoin="round">{lv:+.2f}%</text>')
+        fixed = [(y - over, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
+    top = (fixed[0][0] - bh / 2) - 2
+    if top < 0:                      # 上移过头顶到画布外，再整组压回来
+        fixed = [(y - top, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
+    for y, lv, col, xx, nm in fixed:
+        if stack:
+            o.append(f'<text x="{xx + 7:.1f}" y="{y - bh / 2 + nfs * 0.95:.1f}" '
+                     f'fill="{col}" fill-opacity=".78" font-size="{nfs}" '
+                     'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
+                     f'stroke-width="2.6" stroke-linejoin="round">{_esc(nm)}</text>')
+            o.append(f'<text x="{xx + 7:.1f}" y="{y + bh / 2 - pfs * 0.22:.1f}" '
+                     f'fill="{col}" font-size="{pfs}" font-weight="600" '
+                     'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
+                     f'stroke-width="3" stroke-linejoin="round">{lv:+.2f}%</text>')
+        else:
+            # 名称与百分比放同一个 <text> 里（两个 tspan）：位置交给排版引擎算，
+            # 不用自己估字宽去摆第二个 —— 估错了两个就叠在一起了。
+            o.append(f'<text x="{xx + 7:.1f}" y="{y + fs * 0.35:.1f}" '
+                     'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
+                     f'stroke-width="3" stroke-linejoin="round">'
+                     f'<tspan fill="{col}" fill-opacity=".78" font-size="{nfs}">{_esc(nm)}</tspan>'
+                     f'<tspan dx="4" fill="{col}" font-size="{pfs}" '
+                     f'font-weight="600">{lv:+.2f}%</tspan></text>')
 
     # 横轴：首尾必标，中间按自然日等分（不按数据点等分）
     xl = [(d0, d0.strftime("%m-%d")), (d1, d1.strftime("%m-%d"))]
@@ -1355,7 +1429,8 @@ def _month_html(latest):
         items.append((a["name"], a["month"], col))
 
     wide = _month_svg(items, w=1060, h=310, fs=10, maxx=6)
-    narrow = _month_svg(items, w=430, h=290, fs=11, maxx=3)
+    # 窄画布抬高一点：末值标签改成两行（名称在上、百分比在下），5 个标的要竖着排开
+    narrow = _month_svg(items, w=430, h=330, fs=11, maxx=3)
     if not wide:
         return ""
 
