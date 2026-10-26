@@ -896,7 +896,7 @@ function renderChart(){
   labs.sort(function(a,b){ return a.y0 - b.y0; });
   const bh = stack ? (nfs*1.16 + pfs*1.16) : pfs*1.25;   // 单个标签块的高度
   // 两行模式下块间距放大到 1.5 倍块高：名字和自己的分数贴紧、跟邻居拉开
-  const lgap = bh * (stack ? 1.5 : 1.16);
+  const lgap = bh * (stack ? 1.5 : 1.32);
   let pre = null;
   labs.forEach(function(L){
     if(pre != null && L.y - pre < lgap) L.y = pre + lgap;
@@ -1443,7 +1443,8 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     bh = (nfs * 1.16 + pfs * 1.16) if stack else pfs * 1.25   # 单个标签块的高度
     # 两行模式下块与块之间要多留一截：名字和它自己的百分比贴紧、跟邻居拉开，
     # 否则「上一块的数字」看着像「下一块的名字」——正是这次要修的那个毛病。
-    gap = bh * (1.5 if stack else 1.16)
+    # 一行模式给 1.32 倍：相邻两块的数字常只差 1 分多（45.8 / 44.6），1.16 倍贴得太死。
+    gap = bh * (1.5 if stack else 1.32)
     fixed, prev = [], None
     for y, lv, col, xx, nm in ends:
         if prev is not None and y - prev < gap:

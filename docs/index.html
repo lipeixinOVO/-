@@ -1061,7 +1061,7 @@ function renderChart(){
   labs.sort(function(a,b){ return a.y0 - b.y0; });
   const bh = stack ? (nfs*1.16 + pfs*1.16) : pfs*1.25;   // 单个标签块的高度
   // 两行模式下块间距放大到 1.5 倍块高：名字和自己的分数贴紧、跟邻居拉开
-  const lgap = bh * (stack ? 1.5 : 1.16);
+  const lgap = bh * (stack ? 1.5 : 1.32);
   let pre = null;
   labs.forEach(function(L){
     if(pre != null && L.y - pre < lgap) L.y = pre + lgap;
