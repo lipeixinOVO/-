@@ -16,12 +16,13 @@ Chrome headless 的 --screenshot 只拍视口，页面很长时抓不到下半�
 """
 import json
 import os
-import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+sys.path.insert(0, HERE)
+
+import _chrome  # noqa: E402  （必须在 sys.path 注入之后）
 
 
 def shot(out, sel, w, h, query=""):
@@ -49,17 +50,15 @@ document.getElementById('f').onload = function(){
         f.write(html)
     dst = os.path.join(ROOT, out)
     os.makedirs(os.path.dirname(dst) or ROOT, exist_ok=True)
-    cmd = [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-           # file:// 下每个文件都是独立 origin，父页拿不到 iframe.contentDocument ——
-           # 上面那段定位脚本会静默失效，截出来永远是页首。这两个开关必加。
-           "--allow-file-access-from-files",
-           "--disable-web-security",
-           "--force-device-scale-factor=2", "--window-size=%d,%d" % (w, h),
-           "--virtual-time-budget=4000",
-           "--user-data-dir=" + os.path.join(ROOT, "_shot_profile"),
-           "--screenshot=" + dst,
-           "file:///" + wrap.replace("\\", "/")]
-    subprocess.run(cmd, check=False, capture_output=True)
+    _chrome.run([
+        # file:// 下每个文件都是独立 origin，父页拿不到 iframe.contentDocument ——
+        # 上面那段定位脚本会静默失效，截出来永远是页首。这两个开关必加。
+        "--allow-file-access-from-files",
+        "--disable-web-security",
+        "--force-device-scale-factor=2", "--window-size=%d,%d" % (w, h),
+        "--virtual-time-budget=4000",
+        "--screenshot=" + dst,
+        "file:///" + wrap.replace("\\", "/")])
     print(out, os.path.getsize(dst) if os.path.exists(dst) else "MISSING")
 
 

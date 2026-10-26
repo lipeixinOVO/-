@@ -4,9 +4,26 @@
 用 Git Data API 做**单次提交**：blobs → tree → commit → 更新 ref，
 比逐个文件 Contents API 快一个数量级（1 次 commit 而不是 N 次）。
 
+两个曾经造成事故的点，改之前先读：
+
+1. **tree 必须带 base_tree**。不带就是「用这份 tree 完全替换仓库」，
+   远端不在本次清单里的文件会被**删除**。2026-10-26 就这么把云端跑批累积的
+   data/out/*.json 每日快照清空了（远端只剩 latest.json），分数历史图直接断档。
+
+2. **docs/ 是跑批产物，默认不推**。data.json / index.html 由 Actions 每次跑批
+   重新生成并提交；本地这份是上次手工 build 的，一旦推上去就把线上数据回退。
+   2026-10-26 就是这样把 10-26 的最新数据覆盖成 10-24 的旧数据，
+   页面上「创业板指÷中证红利」「二十二年两条线」全部退回 10-23。
+
+   改完源码（src/、tools/）后正确姿势是：推代码 → 触发一次 workflow_dispatch，
+   让云端用最新数据重新渲染。要本地渲染预览用 --site。
+
 用法：
-    python push_github.py            # 建仓库（若不存在）+ 推送
-    python push_github.py --dry      # 只列要推的文件
+    python push_github.py                  # 建仓库（若不存在）+ 推源码
+    python push_github.py -m "说明"        # 自定义提交信息
+    python push_github.py --dry            # 只列要推的文件
+    python push_github.py --site           # 连 docs/ 一起推（离线预览用，慎用）
+    python push_github.py --with-data      # 连 data/out 每日快照一起推（恢复历史用）
 """
 import base64
 import json
@@ -45,7 +62,7 @@ H = {"Authorization": f"Bearer {token()}", "Accept": "application/vnd.github+jso
      "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "workbuddy-sync"}
 
 
-def collect():
+def collect(include_site=False, include_data=False):
     out = []
     for p in sorted(LOCAL.rglob("*")):
         if p.is_dir():
@@ -57,9 +74,14 @@ def collect():
         # 前缀匹配截图/调试目录（_shot_profile2、_shots、_peek…）
         if any(part.startswith(SKIP_DIR_PREFIX) for part in rel.parts):
             continue
-        # data/out 只留 latest 与 report，其余每日快照不进仓库
-        if rel.parts[:2] == ("data", "out") and p.name not in ("latest.json", "report.md"):
+        # docs/ 整体是跑批产物（index.html / data.json / report.md），云端生成。
+        # 推本地这份 = 用陈旧数据覆盖线上，务必只在明确要离线预览时加 --site。
+        if rel.parts[:1] == ("docs",) and not include_site:
             continue
+        # data/out 只留 latest 与 report，其余每日快照默认不推（云端累积）
+        if rel.parts[:2] == ("data", "out") and p.name not in ("latest.json", "report.md"):
+            if not include_data:
+                continue
         if p.suffix in (".pyc", ".log"):
             continue
         out.append((rel.as_posix(), p))
@@ -132,10 +154,25 @@ def enable_pages():
               f"Source 选 Deploy from a branch，Branch 选 main / docs（个人 token 与 GITHUB_TOKEN 都无权建站）")
 
 
-def main(dry=False):
-    files = collect()
+def head_tree(commit_sha):
+    """取 HEAD commit 的 tree sha，作为新建 tree 的 base_tree。
+
+    少了这个字段，Git Data API 会把「本次给的 tree」当成仓库的全部内容，
+    远端其余文件一律删除 —— 不是「只改我推的这几个」。
+    """
+    r = requests.get(f"{API}/repos/{OWNER}/{REPO}/git/commits/{commit_sha}",
+                     headers=H, timeout=30)
+    if r.status_code != 200:
+        raise RuntimeError(f"取 commit 失败 {r.status_code}: {r.text[:200]}")
+    return r.json()["tree"]["sha"]
+
+
+def main(dry=False, include_site=False, include_data=False, message=None):
+    files = collect(include_site, include_data)
     total = sum(p.stat().st_size for _, p in files)
     print(f"待推 {len(files)} 个文件，共 {total/1024:.0f} KB")
+    if not include_site:
+        print("（docs/ 不推：那是跑批产物，改了 src/ 就触发一次 workflow_dispatch 让云端重渲染）")
     if dry:
         for rel, p in files:
             print(f"  {rel}  ({p.stat().st_size/1024:.1f} KB)")
@@ -143,7 +180,8 @@ def main(dry=False):
 
     ensure_repo()
     head = get_head_sha()
-    print(f"当前 HEAD: {head[:8]}")
+    base = head_tree(head)
+    print(f"当前 HEAD: {head[:8]}  base_tree: {base[:8]}")
 
     tree = []
     for i, (rel, p) in enumerate(files, 1):
@@ -152,12 +190,14 @@ def main(dry=False):
         print(f"  [{i}/{len(files)}] {rel}", flush=True)
 
     r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/trees", headers=H, timeout=60,
-                      json={"tree": tree})
+                      json={"tree": tree, "base_tree": base})
     r.raise_for_status()
     tree_sha = r.json()["sha"]
 
+    import time as _t
+    msg = message or f"chore: 同步源码 {_t.strftime('%Y-%m-%d %H:%M')}"
     r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/commits", headers=H, timeout=60, json={
-        "message": "feat: 定投台上线（指数口径评分 + 历史回填 + 每日 Action）",
+        "message": msg,
         "tree": tree_sha,
         "parents": [head],
     })
@@ -174,4 +214,14 @@ def main(dry=False):
 
 
 if __name__ == "__main__":
-    main(dry="--dry" in sys.argv)
+    argv = sys.argv[1:]
+    msg = None
+    if "-m" in argv:
+        i = argv.index("-m")
+        if i + 1 < len(argv):
+            msg = argv[i + 1]
+            argv = argv[:i] + argv[i + 2:]
+    main(dry="--dry" in argv,
+         include_site="--site" in argv,
+         include_data="--with-data" in argv,
+         message=msg)

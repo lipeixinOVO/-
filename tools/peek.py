@@ -13,12 +13,14 @@
 """
 import os
 import re
-import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+sys.path.insert(0, HERE)
+
+import _chrome  # noqa: E402  （必须在 sys.path 注入之后）
+
 DIV = re.compile(r"<(/?)div\b", re.I)
 
 
@@ -57,13 +59,11 @@ def peek(out, cls, w, h=3000, pad=20):
         f.write(page)
     dst = os.path.join(ROOT, out)
     os.makedirs(os.path.dirname(dst) or ROOT, exist_ok=True)
-    cmd = [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-           "--force-device-scale-factor=2", "--window-size=%d,%d" % (w, h),
-           "--virtual-time-budget=3000",
-           "--user-data-dir=" + os.path.join(ROOT, "_shot_profile"),
-           "--screenshot=" + dst,
-           "file:///" + tmp.replace("\\", "/")]
-    subprocess.run(cmd, check=False, capture_output=True)
+    _chrome.run([
+        "--force-device-scale-factor=2", "--window-size=%d,%d" % (w, h),
+        "--virtual-time-budget=3000",
+        "--screenshot=" + dst,
+        "file:///" + tmp.replace("\\", "/")])
     print(out, os.path.getsize(dst) if os.path.exists(dst) else "MISSING")
 
 
