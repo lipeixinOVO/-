@@ -116,6 +116,23 @@ for a in assets:
 
 if 'class="chart mchart"' not in h:
     warn("页面上没有近一月对比图（标的轨迹不足两条时会自动隐藏）")
+else:
+    # 末值标签必须带指数名（光秃秃的 +6.02% 只能靠颜色猜是哪条线）。
+    # 一条线一个标签：名称 tspan（fill-opacity=.78）+ 百分比 tspan（dx=4）。
+    n_lab = len(re.findall(r'<tspan fill="[^"]+" fill-opacity="\.78"[^>]*>[^<]*</tspan>'
+                           r'<tspan dx="4"', h))
+    n_ser = len(re.findall(r'class="chart mchart"', h))
+    if n_lab < 2 and n_ser:
+        bad(f"近一月图末值标签没带上指数名（只找到 {n_lab} 个带名字的标签）")
+    # 名字被截断成「…」说明右侧留白算小了，字会顶到画布边缘
+    for t in re.findall(r'<tspan fill="[^"]+" fill-opacity="\.78"[^>]*>([^<]*)</tspan>', h):
+        if t.endswith("…"):
+            warn(f"近一月图末值标签的名字被截断：{t}")
+
+# ---------- 4b2. 分数历史图（前端 JS 画，只能检查代码还在） ----------
+for frag in ("labName", "xEnd+7", "stroke-opacity=\".45\""):
+    if frag not in h:
+        bad(f"分数历史图的末值标签逻辑缺失：找不到 {frag}")
 
 # ---------- 4c. 跑批时刻表（决定页头显示「下次自动更新」） ----------
 sch = data.get("schedule")

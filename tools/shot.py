@@ -24,24 +24,27 @@ ROOT = os.path.dirname(HERE)
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 
-def shot(out, sel, w, h):
+def shot(out, sel, w, h, query=""):
     w, h = int(w), int(h)
     wrap = os.path.join(ROOT, "_shot_wrap.html")
     html = """<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>html,body{margin:0;padding:0;background:#f7f5f1;overflow:hidden}
 #vp{width:%dpx;height:%dpx;overflow:hidden;position:relative}
 #f{border:0;display:block;width:%dpx;height:%dpx}</style></head><body>
-<div id="vp"><iframe id="f" src="docs/index.html" scrolling="no"></iframe></div>
+<div id="vp"><iframe id="f" src="docs/index.html%s" scrolling="no"></iframe></div>
 <script>
 document.getElementById('f').onload = function(){
   var doc = this.contentDocument;
   var el = doc.querySelector(%s);
   if(!el) return;
+  // 先把 iframe 拉到整页高度再量位置：原来高度写死成视口的 4 倍，
+  // 目标区块在页面更下方时（分数历史图在 y≈2600）会定位到 iframe 之外，拍出一张纯背景色。
+  this.style.height = (doc.documentElement.scrollHeight + 40) + 'px';
   var y = el.getBoundingClientRect().top + (this.contentWindow.scrollY || 0);
   this.style.marginTop = (-Math.max(0, y - 8)) + 'px';
 };
 </script>
-</body></html>""" % (w, h, w, h * 4, json.dumps(sel))
+</body></html>""" % (w, h, w, h * 4, query, json.dumps(sel))
     with open(wrap, "w", encoding="utf-8") as f:
         f.write(html)
     dst = os.path.join(ROOT, out)
@@ -62,5 +65,6 @@ document.getElementById('f').onload = function(){
 
 if __name__ == "__main__":
     if len(sys.argv) < 5:
-        raise SystemExit("用法：python tools/shot.py <输出png> <#锚点> <宽> <高>")
-    shot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        raise SystemExit("用法：python tools/shot.py <输出png> <CSS选择器> <宽> <高> [?查询串]")
+    shot(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4],
+         sys.argv[5] if len(sys.argv) > 5 else "")

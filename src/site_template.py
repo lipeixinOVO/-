@@ -480,6 +480,30 @@ function fmtPx(v){ if(v==null) return '—';
                           : v.toFixed(4); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+/* 文字宽度粗估（CJK 1em / ASCII 0.55em）。分数历史图是前端画的，只能在浏览器里算；
+   只用来决定「右侧留白留多少」「名字要不要截断」，估大一点安全（留白多点不会溢出）。 */
+function tw(s, fs){
+  s = String(s==null?'':s);
+  var w = 0;
+  for(var i=0;i<s.length;i++){ w += s.charCodeAt(i) > 0x2E80 ? 1 : 0.55; }
+  return w * fs;
+}
+/* 图上标签用的名字：去掉括号里的补充说明（黄金（COMEX 主力连续）→ 黄金）。 */
+function cname(s){
+  var t = String(s==null?'':s).replace(/[（(][^）)]*[）)]/g, '').replace(/ +/g, ' ').trim();
+  return t || String(s==null?'':s);
+}
+/* 名字超出可用宽度就截断加省略号 —— 宁可少两个字，也不能顶出 viewBox 被裁掉。 */
+function ellip(s, fs, maxw){
+  s = String(s==null?'':s);
+  if(tw(s, fs) <= maxw) return s;
+  var out = '';
+  for(var i=0;i<s.length;i++){
+    if(tw(out + s.charAt(i), fs) > maxw - tw('…', fs)) break;
+    out += s.charAt(i);
+  }
+  return (out || s.charAt(0)) + '…';
+}
 function multCls(m){ return m>1.02?'up':(m<0.98?'down':'base'); }
 function stCls(s){ s=s||'';
   if(s.indexOf('暂停')>=0) return 'no';
@@ -787,11 +811,24 @@ function renderChart(){
   // 手机上按窄视口重设画布：viewBox 宽 1100 缩到 375px 会把线和字一起压成 1/3，
   // 这也是「手机上图太浅」的真正原因，不只是配色淡。
   const narrow = (window.innerWidth || 1200) < 640;
-  const W = narrow ? 430 : 1100, H = narrow ? 340 : 330;
-  const PL = narrow ? 26 : 40, PR = narrow ? 10 : 16, PT = narrow ? 16 : 22,
-        PB = narrow ? 26 : 30;
+  const W = narrow ? 430 : 1100, H = narrow ? 350 : 330;
+  const PL = narrow ? 26 : 40, PT = narrow ? 16 : 22, PB = narrow ? 26 : 30;
   // 五条线要能在手机上分开：金 / 近黑 / 靛蓝 / 墨绿 / 砖红，明度与色相都拉开
   const colors = ['#a8752a','#111827','#2f6fb0','#2f7d5e','#b4512f'];
+  // 曲线右端要标「指数名 + 当前分数」，右侧留白不能再写死 16（塞不下一个字）。
+  // 按最长的那个名字算，上限 0.34×画布宽；窄画布一行放不下就改两行（名称在上、分数在下）。
+  const stack = W < 600;
+  const nfs = 10, pfs = 11;
+  const pcap = tw('-88.8', pfs);
+  const room = Math.max(56, W * 0.34);
+  const namecap = room - 12 - (stack ? 0 : (7 + 4 + pcap));
+  const labName = ids.map(function(id){ return ellip(cname((S.names||{})[id]||id), nfs, namecap); });
+  let need = 0;
+  labName.forEach(function(nm){
+    need = Math.max(need, stack ? Math.max(tw(nm, nfs), pcap) : (7 + tw(nm, nfs) + 4 + pcap));
+  });
+  // +12 = 标签相对线端点的左偏 7 加上安全余量，少了这几个单位字就顶出 viewBox
+  const PR = Math.min(Math.max(56, need + 12), room);
   // 每条约曲线只取「窗口内的尾部」：某天某标的缺数据时不会把整条线整体左移
   const tail = function(id){
     const a = S.data[id]||[];
@@ -845,6 +882,55 @@ function renderChart(){
     svg += '<circle cx="'+x(n-1).toFixed(1)+'" cy="'+y(last.s).toFixed(1)+
       '" r="2.8" fill="'+colors[ci%colors.length]+'"/>';
   });
+  // 末值标签：指数名 + 当前分数，贴在各自曲线右端。
+  // 四条线经常收在 35–52 这十几分里（本期 45.8 / 44.6 只差 1.2 分），末端几乎重合，
+  // 所以按 y 排序后逐个压开最小间距；被压开的画一小段引线连回真实端点，
+  // 否则标签看着像标到了旁边那条线上 —— 这比不标更糟。
+  const labs = [];
+  ids.forEach(function(id,ci){
+    const pts = tail(id); if(!pts.length) return;
+    const last = pts[pts.length-1]; if(last.s==null) return;
+    labs.push({y0: y(last.s), y: y(last.s), v: last.s,
+               c: colors[ci%colors.length], nm: labName[ci]});
+  });
+  labs.sort(function(a,b){ return a.y0 - b.y0; });
+  const bh = stack ? (nfs*1.16 + pfs*1.16) : pfs*1.25;   // 单个标签块的高度
+  // 两行模式下块间距放大到 1.5 倍块高：名字和自己的分数贴紧、跟邻居拉开
+  const lgap = bh * (stack ? 1.5 : 1.16);
+  let pre = null;
+  labs.forEach(function(L){
+    if(pre != null && L.y - pre < lgap) L.y = pre + lgap;
+    pre = L.y;
+  });
+  if(labs.length){
+    const over = (labs[labs.length-1].y + bh/2) - (H - PB + 6);
+    if(over > 0) labs.forEach(function(L){ L.y -= over; });        // 推到底边外整组上移
+    const up = (labs[0].y - bh/2) - 2;
+    if(up < 0) labs.forEach(function(L){ L.y -= up; });            // 顶到画布外再压回来
+  }
+  const xEnd = x(n-1);
+  labs.forEach(function(L){
+    if(Math.abs(L.y - L.y0) > 0.6){
+      svg += '<path d="M'+(xEnd+2).toFixed(1)+' '+L.y0.toFixed(1)+'L'+(xEnd+6).toFixed(1)+' '+
+        L.y.toFixed(1)+'" fill="none" stroke="'+L.c+'" stroke-width="1" stroke-opacity=".45"/>';
+    }
+    if(stack){
+      svg += '<text x="'+(xEnd+7).toFixed(1)+'" y="'+(L.y-bh/2+nfs*0.95).toFixed(1)+'" '+
+        'fill="'+L.c+'" fill-opacity=".78" font-size="'+nfs+'" paint-order="stroke fill" '+
+        'stroke="#fff" stroke-width="2.6" stroke-linejoin="round">'+esc(L.nm)+'</text>';
+      svg += '<text x="'+(xEnd+7).toFixed(1)+'" y="'+(L.y+bh/2-pfs*0.22).toFixed(1)+'" '+
+        'fill="'+L.c+'" font-size="'+pfs+'" font-weight="600" paint-order="stroke fill" '+
+        'stroke="#fff" stroke-width="3" stroke-linejoin="round">'+L.v.toFixed(1)+'</text>';
+    }else{
+      // 名称与分数放同一个 <text> 的两个 <tspan>：位置交给排版引擎算，
+      // 自己估字宽去摆第二个 <text> 一旦估错两个就叠住了（dx 而不是空格，SVG 会吃首尾空白）
+      svg += '<text x="'+(xEnd+7).toFixed(1)+'" y="'+(L.y+pfs*0.35).toFixed(1)+'" '+
+        'paint-order="stroke fill" stroke="#fff" stroke-width="3" stroke-linejoin="round">'+
+        '<tspan fill="'+L.c+'" fill-opacity=".78" font-size="'+nfs+'">'+esc(L.nm)+'</tspan>'+
+        '<tspan dx="4" fill="'+L.c+'" font-size="'+pfs+'" font-weight="600">'+
+        L.v.toFixed(1)+'</tspan></text>';
+    }
+  });
   const hist = P.history;
   [0, Math.floor(n/2), n-1].forEach(function(i){
     const dd = (hist[off+i]||{}).trade_date||'';
@@ -857,7 +943,7 @@ function renderChart(){
     'color:var(--dim2);letter-spacing:.06em">';
   ids.forEach(function(id,ci){
     const pts = S.data[id]||[]; const lv = pts.length ? pts[pts.length-1].s : null;
-    // 末值放图例里而不是贴在曲线右端：四条线收在 35–52 区间，右端标数值必然叠在一起
+    // 图例仍然保留数字：它同时是配色对照表，滚到底部能一次看全四个分数
     leg += '<span style="display:inline-flex;align-items:center;gap:7px">'+
       '<i style="width:12px;height:2px;border-radius:2px;background:'+colors[ci%colors.length]+
       ';display:inline-block"></i>'+esc((S.names||{})[id]||id)+
@@ -1370,6 +1456,12 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     top = (fixed[0][0] - bh / 2) - 2
     if top < 0:                      # 上移过头顶到画布外，再整组压回来
         fixed = [(y - top, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
+    # 被压开的标签画一小段引线连回真实端点：不然标签看着像标到了旁边那条线上。
+    # ends 与 fixed 顺序一致（只按 y 排过一次，后面全是整体平移），可以 zip。
+    for (y0, _lv, col, xx, _nm), (y, _a, _b, _c, _d) in zip(ends, fixed):
+        if abs(y - y0) > 0.5:
+            o.append(f'<path d="M{xx + 2:.1f} {y0:.1f}L{xx + 6:.1f} {y:.1f}" fill="none" '
+                     f'stroke="{col}" stroke-width="1" stroke-opacity=".45"/>')
     for y, lv, col, xx, nm in fixed:
         if stack:
             o.append(f'<text x="{xx + 7:.1f}" y="{y - bh / 2 + nfs * 0.95:.1f}" '
