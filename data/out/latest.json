@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-26 21:44:59",
-  "generated_at_ts": 1793022299,
+  "generated_at": "2026-10-27 12:34:11",
+  "generated_at_ts": 1793075651,
   "generated_tz": "Asia/Shanghai",
-  "trade_date": "2026-10-23",
+  "trade_date": "2026-10-26",
   "base_amount": 1000,
   "scoring_basis": "index",
   "multiplier_table": [
@@ -48,151 +48,143 @@
       "name": "纳斯达克综合指数",
       "kind": "index_ref",
       "advisory_only": true,
-      "price": 25955.34,
-      "price_date": "2026-10-23",
+      "price": 26169.38,
+      "price_date": "2026-10-26",
       "month": {
-        "base_date": "2026-09-23",
-        "base": 26936.04,
-        "end_date": "2026-10-23",
-        "end": 25955.34,
-        "n": 23,
+        "base_date": "2026-09-28",
+        "base": 26820.38,
+        "end_date": "2026-10-26",
+        "end": 26169.38,
+        "n": 21,
         "pts": [
           [
-            "2026-09-23",
+            "2026-09-28",
             0.0
           ],
           [
-            "2026-09-24",
-            0.01
-          ],
-          [
-            "2026-09-25",
-            0.49
-          ],
-          [
-            "2026-09-28",
-            -0.43
-          ],
-          [
             "2026-09-29",
-            -0.51
+            -0.09
           ],
           [
             "2026-09-30",
-            -0.28
+            0.15
           ],
           [
             "2026-10-01",
-            -0.24
+            0.19
           ],
           [
             "2026-10-02",
-            0.95
+            1.38
           ],
           [
             "2026-10-05",
-            2.01
+            2.45
           ],
           [
             "2026-10-06",
-            2.46
+            2.91
           ],
           [
             "2026-10-07",
-            2.24
+            2.68
           ],
           [
             "2026-10-08",
-            0.96
+            1.39
           ],
           [
             "2026-10-09",
-            1.6
+            2.03
           ],
           [
             "2026-10-12",
-            1.15
+            1.59
           ],
           [
             "2026-10-13",
-            1.0
+            1.43
           ],
           [
             "2026-10-14",
-            -0.9
+            -0.48
           ],
           [
             "2026-10-15",
-            -0.83
+            -0.4
           ],
           [
             "2026-10-16",
-            -2.96
+            -2.54
           ],
           [
             "2026-10-19",
-            -1.88
+            -1.45
           ],
           [
             "2026-10-20",
-            -1.9
+            -1.47
           ],
           [
             "2026-10-21",
-            -0.87
+            -0.44
           ],
           [
             "2026-10-22",
-            -3.44
+            -3.03
           ],
           [
             "2026-10-23",
-            -3.64
+            -3.23
+          ],
+          [
+            "2026-10-26",
+            -2.43
           ]
         ],
-        "chg_month": -3.64,
-        "chg_week": -0.71,
-        "week_from": "2026-10-16",
+        "chg_month": -2.43,
+        "chg_week": -0.99,
+        "week_from": "2026-10-19",
         "week_n": 5,
-        "hi": 2.46,
-        "lo": -3.64
+        "hi": 2.91,
+        "lo": -3.23
       },
-      "score": 42.97,
+      "score": 41.95,
       "multiplier": 1.0,
       "label": "中性，基准",
-      "band_pos": 18.6,
+      "band_pos": 12.2,
       "completeness": 1.0,
       "suggest_amount": null,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 44.63,
+          "score": 43.52,
           "anchor": "纳斯达克综合指数自身 PE 不可得，用纳指100(NDX) 估值代理",
           "metrics": [
             {
               "name": "纳指100 PE-TTM 10年分位",
-              "raw": 28.681,
+              "raw": 28.89,
               "unit": "",
-              "pct": 36.26,
-              "score": 63.74,
+              "pct": 37.04,
+              "score": 62.96,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-10-26 13:43 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "纳指100 PB 分位",
-              "raw": 9.0177,
+              "raw": 9.0833,
               "unit": "",
-              "pct": 74.48,
-              "score": 25.52,
+              "pct": 75.92,
+              "score": 24.08,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-10-26 13:43 取）",
+              "source": "蛋卷基金 index_eva detail（2026-10-27 04:33 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.3864"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.3932"
             }
           ],
           "missing_ratio": 0.0
@@ -200,30 +192,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 72.43,
+          "score": 69.19,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": 0.0385,
+              "raw": 0.0465,
               "unit": "%",
-              "pct": 25.29,
-              "score": 74.71,
+              "pct": 27.93,
+              "score": 72.07,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-10-26 13:43 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.0596,
+              "raw": -0.0518,
               "unit": "%",
-              "pct": 29.85,
-              "score": 70.15,
+              "pct": 33.69,
+              "score": 66.31,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-10-26 13:43 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -233,30 +225,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 55.44,
+          "score": 56.04,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.1721,
+              "raw": 0.1736,
               "unit": "%",
-              "pct": 52.18,
-              "score": 52.18,
+              "pct": 52.54,
+              "score": 52.54,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .IXIC（2026-10-26 13:43 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": 0.0332,
+              "raw": 0.0314,
               "unit": "%",
-              "pct": 39.66,
-              "score": 60.34,
+              "pct": 38.7,
+              "score": 61.3,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-10-26 13:43 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -266,18 +258,18 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 1.55,
+          "score": 1.56,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
               "raw": 0.0266,
               "unit": "%",
-              "pct": 98.64,
-              "score": 1.36,
+              "pct": 98.63,
+              "score": 1.37,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-10-26 13:43 取）",
+              "source": "美国财政部 real_yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -285,11 +277,11 @@
               "name": "美债 10Y 名义利率",
               "raw": 0.05,
               "unit": "%",
-              "pct": 97.99,
-              "score": 2.01,
+              "pct": 97.98,
+              "score": 2.02,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-10-26 13:43 取）",
+              "source": "美国财政部 yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -300,164 +292,156 @@
       "trend_flag": {
         "flag": "healthy",
         "ma200_slope_60d": 0.042,
-        "dev": 0.0385
+        "dev": 0.0465
       },
       "execution": {},
       "fund_meta": {},
       "gates": [],
       "note": "仅作市场温度参考，不产生买入动作",
-      "conclusion": "综合 43.0 分 → 1.0 倍（中性，基准）：估值中性，价格在均值下方。"
+      "conclusion": "综合 42.0 分 → 1.0 倍（中性，基准）：估值中性，价格在均值下方。"
     },
     {
       "id": "NDX",
       "name": "纳斯达克100指数",
       "kind": "index",
       "advisory_only": false,
-      "price": 28957.53,
-      "price_date": "2026-10-23",
+      "price": 29273.4,
+      "price_date": "2026-10-26",
       "month": {
-        "base_date": "2026-09-23",
-        "base": 30470.29,
-        "end_date": "2026-10-23",
-        "end": 28957.53,
-        "n": 23,
+        "base_date": "2026-09-28",
+        "base": 30276.81,
+        "end_date": "2026-10-26",
+        "end": 29273.4,
+        "n": 21,
         "pts": [
           [
-            "2026-09-23",
+            "2026-09-28",
             0.0
           ],
           [
-            "2026-09-24",
-            0.03
-          ],
-          [
-            "2026-09-25",
-            0.45
-          ],
-          [
-            "2026-09-28",
-            -0.63
-          ],
-          [
             "2026-09-29",
-            -0.43
+            0.21
           ],
           [
             "2026-09-30",
-            -0.2
+            0.43
           ],
           [
             "2026-10-01",
-            0.1
+            0.74
           ],
           [
             "2026-10-02",
-            1.11
+            1.75
           ],
           [
             "2026-10-05",
-            1.99
+            2.64
           ],
           [
             "2026-10-06",
-            2.48
+            3.13
           ],
           [
             "2026-10-07",
-            2.26
+            2.92
           ],
           [
             "2026-10-08",
-            0.84
+            1.48
           ],
           [
             "2026-10-09",
-            1.35
+            2.0
           ],
           [
             "2026-10-12",
-            0.64
+            1.28
           ],
           [
             "2026-10-13",
-            0.33
+            0.97
           ],
           [
             "2026-10-14",
-            -1.7
+            -1.08
           ],
           [
             "2026-10-15",
-            -1.75
+            -1.13
           ],
           [
             "2026-10-16",
-            -4.21
+            -3.6
           ],
           [
             "2026-10-19",
-            -3.09
+            -2.47
           ],
           [
             "2026-10-20",
-            -3.22
+            -2.6
           ],
           [
             "2026-10-21",
-            -2.13
+            -1.5
           ],
           [
             "2026-10-22",
-            -4.96
+            -4.35
           ],
           [
             "2026-10-23",
-            -4.96
+            -4.36
+          ],
+          [
+            "2026-10-26",
+            -3.31
           ]
         ],
-        "chg_month": -4.96,
-        "chg_week": -0.79,
-        "week_from": "2026-10-16",
+        "chg_month": -3.31,
+        "chg_week": -0.87,
+        "week_from": "2026-10-19",
         "week_n": 5,
-        "hi": 2.48,
-        "lo": -4.96
+        "hi": 3.13,
+        "lo": -4.36
       },
-      "score": 45.78,
+      "score": 44.58,
       "multiplier": 1.0,
       "label": "中性，基准",
-      "band_pos": 36.1,
+      "band_pos": 28.6,
       "completeness": 1.0,
       "suggest_amount": 1000.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 48.45,
+          "score": 47.41,
           "anchor": "纳指100(NDX) 指数自身 PE/PB，蛋卷口径",
           "metrics": [
             {
               "name": "纳指100 PE-TTM 10年分位",
-              "raw": 28.681,
+              "raw": 28.89,
               "unit": "",
-              "pct": 36.26,
-              "score": 63.74,
+              "pct": 37.04,
+              "score": 62.96,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-10-26 13:44 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "纳指100 PB 分位",
-              "raw": 9.0177,
+              "raw": 9.0833,
               "unit": "",
-              "pct": 74.48,
-              "score": 25.52,
+              "pct": 75.92,
+              "score": 24.08,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-10-26 13:44 取）",
+              "source": "蛋卷基金 index_eva detail（2026-10-27 04:33 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.3864"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.3932"
             }
           ],
           "missing_ratio": 0.0
@@ -465,30 +449,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 76.29,
+          "score": 73.01,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": 0.0403,
+              "raw": 0.0509,
               "unit": "%",
-              "pct": 22.81,
-              "score": 77.19,
+              "pct": 25.77,
+              "score": 74.23,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-10-26 13:44 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.0726,
+              "raw": -0.0625,
               "unit": "%",
-              "pct": 24.61,
-              "score": 75.39,
+              "pct": 28.21,
+              "score": 71.79,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-10-26 13:44 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -498,30 +482,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 58.91,
+          "score": 58.55,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.1862,
+              "raw": 0.1895,
               "unit": "%",
-              "pct": 56.3,
-              "score": 56.3,
+              "pct": 57.62,
+              "score": 57.62,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .NDX（2026-10-26 13:44 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": 0.0303,
+              "raw": 0.0353,
               "unit": "%",
-              "pct": 37.17,
-              "score": 62.83,
+              "pct": 40.06,
+              "score": 59.94,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-10-26 13:44 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -531,18 +515,18 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 1.55,
+          "score": 1.56,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
               "raw": 0.0266,
               "unit": "%",
-              "pct": 98.64,
-              "score": 1.36,
+              "pct": 98.63,
+              "score": 1.37,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-10-26 13:44 取）",
+              "source": "美国财政部 real_yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -550,11 +534,11 @@
               "name": "美债 10Y 名义利率",
               "raw": 0.05,
               "unit": "%",
-              "pct": 97.99,
-              "score": 2.01,
+              "pct": 97.98,
+              "score": 2.02,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-10-26 13:44 取）",
+              "source": "美国财政部 yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -565,7 +549,7 @@
       "trend_flag": {
         "flag": "healthy",
         "ma200_slope_60d": 0.0508,
-        "dev": 0.0403
+        "dev": 0.0509
       },
       "execution": {
         "why": "6 只候选实测年化跟踪误差最低（0.83%）；华安1.00% / 大成1.03% / 南方1.42% / 天弘1.46% / 国泰11.83%",
@@ -617,21 +601,21 @@
       "fund_meta": {},
       "gates": [],
       "note": "评分口径：纳指100 指数本身。落地基金 000055。",
-      "conclusion": "综合 45.8 分 → 1.0 倍（中性，基准）：估值中性，价格在均值下方。"
+      "conclusion": "综合 44.6 分 → 1.0 倍（中性，基准）：估值中性，价格在均值下方。"
     },
     {
       "id": "GOLD",
       "name": "黄金（COMEX 主力连续）",
       "kind": "commodity",
       "advisory_only": false,
-      "price": 4015.0,
-      "price_date": "2026-10-26",
+      "price": 4038.2,
+      "price_date": "2026-10-27",
       "month": {
         "base_date": "2026-09-28",
         "base": 4148.4,
-        "end_date": "2026-10-26",
-        "end": 4015.0,
-        "n": 21,
+        "end_date": "2026-10-27",
+        "end": 4038.2,
+        "n": 22,
         "pts": [
           [
             "2026-09-28",
@@ -715,50 +699,54 @@
           ],
           [
             "2026-10-26",
-            -3.22
+            -2.83
+          ],
+          [
+            "2026-10-27",
+            -2.66
           ]
         ],
-        "chg_month": -3.22,
-        "chg_week": -3.49,
-        "week_from": "2026-10-19",
+        "chg_month": -2.66,
+        "chg_week": -2.52,
+        "week_from": "2026-10-20",
         "week_n": 5,
         "hi": 1.73,
         "lo": -3.35
       },
-      "score": 51.98,
+      "score": 51.18,
       "multiplier": 1.0,
       "label": "中性，基准",
-      "band_pos": 74.9,
+      "band_pos": 69.9,
       "completeness": 1.0,
       "suggest_amount": 1000.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 15,
-          "score": 17.28,
+          "score": 17.26,
           "anchor": "黄金无 PE，用 10 年价格分位 + 金/股比价",
           "metrics": [
             {
               "name": "金价 10 年名义分位",
-              "raw": 4015.0,
+              "raw": 4038.2,
               "unit": "",
-              "pct": 89.76,
-              "score": 10.24,
+              "pct": 89.98,
+              "score": 10.02,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-10-26 13:44 取）",
+              "source": "新浪外盘期货 GC 日线（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "未做通胀调整，属近似口径"
             },
             {
               "name": "金价 / 标普500 比价分位",
-              "raw": 0.5259,
+              "raw": 0.5251,
               "unit": "",
-              "pct": 72.15,
-              "score": 27.85,
+              "pct": 71.87,
+              "score": 28.13,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "东财 GC00Y ÷ 新浪 .INX（2026-10-26 13:44 取）",
+              "source": "东财 GC00Y ÷ 新浪 .INX（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "金/股比价越高说明黄金相对股票越贵"
             }
@@ -768,30 +756,30 @@
         {
           "key": "trend",
           "weight": 30,
-          "score": 99.88,
+          "score": 99.66,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.1141,
+              "raw": -0.1083,
               "unit": "%",
-              "pct": 0.08,
-              "score": 99.92,
+              "pct": 0.33,
+              "score": 99.67,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-10-26 13:44 取）",
+              "source": "新浪外盘期货 GC 日线（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.2628,
+              "raw": -0.2586,
               "unit": "%",
-              "pct": 0.16,
-              "score": 99.84,
+              "pct": 0.36,
+              "score": 99.64,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-10-26 13:44 取）",
+              "source": "新浪外盘期货 GC 日线（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -801,30 +789,30 @@
         {
           "key": "sentiment",
           "weight": 25,
-          "score": 75.85,
+          "score": 72.89,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.1724,
+              "raw": 0.1619,
               "unit": "%",
-              "pct": 74.31,
-              "score": 74.31,
+              "pct": 69.39,
+              "score": 69.39,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪外盘期货 GC 日线（2026-10-26 13:44 取）",
+              "source": "新浪外盘期货 GC 日线（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.0233,
+              "raw": -0.0232,
               "unit": "%",
               "pct": 21.85,
               "score": 78.15,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-10-26 13:44 取）",
+              "source": "新浪外盘期货 GC 日线（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -834,18 +822,18 @@
         {
           "key": "macro",
           "weight": 30,
-          "score": 1.55,
+          "score": 1.56,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
               "raw": 0.0266,
               "unit": "%",
-              "pct": 98.64,
-              "score": 1.36,
+              "pct": 98.63,
+              "score": 1.37,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-10-26 13:44 取）",
+              "source": "美国财政部 real_yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -853,11 +841,11 @@
               "name": "美债 10Y 名义利率",
               "raw": 0.05,
               "unit": "%",
-              "pct": 97.99,
-              "score": 2.01,
+              "pct": 97.98,
+              "score": 2.02,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-10-26 13:44 取）",
+              "source": "美国财政部 yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -867,8 +855,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0054,
-        "dev": -0.1141
+        "ma200_slope_60d": 0.0047,
+        "dev": -0.1083
       },
       "execution": {
         "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
@@ -909,156 +897,148 @@
       "fund_meta": {},
       "gates": [],
       "note": "评分口径：COMEX 黄金主力连续合约日线",
-      "conclusion": "综合 52.0 分 → 1.0 倍（中性，基准）：估值偏贵，价格在均值下方。"
+      "conclusion": "综合 51.2 分 → 1.0 倍（中性，基准）：估值偏贵，价格在均值下方。"
     },
     {
       "id": "MSCI_HEALTH",
       "name": "MSCI 全球医疗保健指数",
       "kind": "index",
       "advisory_only": false,
-      "price": 661.9961200388435,
-      "price_date": "2026-10-23",
+      "price": 662.3428554926668,
+      "price_date": "2026-10-26",
       "month": {
-        "base_date": "2026-09-23",
-        "base": 624.4055,
-        "end_date": "2026-10-23",
-        "end": 661.9961,
-        "n": 23,
+        "base_date": "2026-09-28",
+        "base": 630.7208,
+        "end_date": "2026-10-26",
+        "end": 662.3429,
+        "n": 21,
         "pts": [
           [
-            "2026-09-23",
+            "2026-09-28",
             0.0
           ],
           [
-            "2026-09-24",
-            0.35
-          ],
-          [
-            "2026-09-25",
-            0.83
-          ],
-          [
-            "2026-09-28",
-            1.01
-          ],
-          [
             "2026-09-29",
-            0.51
+            -0.5
           ],
           [
             "2026-09-30",
-            -0.45
+            -1.45
           ],
           [
             "2026-10-01",
-            -1.8
+            -2.78
           ],
           [
             "2026-10-02",
-            -2.06
+            -3.04
           ],
           [
             "2026-10-05",
-            -1.66
+            -2.64
           ],
           [
             "2026-10-06",
-            -1.48
+            -2.47
           ],
           [
             "2026-10-07",
-            -0.48
+            -1.48
           ],
           [
             "2026-10-08",
-            -1.34
+            -2.33
           ],
           [
             "2026-10-09",
-            0.07
+            -0.93
           ],
           [
             "2026-10-12",
-            0.71
+            -0.3
           ],
           [
             "2026-10-13",
-            -0.34
+            -1.34
           ],
           [
             "2026-10-14",
-            1.71
+            0.69
           ],
           [
             "2026-10-15",
-            3.86
+            2.82
           ],
           [
             "2026-10-16",
-            3.84
+            2.8
           ],
           [
             "2026-10-19",
-            3.22
+            2.19
           ],
           [
             "2026-10-20",
-            5.51
+            4.45
           ],
           [
             "2026-10-21",
-            5.29
+            4.24
           ],
           [
             "2026-10-22",
-            6.92
+            5.85
           ],
           [
             "2026-10-23",
-            6.02
+            4.96
+          ],
+          [
+            "2026-10-26",
+            5.01
           ]
         ],
-        "chg_month": 6.02,
-        "chg_week": 2.1,
-        "week_from": "2026-10-16",
+        "chg_month": 5.01,
+        "chg_week": 2.76,
+        "week_from": "2026-10-19",
         "week_n": 5,
-        "hi": 6.92,
-        "lo": -2.06
+        "hi": 5.85,
+        "lo": -3.04
       },
-      "score": 38.37,
+      "score": 38.1,
       "multiplier": 0.8,
       "label": "偏贵，略减",
-      "band_pos": 86.4,
+      "band_pos": 84.2,
       "completeness": 1.0,
       "suggest_amount": 800.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 35,
-          "score": 65.29,
+          "score": 65.5,
           "anchor": "MSCI 官方 PE 历史不可得（需订阅）；用相对 MSCI World 比价 + 对数趋势偏离代理。官方快照 2026-08-31：PE 22.44、PB 4.85、股息率 1.77%",
           "metrics": [
             {
               "name": "医疗 / MSCI World 比价 10年分位",
-              "raw": 0.0419,
+              "raw": 0.0417,
               "unit": "",
-              "pct": 14.29,
-              "score": 85.71,
+              "pct": 13.61,
+              "score": 86.39,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "MSCI 106801 ÷ MSCI 990100（2026-10-26 13:44 取）",
+              "source": "MSCI 106801 ÷ MSCI 990100（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "比价越高=医疗相对全球大盘越贵，分数越低"
             },
             {
               "name": "距 10 年对数趋势偏离",
-              "raw": 0.0318,
+              "raw": 0.032,
               "unit": "%",
-              "pct": 65.35,
-              "score": 34.65,
+              "pct": 65.84,
+              "score": 34.16,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-26 13:44 取）",
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "偏离长期对数趋势越多=越贵；CAPE 近似思路，MSCI 历史 PE 序列不可得时用它代理"
             }
@@ -1068,30 +1048,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 14.22,
+          "score": 13.82,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
               "raw": 0.1068,
               "unit": "%",
-              "pct": 94.8,
-              "score": 5.2,
+              "pct": 94.76,
+              "score": 5.24,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-26 13:44 取）",
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.0084,
+              "raw": -0.0079,
               "unit": "%",
-              "pct": 76.75,
-              "score": 23.25,
+              "pct": 77.59,
+              "score": 22.41,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-26 13:44 取）",
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1101,30 +1081,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 58.28,
+          "score": 57.05,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.1798,
+              "raw": 0.18,
               "unit": "%",
-              "pct": 87.52,
-              "score": 87.52,
+              "pct": 87.56,
+              "score": 87.56,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-26 13:44 取）",
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": 0.0848,
+              "raw": 0.0904,
               "unit": "%",
-              "pct": 85.59,
-              "score": 14.41,
+              "pct": 88.72,
+              "score": 11.28,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-26 13:44 取）",
+              "source": "MSCI 官方指数接口 index_codes=106801（NETR）（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -1134,18 +1114,18 @@
         {
           "key": "macro",
           "weight": 20,
-          "score": 1.55,
+          "score": 1.56,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
               "raw": 0.0266,
               "unit": "%",
-              "pct": 98.64,
-              "score": 1.36,
+              "pct": 98.63,
+              "score": 1.37,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-10-26 13:44 取）",
+              "source": "美国财政部 real_yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -1153,11 +1133,11 @@
               "name": "美债 10Y 名义利率",
               "raw": 0.05,
               "unit": "%",
-              "pct": 97.99,
-              "score": 2.01,
+              "pct": 97.98,
+              "score": 2.02,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-10-26 13:44 取）",
+              "source": "美国财政部 yield_curve（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -1167,7 +1147,7 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0245,
+        "ma200_slope_60d": 0.0246,
         "dev": 0.1068
       },
       "execution": {
@@ -1186,7 +1166,7 @@
       "fund_meta": {},
       "gates": [],
       "note": "评分口径：MSCI 官方指数点位（106801，净总回报口径，1999 年起）。不再用基金累计净值。",
-      "conclusion": "综合 38.4 分 → 0.8 倍（偏贵，略减）：估值偏便宜，价格明显高于均值。"
+      "conclusion": "综合 38.1 分 → 0.8 倍（偏贵，略减）：估值偏便宜，价格明显高于均值。"
     },
     {
       "id": "CSI_DIVIDEND",
@@ -1295,7 +1275,7 @@
               "score": 13.79,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-10-26 13:44 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "真实股息率=0.0459，历史股息率序列不可得，用 PE 分位反向代理"
             },
@@ -1307,7 +1287,7 @@
               "score": 39.52,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-10-26 13:44 取）",
+              "source": "蛋卷基金 index_eva detail（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "蛋卷口径"
             }
@@ -1328,7 +1308,7 @@
               "score": 76.91,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-10-26 13:44 取）",
+              "source": "中证指数官网 indexCode=000922（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1340,7 +1320,7 @@
               "score": 54.86,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-10-26 13:44 取）",
+              "source": "中证指数官网 indexCode=000922（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1361,7 +1341,7 @@
               "score": 70.19,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-10-26 13:44 取）",
+              "source": "中证指数官网 indexCode=000922（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1373,7 +1353,7 @@
               "score": 67.51,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-10-26 13:44 取）",
+              "source": "中证指数官网 indexCode=000922（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "放量（恐慌或狂热）给分，需结合趋势看"
             }
@@ -1394,7 +1374,7 @@
               "score": 20.81,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "东财 000922 ÷ 000300（2026-10-26 13:44 取）",
+              "source": "东财 000922 ÷ 000300（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "红利相对大盘越强，性价比越低"
             },
@@ -1406,7 +1386,7 @@
               "score": 53.01,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "蛋卷基金 index_eva pe_history SH000300（2026-10-26 13:44 取）",
+              "source": "蛋卷基金 index_eva pe_history SH000300（2026-10-27 04:33 取）",
               "fetched_at": "",
               "note": "大盘越贵，资金越倾向高股息防御，红利相对吸引力上升 → 方向为正"
             }
@@ -1446,12 +1426,15 @@
   "macro": {
     "ust_10y_real": 2.66,
     "ust_10y_nominal": 5.0,
-    "dxy": 101.97,
-    "usdcnh": 6.6686,
-    "gold_spot": 4001.0
+    "dxy": null,
+    "usdcnh": null,
+    "gold_spot": 4020.16
   },
   "errors": [],
-  "data_notes": [],
+  "data_notes": [
+    "dxy 本期取不到（仅展示项，不影响分数）",
+    "usdcny 本期取不到（仅展示项，不影响分数）"
+  ],
   "labs": {
     "errors": [],
     "notes": [
@@ -22427,13 +22410,13 @@
     }
   },
   "mood": {
-    "score": 23.4,
-    "rating": "extreme fear",
-    "label": "极度恐惧",
-    "color": "#a8321f",
+    "score": 27.1,
+    "rating": "fear",
+    "label": "恐惧",
+    "color": "#c2703c",
     "zone": [
-      0,
-      24
+      25,
+      44
     ],
     "zones": [
       [
@@ -22467,53 +22450,53 @@
         "#2f7d54"
       ]
     ],
-    "date": "2026-10-26",
-    "ts": "2026-10-26T13:41:28+00:00",
-    "prev_close": 21.0,
-    "prev_week": 20.8,
+    "date": "2026-10-27",
+    "ts": "2026-10-27T00:00:00+00:00",
+    "prev_close": 27.1,
+    "prev_week": 29.6,
     "prev_month": 36.9,
-    "prev_year": 32.5,
+    "prev_year": 37.3,
     "parts": [
       {
         "name": "股价动能",
         "why": "标普500 相对 125 日均线的偏离",
-        "score": 19.8,
-        "rating": "extreme fear"
+        "score": 25.4,
+        "rating": "fear"
       },
       {
         "name": "股价强度",
         "why": "纽交所创新高与创新低的股票数对比",
-        "score": 18.6,
+        "score": 23.4,
         "rating": "extreme fear"
       },
       {
         "name": "市场宽度",
         "why": "上涨股与下跌股的成交量对比",
-        "score": 23.4,
-        "rating": "extreme fear"
+        "score": 25.8,
+        "rating": "fear"
       },
       {
         "name": "看跌/看涨",
         "why": "期权市场 5 日看跌看涨比率",
-        "score": 23.6,
+        "score": 22.8,
         "rating": "extreme fear"
       },
       {
         "name": "波动率",
         "why": "VIX 相对其 50 日均线的位置",
-        "score": 26.9,
+        "score": 39.6,
         "rating": "fear"
       },
       {
         "name": "垃圾债需求",
         "why": "高收益债与国债的利差",
-        "score": 40.2,
+        "score": 41.6,
         "rating": "fear"
       },
       {
         "name": "避险需求",
         "why": "股票与国债近 20 日回报之差",
-        "score": 10.4,
+        "score": 11.0,
         "rating": "extreme fear"
       }
     ],
@@ -23516,11 +23499,15 @@
       ],
       [
         1792972800000,
-        23.27
+        27.08
       ],
       [
-        1793022088000,
-        23.35
+        1793059200000,
+        27.08
+      ],
+      [
+        1793059200000,
+        27.08
       ]
     ],
     "source": "CNN Business Fear & Greed（production.dataviz.cnn.io）"
