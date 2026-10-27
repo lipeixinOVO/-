@@ -167,6 +167,36 @@ def head_tree(commit_sha):
     return r.json()["tree"]["sha"]
 
 
+def guard_site():
+    """--site 前的最后一道闸：本地 docs 的数据不能比线上旧。
+
+    这条闸是拿事故换来的。2026-10-26 本地 docs/ 还是 10-24 手工 build 的，
+    全量推上去把线上跑批生成的 10-26 数据整个覆盖回 10-23 —— 页面看着像
+    「两个板块没自动更新」，其实云端跑得好好的，是推送把它推回去了。
+    数据只会往前走，本地比线上旧就说明本地这份过期，必须拦下。
+    """
+    p = LOCAL / "docs" / "data.json"
+    if not p.exists():
+        return
+    r = requests.get(f"{API}/repos/{OWNER}/{REPO}/contents/docs/data.json?ref={BRANCH}",
+                     headers=H, timeout=40)
+    if r.status_code != 200:
+        return
+    try:
+        remote = json.loads(base64.b64decode(r.json()["content"]).decode("utf-8"))
+        local = json.loads(p.read_text(encoding="utf-8"))
+        rt = remote["latest"]["generated_at_ts"]
+        lt = local["latest"]["generated_at_ts"]
+    except Exception:  # noqa: BLE001
+        return
+    if lt < rt - 120:
+        raise SystemExit(
+            "拒绝推送 docs/：本地数据比线上旧，推上去会把线上数据回退。\n"
+            f"  本地 generated_at = {local['latest']['generated_at']}\n"
+            f"  线上 generated_at = {remote['latest']['generated_at']}\n"
+            "先同步线上最新数据（或触发一次 workflow_dispatch）再重试。")
+
+
 def main(dry=False, include_site=False, include_data=False, message=None):
     files = collect(include_site, include_data)
     total = sum(p.stat().st_size for _, p in files)
@@ -179,6 +209,8 @@ def main(dry=False, include_site=False, include_data=False, message=None):
         return
 
     ensure_repo()
+    if include_site:
+        guard_site()          # 本地比线上旧就拦下，别把数据推回去
     head = get_head_sha()
     base = head_tree(head)
     print(f"当前 HEAD: {head[:8]}  base_tree: {base[:8]}")
