@@ -294,6 +294,7 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   display:flex;justify-content:space-between;gap:3px 14px;flex-wrap:wrap}
 /* 三段说明各占一行：默认 flex 会把前两段排在一行左右分开，读起来像两个不相干的东西 */
 .live .stamp>span{flex:1 1 100%}
+.live .stamp i.now{font-style:normal}
 .live .stamp b{color:#14161b;font-weight:500}
 
 /* ---------- 图表 ---------- */
@@ -651,16 +652,25 @@ function applyMood(score){
   return true;
 }
 
+/* CNN 这个口国内经常连不上。原来每分钟无超时地拉一次，请求会一直挂着占住连接，
+   手机上表现为「页面一直在转、很卡」。现在：8 秒硬超时 + 连续失败退避
+   （1 次→1 分钟，2 次→5 分钟，3 次以上→15 分钟），断了就不折腾。 */
+let _moodFail = 0, _moodNext = 0;
 function refreshMood(){
   if(document.hidden) return;
   if(!document.getElementById('mood-sc')) return;      // 本期没这块，不白拉
+  if(Date.now() < _moodNext) return;                   // 还在退避窗口里
   const at = document.getElementById('mood-at');
+  const ctl = ('AbortController' in window) ? new AbortController() : null;
+  const killer = ctl ? setTimeout(function(){ ctl.abort(); }, 8000) : null;
+  const done = function(){ if(killer) clearTimeout(killer); };
   fetch('https://production.dataviz.cnn.io/index/fearandgreed/graphdata',
-        {mode:'cors', cache:'no-store'})
+        {mode:'cors', cache:'no-store', signal: ctl ? ctl.signal : undefined})
     .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
     .then(function(j){
       const fg = (j && j.fear_and_greed) || {};
       if(fg.score == null || !applyMood(+fg.score)) return;
+      _moodFail = 0; _moodNext = 0;
       if(at){
         const d = new Date();
         at.textContent = '直连 CNN 刷新 ' + hhmm(d) + ':' + ('0' + d.getSeconds()).slice(-2);
@@ -668,9 +678,26 @@ function refreshMood(){
       }
     })
     .catch(function(){
-      // 跨域被拦 / 网络抖动 / CNN 改接口 → 静默，页面上继续用跑批快照
+      // 跨域被拦 / 超时 / CNN 改接口 → 静默，页面上继续用跑批快照
+      _moodFail += 1;
+      _moodNext = Date.now() + (_moodFail >= 3 ? 900000 : (_moodFail === 2 ? 300000 : 60000));
       if(at){ at.textContent = '直连 CNN 暂不可用，显示跑批快照'; at.className = 'at idle'; }
-    });
+    })
+    .then(done, done);
+}
+
+/* 非交易日说明：周六周日跑批照跑（抓隔夜美股 / MSCI），但 A 股不开盘，
+   trade_date 必然停在最近一个交易日。不写清楚，用户会以为「页面没更新」——
+   2026-10-31（周六）就为此被问了一次。 */
+function restTag(td){
+  if(!td) return '';
+  const n = new Date();
+  const p = function(x){ return ('0'+x).slice(-2); };
+  const today = n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate());
+  if(td >= today) return '';
+  const w = n.getDay();
+  if(w === 0 || w === 6) return '<span class="idle nw">（周末休市）</span>';
+  return '<span class="idle nw">（非今日）</span>';
 }
 
 function render(){
@@ -715,7 +742,8 @@ function render(){
 
   document.getElementById('meta').innerHTML =
     '<span class="ln"><span class="dot"></span><span class="k">分数快照</span>' +
-      '<b>' + (L.trade_date || '') + '</b> · ' + (L.generated_at || '').slice(11, 16) + ' 生成' +
+      '<b>' + (L.trade_date || '') + '</b>' + restTag(L.trade_date) + ' · ' +
+      (L.generated_at || '').slice(11, 16) + ' 生成' +
       (stateTxt ? ' · <span class="' + stateCls + ' nw">' + stateTxt + '</span>' : '') +
       (nTxt ? ' · <span class="idle nw">' + nTxt + '</span>' : '') + '</span>' +
     '<span class="ln rt"><span class="k">实时价格</span>每 60 秒自动刷新' +
@@ -1033,22 +1061,41 @@ function renderLive(){
   const at = ('0'+nw.getHours()).slice(-2)+':'+('0'+nw.getMinutes()).slice(-2)+
              ':'+('0'+nw.getSeconds()).slice(-2);
   const perDay = (P.schedule && P.schedule.tods) ? P.schedule.tods.length : 6;
-  box.innerHTML = cells.join('')+
+  const body = cells.join('');
+  // 价格没变就别重建 DOM。原来每 60 秒把 6 个格子整个 innerHTML 重写一遍，
+  // 手机上会引起整条重排，页面正在滚动时会被"拽"一下 —— 用户感受就是「一直在刷新、很卡」。
+  // 数据没变时只换掉「本次 HH:MM:SS」，证明确实拉过。
+  const atEl = box.querySelector('.stamp i.now');
+  if(body === _liveSig && atEl){
+    atEl.textContent = at;
+    return;
+  }
+  _liveSig = body;
+  box.innerHTML = body+
     '<div class="stamp">'+
     '<span>行情时间 <b>'+(stamp?esc(stamp):'—')+
-    '</b> · 腾讯行情每 60 秒刷新（本次 '+at+'）</span>'+
+    '</b> · 腾讯行情每 60 秒刷新（本次 <i class="now">'+at+'</i>）</span>'+
     '<span>MSCI 全球医疗无实时源，用官方 <b>EOD 收盘</b>；每交易日 06:37 / 08:07 跑批时更新</span>'+
     '<span><b>实时价不参与打分</b>；分数、卡片收盘价、各类曲线每交易日 '+
     perDay+' 次整体重算</span></div>';
 }
+let _liveSig = '';
+let _liveT = null;
 function loadLive(){
   const s=document.createElement('script');
   s.charset='gbk';
   s.src='https://qt.gtimg.cn/q='+LIVE.map(function(x){return x.c;}).join(',')+'&_='+Date.now();
-  s.onload=function(){ renderLive(); };
-  s.onerror=function(){ const b=document.getElementById('live'); if(b) b.style.display='none'; };
+  // 每次调用都会新建一个 <script>。用完必须摘掉，否则一小时就攒 60 个节点，
+  // 手机上内存和重排都吃不消（原来只建不删）。
+  const fin=function(){ if(_liveT){ clearTimeout(_liveT); _liveT=null; } };
+  const drop=function(){ if(s.parentNode) s.parentNode.removeChild(s); };
+  s.onload=function(){ fin(); drop(); renderLive(); };
+  s.onerror=function(){ fin(); drop();
+    const b=document.getElementById('live'); if(b) b.style.display='none'; };
   document.head.appendChild(s);
-  setTimeout(renderLive, 4000);   // 兜底：脚本静默失败时也试一次
+  // 兜底：JSONP 静默失败时也画一次。onload/onerror 里会把它清掉，不再是每轮必跑。
+  if(_liveT) clearTimeout(_liveT);
+  _liveT=setTimeout(function(){ _liveT=null; renderLive(); }, 4000);
 }
 
 /* 二十二年那张图的窗口切换（服务端已生成好几份 SVG，这里只切显示） */
@@ -1083,30 +1130,40 @@ document.addEventListener('visibilitychange', function(){
 });
 
 /* 页面是静态的：跑批在后台更新了 docs/data.json，但已经打开的页面还停在旧快照上。
-   这里每 3 分钟探一次 data.json 的 generated_at_ts，比自己瞎猜"多久该刷新"可靠。
+   这里探一个极小的 ver.json（几十字节）来发现更新。
+   ★ 别改回拉 data.json —— 它现在 270KB+，手机上每 3 分钟下一次，流量和解析开销都受不了，
+     2026-10-31 用户报「手机端一直刷新很卡」，一个原因就是这个。
    file:// 下 fetch 会被同源策略拒绝，直接跳过（本地预览不需要这个提示）。 */
 function checkNewer(){
   if(!/^https?:$/.test(location.protocol)) return;
   const cur = P.latest && P.latest.generated_at_ts;
   if(!cur) return;
-  fetch('data.json?t=' + Date.now(), {cache:'no-store'})
-    .then(function(r){ return r.json(); })
+  fetch('ver.json?t=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(j){
-      const t = j && j.latest && j.latest.generated_at_ts;
+      const t = j && j.ts;
       if(t && t > cur + 60){                       // 60 秒容差，避免同一次构建的抖动误报
-        document.getElementById('newat').textContent = String(j.latest.generated_at||'').slice(11,16);
+        const nb = document.getElementById('newbar');
+        if(!nb || !nb.hidden) return;              // 已经提示过就别重复写 DOM
+        document.getElementById('newat').textContent = String(j.at||'').slice(11,16);
         document.getElementById('curat').textContent = String(P.latest.generated_at||'').slice(11,16);
-        document.getElementById('newbar').hidden = false;
+        nb.hidden = false;
       }
     })
     .catch(function(){ /* 网络抖动/跨域失败都当没发生，不打扰用户 */ });
 }
-if(!document.hidden) setTimeout(checkNewer, 20000);   // 打开 20 秒后先探一次
-setInterval(function(){ if(!document.hidden) checkNewer(); }, 180000);
+// 手机端把探测间隔拉长到 10 分钟：跑批本身一天才十几次，3 分钟一探纯属浪费电量
+const _narrow = (window.innerWidth || 1200) < 640;
+if(!document.hidden) setTimeout(checkNewer, _narrow ? 60000 : 20000);
+setInterval(function(){ if(!document.hidden) checkNewer(); }, _narrow ? 600000 : 180000);
 
-// 横竖屏切换 / 窗口缩放时重画分数图（窄屏和宽屏用不同画布尺寸）
-let _rz = null;
+// 横竖屏切换 / 窗口缩放时重画分数图（窄屏和宽屏用不同画布尺寸）。
+// ★ 只在**宽度变了**才重画：手机上滚动时地址栏收起/展开改的是高度，innerWidth 不变，
+//   原来无条件重画，等于每滚一下就把 5 条折线整张重算一遍 —— 卡顿的主因之一。
+let _rz = null, _lastW = window.innerWidth;
 window.addEventListener('resize', function(){
+  if(window.innerWidth === _lastW) return;
+  _lastW = window.innerWidth;
   clearTimeout(_rz);
   _rz = setTimeout(function(){ renderChart(); }, 200);
 });

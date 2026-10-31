@@ -198,6 +198,40 @@ if len(blocks) < 2:
 else:
     io.open(os.path.join(HERE, "_selfcheck.js"), "w", encoding="utf-8").write(blocks[-1])
 
+# ---------- 7b. 前端刷新策略（手机端卡不卡就看这几条在不在） ----------
+# 版本探针必须是小文件。曾经前端直接拉 data.json（270KB+）判更新，
+# 手机上每 3 分钟下一次，用户反馈「一直刷新、很卡」。
+ver_path = os.path.join(HERE, "..", "docs", "ver.json")
+ver_path = os.path.abspath(ver_path)
+if not os.path.exists(ver_path):
+    bad("缺少 docs/ver.json（前端靠它判「后台已更新」，没有就只能拉整个 data.json）")
+else:
+    vraw = io.open(ver_path, encoding="utf-8").read()
+    vsize = len(vraw.encode("utf-8"))
+    if vsize > 500:
+        bad(f"docs/ver.json 体积 {vsize} 字节，应该只有几十字节")
+    try:
+        vj = json.loads(vraw)
+        if not vj.get("ts"):
+            bad("docs/ver.json 里没有 ts 字段")
+    except Exception as e:  # noqa: BLE001
+        bad(f"docs/ver.json 解析失败：{e}")
+
+if "ver.json" not in h:
+    bad("页面上没有引用 ver.json，更新探测会退回拉整个 data.json")
+if "data.json?t=" in h:
+    bad("页面仍在用 data.json 探更新（270KB+），移动端会卡；应改用 ver.json")
+
+# 手机滚动时地址栏收起只改高度，resize 里必须按宽度过滤，否则每滚一下重画整张图
+if "innerWidth === _lastW" not in h:
+    bad("resize 没有宽度守卫，手机滚动会反复重画分数图（卡顿主因）")
+# CNN 国内常连不上，没有超时就会一直挂着占连接
+if "AbortController" not in h:
+    bad("CNN 轮询没有超时保护（AbortController），断网时会长期挂起")
+# 周末/非交易日必须显式标注，否则用户会以为「页面没更新」
+if "restTag" not in h:
+    warn("页头没有非交易日提示（周末会被误认为数据没更新）")
+
 # ---------- 8. 体积 ----------
 size_kb = len(h.encode("utf-8")) / 1024
 if size_kb > 400:

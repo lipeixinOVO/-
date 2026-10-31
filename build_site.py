@@ -92,6 +92,15 @@ def main():
         # 紧凑写：labs 里现在带几千个日频点，indent=2 会把每个数字拆成一行，体积翻三倍
         json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
 
+    # 版本探针：前端每隔几分钟要问一句「后台更新了吗」，只为拿一个时间戳。
+    # 原来直接拉 data.json，那是 270KB+ —— 手机上每 3 分钟下一次，流量和 JSON 解析都白烧，
+    # 用户直接反馈「一直刷新、很卡」。这个文件只有几十字节。
+    with open(os.path.join(SITE_DIR, "ver.json"), "w", encoding="utf-8") as f:
+        json.dump({"ts": latest.get("generated_at_ts"),
+                   "at": latest.get("generated_at"),
+                   "td": latest.get("trade_date")},
+                  f, ensure_ascii=False, separators=(",", ":"))
+
     from src import site_template as T
     html = T.render(payload)
     with open(os.path.join(SITE_DIR, "index.html"), "w", encoding="utf-8") as f:
