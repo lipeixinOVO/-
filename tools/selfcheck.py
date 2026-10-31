@@ -232,6 +232,26 @@ if "AbortController" not in h:
 if "restTag" not in h:
     warn("页头没有非交易日提示（周末会被误认为数据没更新）")
 
+# 同一只指数在「近一月涨跌图」（Python 侧 MONTH_COLORS）和「分数历史图」（前端 COLORS）
+# 必须同色。按下标轮色导致过两图配色错位：黄金在一张图里是棕、另一张里是黑。
+try:
+    sys.path.insert(0, os.path.join(HERE, ".."))
+    from src import site_template as _T
+    m = re.search(r"const COLORS = \{(.*?)\};", h, re.S)
+    if not m:
+        bad("前端分数图找不到 COLORS 颜色表（颜色可能又退回按下标轮）")
+    else:
+        js_colors = dict((k.strip(), v.strip().strip("'\""))
+                         for k, v in re.findall(r"(\w+)\s*:\s*('[^']*'|\"[^\"]*\")", m.group(1)))
+        for aid, pc in _T.MONTH_COLORS.items():
+            jc = js_colors.get(aid)
+            if not jc:
+                bad(f"分数图缺 {aid} 的颜色（近一月图用的是 {pc}）")
+            elif jc.lower() != pc.lower():
+                bad(f"{aid} 两图颜色不一致：近一月图 {pc} / 分数图 {jc}")
+except Exception as e:  # noqa: BLE001
+    warn(f"颜色一致性检查跳过：{e}")
+
 # ---------- 8. 体积 ----------
 size_kb = len(h.encode("utf-8")) / 1024
 if size_kb > 400:

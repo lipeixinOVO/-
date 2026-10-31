@@ -1006,8 +1006,17 @@ function renderChart(){
   const narrow = (window.innerWidth || 1200) < 640;
   const W = narrow ? 430 : 1100, H = narrow ? 350 : 330;
   const PL = narrow ? 26 : 40, PT = narrow ? 16 : 22, PB = narrow ? 26 : 30;
-  // 五条线要能在手机上分开：金 / 近黑 / 靛蓝 / 墨绿 / 砖红，明度与色相都拉开
-  const colors = ['#a8752a','#111827','#2f6fb0','#2f7d5e','#b4512f'];
+  // ★ 颜色必须按**标的 id** 查表，不能按下标轮。
+  //   按下标轮时，同一只标的在「近一月涨跌图」（Python 侧 MONTH_COLORS）和这张分数图里
+  //   颜色不一样 —— 2026-10-31 自查发现：近一月图里黄金是棕、纳指100 是蓝，
+  //   分数图里黄金却成了黑、纳指100 成了棕。读者换一张图就得重新认一遍线，比没颜色更糟。
+  //   下面这张表与 Python 的 MONTH_COLORS 必须逐字一致（selfcheck 有断言比对）。
+  const COLORS = {
+    IXIC:'#111827', NDX:'#2f6fb0', GOLD:'#a8752a',
+    MSCI_HEALTH:'#2f7d5e', CSI_DIVIDEND:'#b4512f'
+  };
+  const COLORS_FB = ['#5b4b8a','#7a7f8c','#3f7f9e','#8a6b25','#9c4f4f'];
+  const colorOf = function(id, i){ return COLORS[id] || COLORS_FB[i % COLORS_FB.length]; };
   // 曲线右端要标「指数名 + 当前分数」，右侧留白不能再写死 16（塞不下一个字）。
   // 按最长的那个名字算，上限 0.34×画布宽；窄画布一行放不下就改两行（名称在上、分数在下）。
   const stack = W < 600;
@@ -1042,9 +1051,9 @@ function renderChart(){
   svg += '<defs>';
   ids.forEach(function(id,ci){
     svg += '<linearGradient id="g'+ci+'" x1="0" y1="0" x2="1" y2="0">'+
-      '<stop offset="0%" stop-color="'+colors[ci%colors.length]+'" stop-opacity=".7"/>'+
-      '<stop offset="55%" stop-color="'+colors[ci%colors.length]+'" stop-opacity=".96"/>'+
-      '<stop offset="100%" stop-color="'+colors[ci%colors.length]+'" stop-opacity="1"/></linearGradient>';
+      '<stop offset="0%" stop-color="'+colorOf(id, ci)+'" stop-opacity=".7"/>'+
+      '<stop offset="55%" stop-color="'+colorOf(id, ci)+'" stop-opacity=".96"/>'+
+      '<stop offset="100%" stop-color="'+colorOf(id, ci)+'" stop-opacity="1"/></linearGradient>';
   });
   svg += '</defs>';
   for(let k=0;k<=4;k++){
@@ -1073,7 +1082,7 @@ function renderChart(){
       'stroke-linejoin="round" stroke-linecap="round"/>';
     const last = pts[pts.length-1];
     svg += '<circle cx="'+x(n-1).toFixed(1)+'" cy="'+y(last.s).toFixed(1)+
-      '" r="2.8" fill="'+colors[ci%colors.length]+'"/>';
+      '" r="2.8" fill="'+colorOf(id, ci)+'"/>';
   });
   // 末值标签：指数名 + 当前分数，贴在各自曲线右端。
   // 四条线经常收在 35–52 这十几分里（本期 45.8 / 44.6 只差 1.2 分），末端几乎重合，
@@ -1084,7 +1093,7 @@ function renderChart(){
     const pts = tail(id); if(!pts.length) return;
     const last = pts[pts.length-1]; if(last.s==null) return;
     labs.push({y0: y(last.s), y: y(last.s), v: last.s,
-               c: colors[ci%colors.length], nm: labName[ci]});
+               c: colorOf(id, ci), nm: labName[ci]});
   });
   labs.sort(function(a,b){ return a.y0 - b.y0; });
   const bh = stack ? (nfs*1.16 + pfs*1.16) : pfs*1.25;   // 单个标签块的高度
@@ -1138,7 +1147,7 @@ function renderChart(){
     const pts = S.data[id]||[]; const lv = pts.length ? pts[pts.length-1].s : null;
     // 图例仍然保留数字：它同时是配色对照表，滚到底部能一次看全四个分数
     leg += '<span style="display:inline-flex;align-items:center;gap:7px">'+
-      '<i style="width:12px;height:2px;border-radius:2px;background:'+colors[ci%colors.length]+
+      '<i style="width:12px;height:2px;border-radius:2px;background:'+colorOf(id, ci)+
       ';display:inline-block"></i>'+esc((S.names||{})[id]||id)+
       '<b style="color:var(--txt);font-weight:600;font-variant-numeric:tabular-nums">'+
       (lv==null?'—':lv.toFixed(1))+'</b></span>';
@@ -1157,7 +1166,7 @@ function renderChart(){
     ids.forEach(function(id,ci){
       const a = S.data[id]||[]; const p1 = a[a.length-2], p2 = a[a.length-1];
       const dv = (p1&&p2&&p1.s!=null&&p2.s!=null) ? (p2.s-p1.s) : null;
-      bh += '<span class="dd"><i style="background:'+colors[ci%colors.length]+'"></i>'+
+      bh += '<span class="dd"><i style="background:'+colorOf(id, ci)+'"></i>'+
         esc((S.names||{})[id]||id)+'<b>'+(dv==null?'—':(dv>0?'+':'')+dv.toFixed(1))+'</b></span>';
     });
     bh += '</div>';
