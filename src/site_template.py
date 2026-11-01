@@ -655,15 +655,17 @@ function applyMood(score){
 /* CNN 这个口国内经常连不上。原来每分钟无超时地拉一次，请求会一直挂着占住连接，
    手机上表现为「页面一直在转、很卡」。现在：8 秒硬超时 + 连续失败退避
    （1 次→1 分钟，2 次→5 分钟，3 次以上→15 分钟），断了就不折腾。 */
-let _moodFail = 0, _moodNext = 0;
+let _moodFail = 0, _moodNext = 0, _moodBusy = false;
 function refreshMood(){
   if(document.hidden) return;
+  if(_moodBusy) return;                                // 上一发还在路上，别并发
   if(!document.getElementById('mood-sc')) return;      // 本期没这块，不白拉
   if(Date.now() < _moodNext) return;                   // 还在退避窗口里
   const at = document.getElementById('mood-at');
   const ctl = ('AbortController' in window) ? new AbortController() : null;
   const killer = ctl ? setTimeout(function(){ ctl.abort(); }, 8000) : null;
-  const done = function(){ if(killer) clearTimeout(killer); };
+  const done = function(){ _moodBusy = false; if(killer) clearTimeout(killer); };
+  _moodBusy = true;
   fetch('https://production.dataviz.cnn.io/index/fearandgreed/graphdata',
         {mode:'cors', cache:'no-store', signal: ctl ? ctl.signal : undefined})
     .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
@@ -1064,6 +1066,7 @@ function renderLive(){
       '<div class="px">'+fmtPx(h.price)+'</div></div>');
   }
   if(!cells.length){ box.style.display='none'; return; }
+  box.style.display='';   // 之前失败被隐藏的，恢复显示（否则成功一次后永远看不见）
   // 「本次 HH:MM:SS」是刻意加的：页面挂在后台或接口静默失败时，这一行会停住不动，
   // 用户一眼就能看出「是没刷新」还是「刷新了但价格没变」。
   const nw = new Date();
@@ -1089,22 +1092,30 @@ function renderLive(){
     perDay+' 次整体重算</span></div>';
 }
 let _liveSig = '';
-let _liveT = null;
+let _liveKill = null, _liveFail = 0, _liveNext = 0;
 function loadLive(){
+  if(document.hidden) return;
+  if(Date.now() < _liveNext) return;          // 失败退避窗口内不再试
+  if(_liveKill) return;                        // 上一发还没落地，别往上叠
   const s=document.createElement('script');
   s.charset='gbk';
   s.src='https://qt.gtimg.cn/q='+LIVE.map(function(x){return x.c;}).join(',')+'&_='+Date.now();
   // 每次调用都会新建一个 <script>。用完必须摘掉，否则一小时就攒 60 个节点，
   // 手机上内存和重排都吃不消（原来只建不删）。
-  const fin=function(){ if(_liveT){ clearTimeout(_liveT); _liveT=null; } };
-  const drop=function(){ if(s.parentNode) s.parentNode.removeChild(s); };
-  s.onload=function(){ fin(); drop(); renderLive(); };
-  s.onerror=function(){ fin(); drop();
-    const b=document.getElementById('live'); if(b) b.style.display='none'; };
+  const drop=function(){
+    if(_liveKill){ clearTimeout(_liveKill); _liveKill=null; }
+    if(s.parentNode) s.parentNode.removeChild(s);
+  };
+  s.onload=function(){ drop(); _liveFail=0; _liveNext=0; renderLive(); };
+  s.onerror=function(){ drop(); _liveFail+=1;
+    // 弱网退避：连败 1→1 分钟、2→5 分钟、≥3→15 分钟。
+    // 原来每 60 秒硬拉、挂着不摘的 <script> 会占满手机连接池 —— 卡死主因之一。
+    _liveNext=Date.now()+(_liveFail>=3?900000:(_liveFail===2?300000:60000));
+    if(_liveFail>=2){ const b=document.getElementById('live'); if(b) b.style.display='none'; } };
   document.head.appendChild(s);
-  // 兜底：JSONP 静默失败时也画一次。onload/onerror 里会把它清掉，不再是每轮必跑。
-  if(_liveT) clearTimeout(_liveT);
-  _liveT=setTimeout(function(){ _liveT=null; renderLive(); }, 4000);
+  // 8 秒硬超时：JSONP 弱网下可能永远不回调，原来节点一直挂着不摘、每分钟再叠一个。
+  // 超时先补画一次（万一数据其实到了，renderLive 里有签名判断不会白画），再按失败处理。
+  _liveKill=setTimeout(function(){ s.onerror(); }, 8000);
 }
 
 /* 二十二年那张图的窗口切换（服务端已生成好几份 SVG，这里只切显示） */
@@ -1128,14 +1139,37 @@ function bindEqw(){
 render();
 bindEqw();
 loadLive();
-// 每 60 秒拉一次实时价。页面在后台时跳过 —— 移动端浏览器会把后台定时器节流到几分钟一次，
-// 与其那样半死不活地拉，不如不拉；切回前台时立刻补一次，不用干等下一个整分钟。
-setInterval(function(){ if(!document.hidden) loadLive(); }, 60000);
-// 市场情绪也每分钟直连 CNN。首次延迟 12 秒，别和首屏的几个请求抢带宽。
-setTimeout(function(){ if(!document.hidden) refreshMood(); }, 12000);
-setInterval(function(){ if(!document.hidden) refreshMood(); }, 60000);
+// 市场情绪直连 CNN。首次延迟 12 秒，别和首屏的几个请求抢带宽（后台时它自己会跳过）。
+setTimeout(function(){ refreshMood(); }, 12000);
+
+const _narrow = (window.innerWidth || 1200) < 640;
+
+/* ---------- 统一心跳 ----------
+   原来三个 setInterval 各跑各的：移动端回前台瞬间所有定时器一起补触发，
+   叠加页面恢复本身的渲染，就是「一切回来先卡一下」；后台时定时器仍会被
+   浏览器周期性唤醒。现在只留一个 60 秒心跳，各任务按自己的周期节流：
+   实时条 60s · CNN 情绪 60s（各自另带失败退避）· 新版本探测 窄屏 10min / 宽屏 3min。
+   后台全停；回前台延迟 3 秒补一轮（避开恢复渲染高峰），30 秒内不重复补。 */
+let _hbLive = 0, _hbMood = 0, _hbVer = 0, _hbResume = 0;
+const _VER_EVERY = _narrow ? 600000 : 180000;
+function heartbeat(force){
+  if(document.hidden) return;
+  const now = Date.now();
+  if(force){
+    if(now - _hbResume < 30000) return;
+    _hbResume = now;
+  }
+  if(now - _hbLive >= 60000){ _hbLive = now; loadLive(); }
+  if(now - _hbMood >= 60000){ _hbMood = now; refreshMood(); }
+  if(now - _hbVer >= _VER_EVERY){ _hbVer = now; checkNewer(); }
+}
+setInterval(function(){ heartbeat(false); }, 60000);
 document.addEventListener('visibilitychange', function(){
-  if(!document.hidden){ loadLive(); refreshMood(); }
+  if(!document.hidden) setTimeout(function(){ heartbeat(true); }, 3000);
+});
+// iOS 从别的页面返回（bfcache 恢复）不一定触发 visibilitychange，这里补一刀
+window.addEventListener('pageshow', function(e){
+  if(e.persisted) setTimeout(function(){ heartbeat(true); }, 1500);
 });
 
 /* 页面是静态的：跑批在后台更新了 docs/data.json，但已经打开的页面还停在旧快照上。
@@ -1147,6 +1181,13 @@ function checkNewer(){
   if(!/^https?:$/.test(location.protocol)) return;
   const cur = P.latest && P.latest.generated_at_ts;
   if(!cur) return;
+  // ★「加载新数据」点过之后，GitHub Pages 的 CDN/浏览器缓存最长 10 分钟还在发旧的
+  //   index.html —— 刷完版本号还是旧的，横条又弹出来 → 用户再点 → 再弹，
+  //   看起来就是「页面莫名一直刷新」。点过一次后 10 分钟内不再提示，掐断这个循环。
+  try{
+    const rl = +sessionStorage.getItem('rl_ts') || 0;
+    if(rl && Date.now() - rl < 600000) return;
+  }catch(e){}
   fetch('ver.json?t=' + Date.now(), {cache:'no-store'})
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(j){
@@ -1161,10 +1202,10 @@ function checkNewer(){
     })
     .catch(function(){ /* 网络抖动/跨域失败都当没发生，不打扰用户 */ });
 }
-// 手机端把探测间隔拉长到 10 分钟：跑批本身一天才十几次，3 分钟一探纯属浪费电量
-const _narrow = (window.innerWidth || 1200) < 640;
-if(!document.hidden) setTimeout(checkNewer, _narrow ? 60000 : 20000);
-setInterval(function(){ if(!document.hidden) checkNewer(); }, _narrow ? 600000 : 180000);
+// 首轮探测：窄屏延 60 秒、宽屏 20 秒；之后由心跳按 _VER_EVERY 节奏走。
+if(!document.hidden){
+  setTimeout(function(){ checkNewer(); _hbVer = Date.now(); }, _narrow ? 60000 : 20000);
+}
 
 // 横竖屏切换 / 窗口缩放时重画分数图（窄屏和宽屏用不同画布尺寸）。
 // ★ 只在**宽度变了**才重画：手机上滚动时地址栏收起/展开改的是高度，innerWidth 不变，
@@ -1942,7 +1983,7 @@ def render(payload):
 
 <div class="newbar" id="newbar" hidden>
   <span>后台已更新到 <b id="newat">—</b> 的版本，你正在看的是 <b id="curat">—</b> 的快照</span>
-  <button type="button" onclick="location.reload()">加载新数据</button>
+  <button type="button" onclick="try{{sessionStorage.setItem('rl_ts',Date.now())}}catch(e){{}};location.reload()">加载新数据</button>
 </div>
 
 <div class="hero" id="hero"></div>
