@@ -1932,7 +1932,7 @@ def _sz_kline_html(sz):
       当前价夹在「支撑 / 压力」之间，距离每分钟随实时价刷新</div>
   </div>
   <div class="szk-top">
-    <div class="szk-now"><span class="lbl">深证成指</span><b id="szk-px">{cur:,.1f}</b><span class="rt">实时</span></div>
+    <div class="szk-now"><span class="lbl">深证成指</span><b id="szk-px">{cur:,.2f}</b><span class="rt">实时</span></div>
     <div class="res"><span class="lbl">上方压力</span><span class="pct" id="szk-res-p">{_esc(res_pct)}</span><b id="szk-res">{_esc(res_price)}</b><span class="gap" id="szk-res-g">{_esc(res_gap_t)}</span></div>
     <div class="sup"><span class="lbl">下方支撑</span><span class="pct" id="szk-sup-p">{_esc(sup_pct)}</span><b id="szk-sup">{_esc(sup_price)}</b><span class="gap" id="szk-sup-g">{_esc(sup_gap_t)}</span></div>
   </div>
