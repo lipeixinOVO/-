@@ -15,6 +15,7 @@ import re
 CSS = """
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
+  color-scheme:light;   /* CSS 级再钉一次浅色主题：部分手机内核无视 meta，但吃 CSS */
   --bg:#f7f5f1; --bg-2:#f2f0eb;
   --card-a:#ffffff; --card-b:#fdfcf9;
   --line:rgba(20,22,27,.11); --line-2:rgba(20,22,27,.2);
@@ -23,7 +24,7 @@ CSS = """
   --ink:#66727e; --ok:#2f7d54; --hot:#b4452e;
   --r:14px;
 }
-html{background:var(--bg);-webkit-text-size-adjust:100%}
+html{background:var(--bg);-webkit-text-size-adjust:100%;overscroll-behavior-y:contain}
 body{
   background:
     radial-gradient(1100px 520px at 50% -220px, rgba(198,168,96,.18), transparent 62%),
@@ -37,6 +38,34 @@ body{
 }
 .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---------- 手机端减负：首屏外的大块先不布局不绘制 ----------
+   content-visibility:auto = 视口外的区块跳过布局/绘制/内存占用，滚近了才渲染
+   （Chrome 85+ / iOS Safari 18+ 生效，老内核直接忽略该属性、行为不变，零风险）。
+   背景：283KB 单页 HTML 在手机上全量布局，内存吃紧时渲染进程被系统杀掉，
+   浏览器自动整页重载，每次重载先白屏再画内容 —— 用户看到的就是
+   「很卡 + 莫名自动刷新 + 黑白来回变」（2026-11-04 用户报障）。
+   contain-intrinsic-size 只影响占位高度，宽度不受影响（renderChart 只读 innerWidth，安全）。
+   占位值是 tools/measure_sections.py 在 390/1100 视口下量的真实高度——
+   差得越远，滚动时区块「落地」的跳动越明显。auto 前缀 = 渲染过一次后
+   浏览器记住真实尺寸，之后不再跳。 */
+.grid{content-visibility:auto;contain-intrinsic-size:auto 2085px}
+.mchart{content-visibility:auto;contain-intrinsic-size:auto 510px}
+.charthint{content-visibility:auto;contain-intrinsic-size:auto 80px}
+.chartbar{content-visibility:auto;contain-intrinsic-size:auto 115px}
+.chart{content-visibility:auto;contain-intrinsic-size:auto 510px}
+.lab{content-visibility:auto;contain-intrinsic-size:auto 390px}
+.notes{content-visibility:auto;contain-intrinsic-size:auto 700px}
+.foot{content-visibility:auto;contain-intrinsic-size:auto 121px}
+@media (min-width:640px){
+  .grid{contain-intrinsic-size:auto 1254px}
+  .mchart{contain-intrinsic-size:auto 475px}
+  .charthint{contain-intrinsic-size:auto 18px}
+  .chartbar{contain-intrinsic-size:auto 27px}
+  .chart{contain-intrinsic-size:auto 475px}
+  .lab{contain-intrinsic-size:auto 430px}
+  .foot{contain-intrinsic-size:auto 81px}
+}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px 96px}
 
 /* ---------- 顶部标题 ---------- */
@@ -1082,6 +1111,22 @@ function renderLive(){
     atEl.textContent = at;
     return;
   }
+  // ★ 价格变了也尽量别整条重建：交易时段几乎每分钟都有格子变价，
+  //   整条 innerHTML 重写会让正在滚动的手机页面被"拽"一下（2026-11-04 报障）。
+  //   格子数量没变（还是同一批标的）时走逐格更新，只替换价格变了的那一两格。
+  const cur = box.querySelectorAll(':scope > .cell');
+  if(_liveSig && atEl && cells.length && cur.length === cells.length){
+    for(let i = 0; i < cells.length; i++){
+      if(_liveCellHTML[i] !== cells[i]){
+        cur[i].outerHTML = cells[i];
+        _liveCellHTML[i] = cells[i];
+      }
+    }
+    _liveSig = body;
+    atEl.textContent = at;
+    return;
+  }
+  _liveCellHTML = cells.slice();
   _liveSig = body;
   box.innerHTML = body+
     '<div class="stamp">'+
@@ -1092,6 +1137,7 @@ function renderLive(){
     perDay+' 次整体重算</span></div>';
 }
 let _liveSig = '';
+let _liveCellHTML = [];   // 上一轮每格的 HTML，用于逐格 diff，避免整条 innerHTML 重建
 let _liveKill = null, _liveFail = 0, _liveNext = 0;
 function loadLive(){
   if(document.hidden) return;
