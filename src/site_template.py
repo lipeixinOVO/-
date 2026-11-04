@@ -512,9 +512,9 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   .swipehint{display:block}
   .chartbar{gap:8px}
   .chartbar button{font-size:12.5px;padding:6px 15px}
-  /* 二十二年四个窗口按钮要在一行里排开，手机上把内边距收紧 */
-  .eqw .chartbar button{font-size:11.5px;padding:5px 9px;letter-spacing:.02em}
-  .eqw .chartbar .delta{margin-left:0;font-size:10px}
+  /* 二十二年 / 深证成指的多窗口按钮要在一行里排开，手机上把内边距收紧 */
+  .eqw .chartbar button,.szk .chartbar button{font-size:11.5px;padding:5px 9px;letter-spacing:.02em}
+  .eqw .chartbar .delta,.szk .chartbar .delta{margin-left:0;font-size:10px}
   .charthint{font-size:11.5px;gap:12px}
 }
 """
@@ -1212,7 +1212,7 @@ function loadLive(){
 
 /* 二十二年那张图的窗口切换（服务端已生成好几份 SVG，这里只切显示） */
 function bindEqw(){
-  const roots=document.querySelectorAll('.eqw');
+  const roots=document.querySelectorAll('.eqw,.szk');
   Array.prototype.forEach.call(roots,function(root){
     const btns=root.querySelectorAll('.chartbar button');
     const panes=root.querySelectorAll('.sw');
@@ -1770,16 +1770,19 @@ def _sz_fib_pct(p):
     return f"{p*100:.1f}%"
 
 
-def _sz_kline_svg(sz, w, h, fs=9.5):
+def _sz_kline_svg(sz, w, h, fs=9.5, klines=None):
     """深成指日 K + 斐波那契回调线 SVG。
 
     蜡烛用 4 个 path 合并画（阳影线 / 阴影线 / 阳实体 / 阴实体），
     660 根蜡烛只产生 4 个 <path>，避免单根一个 <rect>+<line> 把 SVG 撑到上百 KB。
+
+    klines：传入时表示只画这一段日 K（日期切换功能），Y 轴按这段自适应；
+    默认（None）画全量。自适应范围会把「压力 / 支撑」两条线一起包进去，
+    保证它们永远落在图内。
     """
-    klines = sz.get("klines") or []
+    if klines is None:
+        klines = sz.get("klines") or []
     fib = sz.get("fib") or []
-    lo = sz["swing_low"]["price"]
-    hi = sz["swing_high"]["price"]
     cur = sz["cur"]
     res = sz.get("resistance") or {}
     sup = sz.get("support") or {}
@@ -1787,7 +1790,14 @@ def _sz_kline_svg(sz, w, h, fs=9.5):
     if n < 2:
         return ""
 
-    pad = (hi - lo) * 0.02
+    # Y 轴按「这段 K 线的高低」自适应，并把压力/支撑线一起纳入，确保可见。
+    lo = min(k["l"] for k in klines)
+    hi = max(k["h"] for k in klines)
+    for _p in (res.get("price"), sup.get("price")):
+        if _p is not None:
+            lo = min(lo, _p)
+            hi = max(hi, _p)
+    pad = (hi - lo) * 0.06
     ymin, ymax = lo - pad, hi + pad
 
     PL = 66 if w >= 600 else 72          # 左留白：放斐波那契「百分比 + 价格」（窄屏字号大、价格带千分位，留宽点）
@@ -1840,6 +1850,10 @@ def _sz_kline_svg(sz, w, h, fs=9.5):
     sup_p = sup.get("price")
     for f in fib:
         y = Y(f["price"])
+        # 短窗口下落在可视范围之外的斐波那契线直接不画（连标签也不画），
+        # 避免一堆线 + 文字堆在图的上下边界外。
+        if y < PT - 4 or y > PT + ph + 4:
+            continue
         is_res = res_p is not None and abs(f["price"] - res_p) < 1e-6
         is_sup = sup_p is not None and abs(f["price"] - sup_p) < 1e-6
         if is_res:
@@ -1870,7 +1884,7 @@ def _sz_kline_svg(sz, w, h, fs=9.5):
     o.append(f'<text x="{w-PR-3}" y="{y_cur-6:.1f}" text-anchor="end" fill="{SZ_CUR}" '
              f'font-size="{fs if w >= 600 else fs-0.5}" font-weight="600">{cur_lbl}</text>')
 
-    # 日期轴：swing 低点 / swing 高点 / 最新。窄屏缩短格式并防重叠。
+    # 日期轴：只标这段 K 线的首尾；swing 高点若落在段内（宽屏）再补一个中间标记。
     import datetime as _dt
     def _d(s):
         return _dt.date.fromisoformat(str(s)[:10])
@@ -1878,9 +1892,9 @@ def _sz_kline_svg(sz, w, h, fs=9.5):
     hd = _d(sz["swing_high"]["date"])
     fmt = "%y-%m-%d" if w >= 600 else "%y-%m"
     span = max(1, (d1 - d0).days)
-    # 窄屏只标首尾两个日期（swing 高点由 100% 斐波那契线+价格轴体现，不用再标日期，避免叠字）
-    marks = ([(d0, "start"), (d1, "end")] if w < 600
-             else [(d0, "start"), (hd, "mid"), (d1, "end")])
+    marks = [(d0, "start"), (d1, "end")]
+    if w >= 600 and d0 <= hd <= d1:
+        marks.insert(1, (hd, "mid"))
     for dd, mode in marks:
         frac = (dd - d0).days / span
         xx = PL + pw * frac
@@ -1899,6 +1913,7 @@ def _sz_kline_html(sz):
     res = sz.get("resistance") or {}
     sup = sz.get("support") or {}
     cur = sz["cur"]
+    klines_all = sz.get("klines") or []
 
     def _gap(f, cur_):
         if not f:
@@ -1908,9 +1923,30 @@ def _sz_kline_html(sz):
     res_gap = _gap(res, cur)
     sup_gap = _gap(sup, cur)
 
-    wide = _sz_kline_svg(sz, w=1060, h=360, fs=9.5)
-    narrow = _sz_kline_svg(sz, w=430, h=380, fs=10.5)
-    if not wide:
+    # 日期切换：按交易日窗口切成多份 SVG，前端只切显隐（复用 bindEqw 的 .chartbar/.sw）。
+    # 默认「近 1 年」——蜡烛够宽、不拥挤；切「全部」看完整 0%~100% 斐波那契。
+    wins = [("1m", "近 1 月", 22),
+            ("3m", "近 3 月", 66),
+            ("6m", "近 6 月", 132),
+            ("1y", "近 1 年", 250),
+            ("all", "全部", None)]
+
+    btns, panes = [], []
+    for k, name, cnt in wins:
+        kl = klines_all if cnt is None else klines_all[-cnt:]
+        if len(kl) < 2:
+            continue
+        wide = _sz_kline_svg(sz, w=1060, h=360, fs=9.5, klines=kl)
+        narrow = _sz_kline_svg(sz, w=430, h=380, fs=10.5, klines=kl)
+        if not wide:
+            continue
+        on = (k == "1y")
+        cls = ' class="on"' if on else ""
+        btns.append(f'<button type="button" data-k="{k}"{cls}>{name}</button>')
+        panes.append(f'<div class="sw" data-k="{k}"{"" if on else " hidden"}>'
+                     f'<div class="v-w">{wide}</div>'
+                     f'<div class="v-n">{narrow}</div></div>')
+    if not panes:
         return ""
 
     res_pct = _sz_fib_pct(res["pct"]) if res else "—"
@@ -1936,8 +1972,9 @@ def _sz_kline_html(sz):
     <div class="res"><span class="lbl">上方压力</span><span class="pct" id="szk-res-p">{_esc(res_pct)}</span><b id="szk-res">{_esc(res_price)}</b><span class="gap" id="szk-res-g">{_esc(res_gap_t)}</span></div>
     <div class="sup"><span class="lbl">下方支撑</span><span class="pct" id="szk-sup-p">{_esc(sup_pct)}</span><b id="szk-sup">{_esc(sup_price)}</b><span class="gap" id="szk-sup-g">{_esc(sup_gap_t)}</span></div>
   </div>
-  <div class="v-w">{wide}</div>
-  <div class="v-n">{narrow}</div>
+  <div class="chartbar"><div class="btns">{''.join(btns)}</div>
+    <div class="delta"><span class="lb">日频数据</span>点击切换日期范围 · 「全部」看完整 0%~100% 斐波那契</div></div>
+  {''.join(panes)}
   <div class="cap">{_esc(anchor_txt)}　·　当前价/压力/支撑距离为实时（腾讯行情每 60 秒），
       K 线为日频、随跑批刷新</div>
 </div>"""
