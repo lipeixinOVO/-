@@ -2306,6 +2306,23 @@ def render(payload):
 <meta name="theme-color" content="#f7f5f1">
 <meta name="color-scheme" content="light">
 <title>定投台 · {_esc(latest['trade_date'])}</title>
+<script>
+/* 版本自检（渲染前执行）：收藏的稳定入口不带 query，GitHub Pages 的 CDN 会缓存它最多
+   10 分钟、手机浏览器（微信/QQ 内核）还可能缓存更久，导致旧主题/旧数据迟迟不换新。
+   这里在画任何内容前自检一次：本地记录的构建号落后于当前构建，就跳转到带版本号的 URL
+   （唯一 URL → CDN 回源），一次拿到最新版。localStorage 记档，只跳一次，不会「反复刷新」。 */
+(function(){{
+  try{{
+    if(location.protocol.indexOf('http') !== 0) return;   // file:// 本地预览跳过
+    if(location.search) return;                            // 已带 ?v=，不重复跳
+    var V = "{latest.get('generated_at_ts', '')}";
+    if(V && localStorage.getItem('__dca_build__') !== V){{
+      localStorage.setItem('__dca_build__', V);
+      location.replace(location.pathname + '?v=' + V);
+    }}
+  }}catch(e){{}}
+}})();
+</script>
 <style>{CSS}</style></head>
 <body><div class="wrap">
 

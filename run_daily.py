@@ -240,9 +240,13 @@ def run(dry=False):
     # 用运行日的话，周六/节假日跑批会往历史里写一期「周六」的分数（内容与周五相同），
     # 分数曲线就会多出一个不存在的点，而且周一的环比也会算错。
     # 黄金是 24 小时交易、日期天然领先一天，算中位数时排除它，否则会把数据日往前拽。
-    _ds = sorted(a["price_date"] for a in results
-                 if a.get("price_date") and a.get("kind") != "commodity")
-    _tdate = _ds[len(_ds) // 2] if _ds else _now_cn.date().isoformat()
+    # 数据日用「最新」而非「中位数」：美股资产在北京时区天然 T+1（今天美股还没收盘，
+    # 最近一个已收盘日就是昨天），3 个美股会把中位数死死拖在昨天 —— A 股 15:17 收盘后
+    # 标题仍显示昨天，用户看着像「没更新」。改取最大值后，A 股收盘当天标题即跳到今天；
+    # 美股自己的 price_date 仍显示昨天（卡片上各自标注），一目了然，不丢信息。
+    _ds = [a["price_date"] for a in results
+           if a.get("price_date") and a.get("kind") != "commodity"]
+    _tdate = max(_ds) if _ds else _now_cn.date().isoformat()
 
     out = {
         "generated_at": _now_cn.strftime("%Y-%m-%d %H:%M:%S"),
