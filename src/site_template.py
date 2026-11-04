@@ -402,6 +402,20 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .mhead .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
 .mhead .sub{font-size:10.5px;color:var(--dim2);margin-top:5px;line-height:1.85}
 .mhead .sub b{font-weight:600;color:#3f434c}
+/* 深证成指技术位：顶部「当前价 / 压力 / 支撑」提示条 */
+.szk-top{display:flex;gap:14px 30px;flex-wrap:wrap;align-items:baseline;
+  margin:14px 0 12px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);
+  background:rgba(20,22,27,.025)}
+.szk-top .lbl{font-size:11px;color:var(--dim2);letter-spacing:.04em;margin-right:7px}
+.szk-top b{font-variant-numeric:tabular-nums;font-weight:600}
+.szk-top .szk-now b{font-size:23px;color:#0e1013;letter-spacing:-.01em}
+.szk-top .szk-now .rt{font-size:9px;letter-spacing:.08em;color:#2f7d54;
+  border:1px solid rgba(47,125,84,.32);background:rgba(47,125,84,.06);
+  padding:1.5px 6px;border-radius:4px;vertical-align:2px;margin-left:8px}
+.szk-top .res b{color:#b4452e}
+.szk-top .sup b{color:#2f7d54}
+.szk-top .pct{font-size:12px;color:var(--dim2);margin-right:5px;font-variant-numeric:tabular-nums}
+.szk-top .gap{font-size:11px;color:var(--dim3);font-variant-numeric:tabular-nums;margin-left:3px}
 .mlegs{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));
   gap:8px 20px;margin:13px 0 8px;font-size:11px;color:var(--dim2)}
 .mleg{display:flex;align-items:baseline;gap:6px;min-width:0}
@@ -413,8 +427,10 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .mleg b.dn{color:#2f7d54}
 .mleg em{font-style:normal;color:var(--dim3);font-size:10.5px;letter-spacing:.02em;flex:0 0 auto}
 .mchart .v-w{display:block} .mchart .v-n{display:none}
+.szk .v-w{display:block} .szk .v-n{display:none}
 @media (max-width:760px){
   .mchart .v-w{display:none} .mchart .v-n{display:block}
+  .szk .v-w{display:none} .szk .v-n{display:block}
   .mlegs{grid-template-columns:1fr;gap:4px;font-size:10.5px;margin:11px 0 6px}
   .mleg{line-height:1.5}
   .mleg em{font-size:10px}
@@ -1056,7 +1072,8 @@ const LIVE = [
   {c:'usNDX',   nm:'纳斯达克100'},
   {c:'hf_GC',   nm:'黄金 COMEX'},
   {c:'sh000922',nm:'中证红利'},
-  {c:'sh000300',nm:'沪深300'}
+  {c:'sh000300',nm:'沪深300'},
+  {c:'sz399001',nm:'深证成指'}
 ];
 function qcls(v){ return v>0.0001?'up':(v<-0.0001?'dn':'mid'); }
 function renderLive(){
@@ -1136,6 +1153,35 @@ function renderLive(){
     '<span><b>实时价不参与打分</b>；分数、卡片收盘价、各类曲线每交易日 '+
     perDay+' 次整体重算</span></div>';
 }
+
+/* 深证成指技术位：当前价 + 压力/支撑距离，跟着实时行情一起每分钟刷新。
+   fib 7 条线在 payload 里（服务端算好），这里用实时价重新夹出上下最近的两条。 */
+function renderSzK(){
+  const raw = window['v_sz399001']; if(!raw) return;
+  const p = String(raw).split('~');
+  const px = parseFloat(p[3]);
+  if(!px || isNaN(px)) return;
+  const SK = P.latest && P.latest.sz_kline; if(!SK || !SK.fib) return;
+  const setTxt = function(id, t){ const e=document.getElementById(id); if(e) e.textContent=t; };
+  setTxt('szk-px', fmtPx(px));
+  const pctTxt = function(v){ if(v===0) return '0%'; if(v===1) return '100%'; return (v*100).toFixed(1)+'%'; };
+  const num = function(v){ return Math.round(v).toLocaleString('zh-CN'); };
+  let res=null, sup=null;
+  SK.fib.forEach(function(f){
+    if(f.price>px && (res===null || f.price<res.price)) res=f;
+    if(f.price<px && (sup===null || f.price>sup.price)) sup=f;
+  });
+  if(res){
+    setTxt('szk-res-p', pctTxt(res.pct));
+    setTxt('szk-res', num(res.price));
+    setTxt('szk-res-g', '+' + ((res.price-px)/px*100).toFixed(1) + '%');
+  }
+  if(sup){
+    setTxt('szk-sup-p', pctTxt(sup.pct));
+    setTxt('szk-sup', num(sup.price));
+    setTxt('szk-sup-g', ((sup.price-px)/px*100).toFixed(1) + '%');
+  }
+}
 let _liveSig = '';
 let _liveCellHTML = [];   // 上一轮每格的 HTML，用于逐格 diff，避免整条 innerHTML 重建
 let _liveKill = null, _liveFail = 0, _liveNext = 0;
@@ -1152,7 +1198,7 @@ function loadLive(){
     if(_liveKill){ clearTimeout(_liveKill); _liveKill=null; }
     if(s.parentNode) s.parentNode.removeChild(s);
   };
-  s.onload=function(){ drop(); _liveFail=0; _liveNext=0; renderLive(); };
+  s.onload=function(){ drop(); _liveFail=0; _liveNext=0; renderLive(); renderSzK(); };
   s.onerror=function(){ drop(); _liveFail+=1;
     // 弱网退避：连败 1→1 分钟、2→5 分钟、≥3→15 分钟。
     // 原来每 60 秒硬拉、挂着不摘的 <script> 会占满手机连接池 —— 卡死主因之一。
@@ -1708,6 +1754,195 @@ def _month_html(latest):
 </div>"""
 
 
+# 深证成指技术位：K 线配色。A 股「涨红跌绿」，阳线红、阴线绿。
+SZ_UP = "#c43d2e"       # 阳线（收盘 ≥ 开盘，涨）
+SZ_DN = "#2f7d54"       # 阴线（收盘 < 开盘，跌）
+SZ_FIB = "#c9a227"      # 斐波那契回调线（黄）
+SZ_FIB_BND = "#d8c06a"  # 0%/100% 边界（浅黄，弱化）
+SZ_CUR = "#14161b"      # 当前价参考线
+
+
+def _sz_fib_pct(p):
+    if p == 0.0:
+        return "0%"
+    if p == 1.0:
+        return "100%"
+    return f"{p*100:.1f}%"
+
+
+def _sz_kline_svg(sz, w, h, fs=9.5):
+    """深成指日 K + 斐波那契回调线 SVG。
+
+    蜡烛用 4 个 path 合并画（阳影线 / 阴影线 / 阳实体 / 阴实体），
+    660 根蜡烛只产生 4 个 <path>，避免单根一个 <rect>+<line> 把 SVG 撑到上百 KB。
+    """
+    klines = sz.get("klines") or []
+    fib = sz.get("fib") or []
+    lo = sz["swing_low"]["price"]
+    hi = sz["swing_high"]["price"]
+    cur = sz["cur"]
+    res = sz.get("resistance") or {}
+    sup = sz.get("support") or {}
+    n = len(klines)
+    if n < 2:
+        return ""
+
+    pad = (hi - lo) * 0.02
+    ymin, ymax = lo - pad, hi + pad
+
+    PL = 66 if w >= 600 else 72          # 左留白：放斐波那契「百分比 + 价格」（窄屏字号大、价格带千分位，留宽点）
+    PR = 52 if w >= 600 else 40          # 右留白：放价格刻度
+    PT, PB = 14, 24
+    pw = w - PL - PR
+    ph = h - PT - PB
+    cw = pw / n
+    bw = min(3.0, max(0.7, cw * 0.66))
+    X = lambda i: PL + pw * (i + 0.5) / n
+    Y = lambda v: PT + ph * (1 - (v - ymin) / (ymax - ymin))
+
+    o = [f'<svg viewBox="0 0 {w} {h}" preserveAspectRatio="xMidYMid meet">']
+
+    # 网格 + 右侧价格刻度
+    for v in _nice_ticks(ymin, ymax, 5):
+        yy = Y(v)
+        o.append(f'<line x1="{PL}" y1="{yy:.1f}" x2="{w-PR}" y2="{yy:.1f}" '
+                 'stroke="rgba(20,22,27,.07)" stroke-width="1"/>')
+        o.append(f'<text x="{w-PR+5}" y="{yy+3:.1f}" fill="#8a8d95" font-size="{fs-0.5}" '
+                 f'text-anchor="start">{v:,.0f}</text>')
+
+    # 蜡烛：影线 + 实体，按涨跌各合并成一个 path
+    wick_u, wick_d, body_u, body_d = [], [], [], []
+    for i, k in enumerate(klines):
+        x = X(i)
+        seg = f"M{x:.1f} {Y(k['h']):.1f}V{Y(k['l']):.1f}"
+        y_top = Y(max(k["o"], k["c"]))
+        y_bot = Y(min(k["o"], k["c"]))
+        bh = max(1.0, y_bot - y_top)
+        x0 = x - bw / 2
+        box = f"M{x0:.1f} {y_top:.1f}h{bw:.1f}v{bh:.1f}h-{bw:.1f}z"
+        if k["c"] >= k["o"]:
+            wick_u.append(seg)
+            body_u.append(box)
+        else:
+            wick_d.append(seg)
+            body_d.append(box)
+    if wick_u:
+        o.append(f'<path d="{"".join(wick_u)}" fill="none" stroke="{SZ_UP}" stroke-width="0.7"/>')
+    if wick_d:
+        o.append(f'<path d="{"".join(wick_d)}" fill="none" stroke="{SZ_DN}" stroke-width="0.7"/>')
+    if body_u:
+        o.append(f'<path d="{"".join(body_u)}" fill="{SZ_UP}" stroke="{SZ_UP}" stroke-width="0.3"/>')
+    if body_d:
+        o.append(f'<path d="{"".join(body_d)}" fill="{SZ_DN}" stroke="{SZ_DN}" stroke-width="0.3"/>')
+
+    # 斐波那契线：0%/100% 边界弱化，5 条中间线黄色；压力/支撑线加粗高亮
+    res_p = res.get("price")
+    sup_p = sup.get("price")
+    for f in fib:
+        y = Y(f["price"])
+        is_res = res_p is not None and abs(f["price"] - res_p) < 1e-6
+        is_sup = sup_p is not None and abs(f["price"] - sup_p) < 1e-6
+        if is_res:
+            col, wd = "#b4452e", 1.7
+        elif is_sup:
+            col, wd = "#2f7d54", 1.7
+        elif f["pct"] in (0.0, 1.0):
+            col, wd = SZ_FIB_BND, 1.0
+        else:
+            col, wd = SZ_FIB, 1.2
+        dash = ' stroke-dasharray="4 3"' if f["pct"] in (0.0, 1.0) else ''
+        o.append(f'<line x1="{PL}" y1="{y:.1f}" x2="{w-PR}" y2="{y:.1f}" '
+                 f'stroke="{col}" stroke-width="{wd}"{dash}/>')
+        # 左侧标注：百分比（金/红/绿）+ 价格（灰）。压力/支撑线只靠颜色+加粗区分，
+        # 不再叠「压力/支撑」文字标签 —— 顶部提示条已写清「上方压力 / 下方支撑」，
+        # 图上再叠一行字会跟百分比+价格压在一起（2026-11-04 截图发现的重叠）。
+        pct_col = "#b4452e" if is_res else ("#2f7d54" if is_sup else "#a08030")
+        o.append(f'<text x="{PL-5}" y="{y+3:.1f}" text-anchor="end" font-size="{fs}">'
+                 f'<tspan fill="{pct_col}" font-weight="{600 if (is_res or is_sup) else 400}">'
+                 f'{_sz_fib_pct(f["pct"])}</tspan>'
+                 f'<tspan dx="3" fill="#6b6e78">{f["price"]:,.0f}</tspan></text>')
+
+    # 当前价参考线（最新收盘价；实时价在顶部提示条每分钟刷新）
+    y_cur = Y(cur)
+    o.append(f'<line x1="{PL}" y1="{y_cur:.1f}" x2="{w-PR}" y2="{y_cur:.1f}" '
+             f'stroke="{SZ_CUR}" stroke-width="1.4" stroke-dasharray="5 4"/>')
+    cur_lbl = f"最新 {cur:,.2f}" if w >= 600 else f"{cur:,.2f}"
+    o.append(f'<text x="{w-PR-3}" y="{y_cur-6:.1f}" text-anchor="end" fill="{SZ_CUR}" '
+             f'font-size="{fs if w >= 600 else fs-0.5}" font-weight="600">{cur_lbl}</text>')
+
+    # 日期轴：swing 低点 / swing 高点 / 最新。窄屏缩短格式并防重叠。
+    import datetime as _dt
+    def _d(s):
+        return _dt.date.fromisoformat(str(s)[:10])
+    d0, d1 = _d(klines[0]["d"]), _d(klines[-1]["d"])
+    hd = _d(sz["swing_high"]["date"])
+    fmt = "%y-%m-%d" if w >= 600 else "%y-%m"
+    span = max(1, (d1 - d0).days)
+    # 窄屏只标首尾两个日期（swing 高点由 100% 斐波那契线+价格轴体现，不用再标日期，避免叠字）
+    marks = ([(d0, "start"), (d1, "end")] if w < 600
+             else [(d0, "start"), (hd, "mid"), (d1, "end")])
+    for dd, mode in marks:
+        frac = (dd - d0).days / span
+        xx = PL + pw * frac
+        anchor = "start" if mode == "start" else ("end" if mode == "end" else "middle")
+        o.append(f'<text x="{xx:.1f}" y="{h-8}" fill="#6b6e78" font-size="{fs}" '
+                 f'text-anchor="{anchor}">{dd.strftime(fmt)}</text>')
+
+    o.append("</svg>")
+    return "".join(o)
+
+
+def _sz_kline_html(sz):
+    """深证成指技术位板块。sz 为 None 时返回空串（整段不输出）。"""
+    if not sz or not sz.get("fib"):
+        return ""
+    res = sz.get("resistance") or {}
+    sup = sz.get("support") or {}
+    cur = sz["cur"]
+
+    def _gap(f, cur_):
+        if not f:
+            return None
+        return (f["price"] - cur_) / cur_ * 100
+
+    res_gap = _gap(res, cur)
+    sup_gap = _gap(sup, cur)
+
+    wide = _sz_kline_svg(sz, w=1060, h=360, fs=9.5)
+    narrow = _sz_kline_svg(sz, w=430, h=380, fs=10.5)
+    if not wide:
+        return ""
+
+    res_pct = _sz_fib_pct(res["pct"]) if res else "—"
+    res_price = f'{res["price"]:,.0f}' if res else "—"
+    res_gap_t = f'{res_gap:+.1f}%' if res_gap is not None else "—"
+    sup_pct = _sz_fib_pct(sup["pct"]) if sup else "—"
+    sup_price = f'{sup["price"]:,.0f}' if sup else "—"
+    sup_gap_t = f'{sup_gap:+.1f}%' if sup_gap is not None else "—"
+
+    # 斐波那契锚点一句话：让读者知道这套线从哪来、会不会变
+    anchor_txt = (f'斐波那契取「{sz["swing_low"]["date"]} 低点 {sz["swing_low"]["price"]:,.0f}」'
+                  f'→「{sz["swing_high"]["date"]} 高点 {sz["swing_high"]["price"]:,.0f}」，'
+                  f'未来创新高/新低会自动重画')
+
+    return f"""<div class="szk chart">
+  <div class="mhead">
+    <div class="t">深证成指 · 技术位</div>
+    <div class="sub">斐波那契回调 · 黄色分界线 = 23.6% / 38.2% / 50% / 61.8% / 80.9%　·　
+      当前价夹在「支撑 / 压力」之间，距离每分钟随实时价刷新</div>
+  </div>
+  <div class="szk-top">
+    <div class="szk-now"><span class="lbl">深证成指</span><b id="szk-px">{cur:,.1f}</b><span class="rt">实时</span></div>
+    <div class="res"><span class="lbl">上方压力</span><span class="pct" id="szk-res-p">{_esc(res_pct)}</span><b id="szk-res">{_esc(res_price)}</b><span class="gap" id="szk-res-g">{_esc(res_gap_t)}</span></div>
+    <div class="sup"><span class="lbl">下方支撑</span><span class="pct" id="szk-sup-p">{_esc(sup_pct)}</span><b id="szk-sup">{_esc(sup_price)}</b><span class="gap" id="szk-sup-g">{_esc(sup_gap_t)}</span></div>
+  </div>
+  <div class="v-w">{wide}</div>
+  <div class="v-n">{narrow}</div>
+  <div class="cap">{_esc(anchor_txt)}　·　当前价/压力/支撑距离为实时（腾讯行情每 60 秒），
+      K 线为日频、随跑批刷新</div>
+</div>"""
+
+
 # 每个区间对应什么情况，一句话。措辞只描述"情绪处在什么状态、历史上多出现在哪"，
 # 不写买卖建议 —— 情绪指数只能说明"大家怎么想"，不能说明"接下来怎么走"。
 MOOD_ZONE_TEXT = {
@@ -1956,6 +2191,12 @@ def _js_payload(payload):
         m = dict(latest["mood"])
         m.pop("history", None)
         latest["mood"] = m
+    # 深证成指技术位：K 线 600+ 根只给服务端画 SVG 用，前端一行都不读
+    # （图是服务端画好的）。前端只读 fib 7 条线 + 当前收盘价，用来每分钟重算压力/支撑距离。
+    if isinstance(latest.get("sz_kline"), dict):
+        sk = dict(latest["sz_kline"])
+        sk.pop("klines", None)
+        latest["sz_kline"] = sk
     p["latest"] = latest
     return p
 
@@ -2003,6 +2244,7 @@ def render(payload):
     mood_sec = _mood_html(latest.get("mood") or {})
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
     sig_sec = _signals_html(payload.get("signals") or {})
+    szk_sec = _sz_kline_html(latest.get("sz_kline"))
     labs_sec = ""
     if labs_a:
         labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small>'
@@ -2054,6 +2296,9 @@ def render(payload):
 
 <h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small><em class="fq snap">随跑批刷新</em></h2>
 {month_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
+
+<h2>深证成指 · 技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
+{szk_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
 <h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="charthint">

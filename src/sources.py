@@ -246,6 +246,31 @@ def tx_kline(secid):
     return [tuple(x) for x in _cached(f"tx_{sym}", _go)]
 
 
+def cn_ohlc(symbol):
+    """A 股指数日 K（OHLC）：[(date, open, close, high, low)]。symbol 例：sz399001。
+
+    腾讯 fqkline 接口的 day 行 = [date, open, close, high, low, volume, ...]，
+    字段顺序与 qt.gtimg.cn 实时快照的今开/收盘/最高/最低逐一核对过。
+    """
+    def _go():
+        url = ("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
+               f"?param={symbol},day,,,2000,qfq")
+        js = fetch_json(url, timeout=25, retries=3)
+        d = (js.get("data") or {}).get(symbol) or {}
+        rows = d.get("qfqday") or d.get("day") or []
+        out = []
+        for r in rows:
+            try:
+                out.append([r[0], float(r[1]), float(r[2]), float(r[3]), float(r[4])])
+            except (IndexError, TypeError, ValueError):
+                continue
+        out.sort(key=lambda x: x[0])
+        if not out:
+            raise RuntimeError(f"cn_ohlc 无数据: {symbol}")
+        return out
+    return [tuple(x) for x in _cached(f"ohlc_{symbol}", _go)]
+
+
 def sina_snapshot(code, enc="gbk"):
     """新浪实时快照。支持 gb_* / hf_* / DINIW / fx_*"""
     return _cached(f"snap_{code}", lambda: _snapshot_raw(code, enc))

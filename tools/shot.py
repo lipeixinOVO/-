@@ -36,6 +36,11 @@ def shot(out, sel, w, h, query=""):
 <script>
 document.getElementById('f').onload = function(){
   var doc = this.contentDocument;
+  // 强制所有区块渲染再定位：content-visibility 下首屏外区块是占位高度，
+  // 不强制的话 scrollHeight / getBoundingClientRect 都是占位值，定位会偏（截到别的板块）。
+  var st = doc.createElement('style');
+  st.textContent = '.grid,.mchart,.charthint,.chartbar,.chart,.lab,.notes,.foot{content-visibility:visible !important}';
+  doc.head.appendChild(st);
   var el = doc.querySelector(%s);
   if(!el) return;
   // 先把 iframe 拉到整页高度再量位置：原来高度写死成视口的 4 倍，
