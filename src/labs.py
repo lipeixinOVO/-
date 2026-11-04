@@ -231,7 +231,14 @@ def run():
     errors = []
     out = {"errors": errors, "notes": []}
 
-    div = _try(lambda: S.csindex_perf("000922", start="2004-01-01"), errors, "中证红利日线")
+    # 中证红利优先走东财（当日收盘后即可取到，避免中证官网的 T+1 延迟让创红比/月线锚
+    # 停在昨天）。东财对 1.000922 会间歇性断连，失败再回退中证官网（T+1，当日可能缺失）。
+    div = _try(lambda: S.em_kline("1.000922"), errors, "中证红利日线(东财)")
+    if not div:
+        div = _try(lambda: S.csindex_perf("000922", start="2004-01-01"), errors,
+                   "中证红利日线(中证官网兜底)")
+        if div:
+            out["notes"].append("中证红利用中证官网兜底（T+1 延迟，当日数据可能缺失）")
     cyb = _try(lambda: S.sina_cn_daily("sz399006"), errors, "创业板指日线")
     h300 = _try(lambda: S.csindex_perf("H00300", start="2004-01-01"), errors, "沪深300全收益")
     # 黑线：全市场。原图是万得全A（拿不到），用中证全指价格指数 000985 近似

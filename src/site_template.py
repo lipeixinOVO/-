@@ -1294,6 +1294,14 @@ function checkNewer(){
     })
     .catch(function(){ /* 网络抖动/跨域失败都当没发生，不打扰用户 */ });
 }
+/* 点「加载新数据」：带唯一 query 强制绕过 GitHub Pages 的 CDN 缓存。
+   之前用 location.reload()，CDN 最长 10 分钟还在发旧 index.html ——
+   刷完版本号还是旧的，newbar 又弹、用户再点、再弹，看着像「页面一直自动刷新」。
+   带 ?v=时间戳 让 CDN 把它当新 URL 回源，一次就能拿到最新版。 */
+function loadNew(){
+  try{ sessionStorage.setItem('rl_ts', Date.now()); }catch(e){}
+  location.replace(location.pathname + '?v=' + Date.now());
+}
 // 首轮探测：窄屏延 60 秒、宽屏 20 秒；之后由心跳按 _VER_EVERY 节奏走。
 if(!document.hidden){
   setTimeout(function(){ checkNewer(); _hbVer = Date.now(); }, _narrow ? 60000 : 20000);
@@ -2308,7 +2316,7 @@ def render(payload):
 
 <div class="newbar" id="newbar" hidden>
   <span>后台已更新到 <b id="newat">—</b> 的版本，你正在看的是 <b id="curat">—</b> 的快照</span>
-  <button type="button" onclick="try{{sessionStorage.setItem('rl_ts',Date.now())}}catch(e){{}};location.reload()">加载新数据</button>
+  <button type="button" onclick="loadNew()">加载新数据</button>
 </div>
 
 <div class="hero" id="hero"></div>

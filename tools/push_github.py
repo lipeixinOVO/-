@@ -131,10 +131,22 @@ def get_head_sha():
 
 def blob(p):
     data = p.read_bytes()
-    r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/blobs", headers=H, timeout=60,
-                      json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
-    r.raise_for_status()
-    return r.json()["sha"]
+    payload = {"content": base64.b64encode(data).decode(), "encoding": "base64"}
+    # api.github.com 在本机走代理时会间歇性断连（WinError 10053），逐个上传 30+ 个文件
+    # 时几乎必中一次。这里对 blob 上传做重试（指数退避），否则整批推送半途而废。
+    import time
+    last = None
+    for attempt in range(4):
+        try:
+            r = requests.post(f"{API}/repos/{OWNER}/{REPO}/git/blobs", headers=H, timeout=60,
+                              json=payload)
+            r.raise_for_status()
+            return r.json()["sha"]
+        except requests.exceptions.RequestException as e:
+            last = e
+            if attempt < 3:
+                time.sleep(1.5 + attempt * 2.0)
+    raise RuntimeError(f"blob 上传失败（已重试 4 次）: {last}")
 
 
 def enable_pages():
