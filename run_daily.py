@@ -20,6 +20,7 @@ from src import compute as C          # noqa: E402
 from src import labs as LB            # noqa: E402
 from src import recent as RC          # noqa: E402
 from src import szkline as SZK        # noqa: E402
+from src import zhulong as ZL         # noqa: E402
 
 DJ_H = {"Referer": "https://danjuanfunds.com/"}
 
@@ -230,6 +231,22 @@ def run(dry=False):
             f"深证成指技术位本期取不到（仅展示项，不影响分数）：{str(e)[:90]}")
         print(f"  ✗ 失败：{e}", flush=True)
 
+    # 超短线擒龙（涨停板池 → 热点题材/龙头梯队/异动/补涨）。**纯展示，不参与打分**。
+    # 单独 try，失败只记 note，不许影响主表跑批。
+    print("\n· 超短线擒龙（涨停板池 → 热点题材/龙头/异动/补涨）…", flush=True)
+    try:
+        zl = ZL.run()
+        m = zl.get("market") or {}
+        print(f"  → 数据日 {zl.get('as_of')}，涨停 {m.get('zt')} / 炸板 {m.get('zb')} / "
+              f"最高 {m.get('max_lbc')} 连板，题材 {len(zl.get('themes') or [])} 个，"
+              f"龙头 {len(zl.get('dragon') or [])} 只，补涨 {len(zl.get('catchup') or [])} 只",
+              flush=True)
+    except Exception as e:  # noqa: BLE001
+        zl = None
+        ctx.setdefault("notes", []).append(
+            f"超短线擒龙本期取不到（仅展示项，不影响分数）：{str(e)[:90]}")
+        print(f"  ✗ 失败：{e}", flush=True)
+
     # 时间戳一律带上时区信息：
     #  - generated_at 按北京时间显示（Actions 的 runner 是 UTC，直接 now() 会差 8 小时，页面上很误导）
     #  - generated_at_ts 是机器可读的 epoch 秒，页面用它算「几小时前更新的」
@@ -272,6 +289,8 @@ def run(dry=False):
         "labs": labs,
         # 深证成指技术位（K 线 + 斐波那契回调 + 压力/支撑距离），纯展示
         "sz_kline": szk,
+        # 超短线擒龙（涨停板池 → 热点题材/龙头/异动/补涨），纯展示
+        "zhulong": zl,
         # 美股市场情绪（CNN 恐惧与贪婪），纯展示
         "mood": ctx.get("fng"),
     }

@@ -517,6 +517,62 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   .eqw .chartbar .delta,.szk .chartbar .delta{margin-left:0;font-size:10px}
   .charthint{font-size:11.5px;gap:12px}
 }
+
+/* ---------- 超短线擒龙（纯展示 · 不参与打分） ----------
+   配色沿用 A 股「涨红跌绿」：涨停/涨幅=红、跌停=绿；炸板/异动用琥珀色单独标出，
+   避免和「跌」混淆。板块本身是日频数据（涨停板池），标题右侧标「日频/随跑批刷新」。 */
+.zl{content-visibility:auto;contain-intrinsic-size:auto 2600px}
+.zl .zl-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 12px}
+.zl .zl-stats .st{background:linear-gradient(180deg,var(--card-a),var(--card-b));
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.zl .zl-stats .lbl{font-size:10px;letter-spacing:.12em;color:var(--dim2)}
+.zl .zl-stats b{display:block;font-size:23px;font-weight:600;margin-top:4px;
+  font-variant-numeric:tabular-nums;color:#0e1013}
+.zl .zl-stats b.up{color:#b4452e}
+.zl .zl-stats b.dn{color:#2f7d54}
+.zl-tags{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:2px 0 6px}
+.zl-tags .tagk{font-size:10px;letter-spacing:.12em;color:var(--dim3);margin-right:4px}
+.zl-tags .chip{font-size:11px;padding:2.5px 10px;border-radius:14px;border:1px solid var(--line);
+  background:var(--card-a);color:var(--dim);font-variant-numeric:tabular-nums}
+.zl-tags .chip b{font-weight:600;color:#b4452e}
+.zl-ct{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em;margin:18px 0 8px;
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.zl-ct .hint{font-weight:400;color:var(--dim3);font-size:10px;letter-spacing:.02em}
+.zl-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.zl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.zl-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.zl-tbl th{font-size:9.5px;color:var(--dim3);font-weight:400;text-align:left;letter-spacing:.08em;
+  padding:0 8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.zl-tbl th.r{text-align:right}
+.zl-tbl td{padding:6px 8px;border-bottom:1px solid var(--line);color:var(--txt);white-space:nowrap}
+.zl-tbl tr:last-child td{border-bottom:0}
+.zl-tbl .nm{font-weight:500;color:#14161b}
+.zl-tbl .cd{color:var(--dim3);font-size:10px}
+.zl-tbl .r{text-align:right;font-variant-numeric:tabular-nums}
+.zl-tbl .up{color:#b4452e;font-weight:500}
+.zl-tbl .dn{color:#2f7d54;font-weight:500}
+.zl-tbl .dim{color:var(--dim2)}
+.zl-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:4px;line-height:1.7;
+  border:1px solid rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.zl-badge.gold{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
+.zl-badge.cycle{border-color:var(--line-2);background:rgba(20,22,27,.04);color:var(--dim2)}
+.zl-badge.zb{border-color:rgba(156,120,47,.4);background:rgba(156,120,47,.1);color:#8a6b25}
+.zl-zb-note{font-size:10px;color:var(--dim2);margin:2px 0 0;letter-spacing:.02em;line-height:1.7}
+.zl-method{background:linear-gradient(180deg,#fdfcf9,#f7f5f0);border:1px solid var(--line);
+  border-radius:10px;padding:14px 16px;margin-top:18px}
+.zl-method .t{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em}
+.zl-method ol{margin:8px 0 0 18px}
+.zl-method li{font-size:11px;color:var(--dim);line-height:1.85;margin-bottom:5px}
+.zl-method li b{color:#14161b;font-weight:600}
+.zl-method .case{font-size:10.5px;color:var(--dim2);line-height:1.8;margin-top:6px}
+.zl-method .case b{color:#3f434c}
+@media(max-width:760px){
+  .zl-grid{grid-template-columns:1fr}
+  .zl .zl-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .zl-tbl{font-size:11px}
+  .zl-tbl th,.zl-tbl td{padding-left:5px;padding-right:5px}
+}
 """
 
 JS = """
@@ -1988,6 +2044,189 @@ def _sz_kline_html(sz):
 </div>"""
 
 
+def _zhulong_html(zl):
+    """超短线擒龙板块。zl 为 None / empty 时返回空串（整段不输出）。
+
+    纯展示、不参与打分。数据日频（东财涨停板池），盘前 09:15 跑批时自动回退到
+    上一交易日（= 昨日复盘 / 连板梯队），盘后 15:17 是当日全天数据。
+    """
+    if not zl or not isinstance(zl, dict):
+        return ""
+    if zl.get("empty"):
+        return ('<div class="zl chart"><div class="mhead">'
+                '<div class="t">超短线擒龙</div>'
+                '<div class="sub">本期未取到涨停板池数据（长假或接口不可用），板块暂不展示</div>'
+                '</div></div>')
+
+    mkt = zl.get("market") or {}
+    # as_of 是 API 的 qdate（20261105），统一转成可读格式
+    _d = str(zl.get("as_of") or "")
+    as_of = f"{_d[:4]}-{_d[4:6]}-{_d[6:8]}" if len(_d) == 8 else _d
+
+    # ---- 盘面概览 ----
+    def _st(lbl, val, cls=""):
+        return (f'<div class="st"><span class="lbl">{lbl}</span>'
+                f'<b class="{cls}">{_esc(val)}</b></div>')
+
+    stats = ('<div class="zl-stats">'
+             + _st("涨停", mkt.get("zt", "—"), "up")
+             + _st("炸板", mkt.get("zb", "—"))
+             + _st("跌停", mkt.get("dt", "—"), "dn")
+             + _st("最高板", f"{mkt.get('max_lbc', 0)}连板" if mkt.get("max_lbc") else "—")
+             + '</div>')
+
+    # ---- 题材温度（概念涨幅榜） ----
+    chips = []
+    for c in (zl.get("concepts") or [])[:8]:
+        chips.append(f'<span class="chip">{_esc(c["name"])} <b>{c["chg"]:+.2f}%</b></span>')
+    tags = ('<div class="zl-tags"><span class="tagk">题材温度</span>'
+            + ''.join(chips)
+            + ('</div>' if chips else '<span class="hint">—</span></div>'))
+
+    # ---- 热点题材榜（涨停家数聚合） ----
+    theme_rows = []
+    for t in (zl.get("themes") or [])[:8]:
+        theme_rows.append(
+            '<tr>'
+            f'<td class="nm">{_esc(t["name"])}</td>'
+            f'<td class="r up"><b>{t["count"]}</b></td>'
+            f'<td class="r">{t["max_lbc"]}板</td>'
+            f'<td class="dim">{_esc(t["leader"] or "—")}</td>'
+            '</tr>')
+    themes_html = ""
+    if theme_rows:
+        themes_html = (
+            '<div class="zl-ct">热点题材榜 <span class="hint">按涨停家数计 · 涨停潮所在 = 题材所在</span></div>'
+            '<div class="zl-scroll"><table class="zl-tbl">'
+            '<thead><tr><th>题材(行业)</th><th class="r">涨停家数</th>'
+            '<th class="r">最高板</th><th>龙头</th></tr></thead>'
+            '<tbody>' + ''.join(theme_rows) + '</tbody></table></div>')
+
+    # ---- 龙头梯队（连板 >= 2） ----
+    def _badge(row):
+        lbc = row.get("lbc") or 0
+        cls = "zl-badge" if lbc >= 3 else "zl-badge gold"
+        return f'<span class="{cls}">{_esc(row.get("label") or "首板")}</span>'
+
+    dragon_rows = []
+    for d in (zl.get("dragon") or [])[:15]:
+        cyc = (f' <span class="zl-badge cycle">{_esc(d["cycle"])}</span>'
+               if d.get("cycle") else "")
+        dragon_rows.append(
+            '<tr>'
+            f'<td class="nm">{_esc(d["name"])}<span class="cd"> {_esc(d["code"])}</span></td>'
+            f'<td>{_badge(d)}{cyc}</td>'
+            f'<td class="dim">{_esc(d.get("hybk") or "—")}</td>'
+            f'<td class="r dim">{_esc(d.get("fbt") or "—")}</td>'
+            f'<td class="r">{_esc(d.get("fund") or "—")}</td>'
+            f'<td class="r dim">{d.get("hs", 0):.1f}%</td>'
+            '</tr>')
+    dragon_html = ""
+    if dragon_rows:
+        dragon_html = (
+            '<div class="zl-ct">龙头梯队 <span class="hint">连板 ≥ 2 · 最高板 = 空间龙头</span></div>'
+            '<div class="zl-scroll"><table class="zl-tbl">'
+            '<thead><tr><th>名称</th><th>连板</th><th>行业</th>'
+            '<th class="r">封板</th><th class="r">封单</th><th class="r">换手</th></tr></thead>'
+            '<tbody>' + ''.join(dragon_rows) + '</tbody></table></div>')
+
+    # ---- 异动监控（炸板池） ----
+    zb_rows = []
+    for z in (zl.get("zhaban") or [])[:10]:
+        chg = z.get("chg") or 0
+        chg_cls = "up" if chg > 0 else ("dn" if chg < 0 else "dim")
+        chg_txt = f'{chg:+.2f}%'
+        zb_rows.append(
+            '<tr>'
+            f'<td class="nm">{_esc(z["name"])}<span class="cd"> {_esc(z["code"])}</span></td>'
+            f'<td><span class="zl-badge zb">炸板{z.get("zbc") or 0}次</span>'
+            + (f' <span class="zl-badge cycle">{_esc(z["cycle"])}</span>' if z.get("cycle") else "")
+            + '</td>'
+            f'<td class="r dim">{z.get("zf") if z.get("zf") is not None else "—"}%</td>'
+            f'<td class="r dim">{z.get("hs", 0):.1f}%</td>'
+            f'<td class="r {chg_cls}">{z.get("price", 0):.2f} ({chg_txt})</td>'
+            '</tr>')
+    zb_html = ""
+    if zb_rows:
+        zb_html = (
+            '<div class="zl-ct">异动监控 <span class="hint">炸板 = 涨停后打开 · 龙头分歧信号</span></div>'
+            '<div class="zl-scroll"><table class="zl-tbl">'
+            '<thead><tr><th>名称</th><th>状态</th><th class="r">振幅</th>'
+            '<th class="r">换手</th><th class="r">现价</th></tr></thead>'
+            '<tbody>' + ''.join(zb_rows) + '</tbody></table></div>')
+    if not zb_rows:
+        zb_html = ('<div class="zl-ct">异动监控 <span class="hint">今日无炸板，封板情绪强</span></div>'
+                   '<div class="zl-zb-note">涨停板池中炸板次数均为 0。</div>')
+
+    # ---- 补涨候选 ----
+    cu_rows = []
+    for c in (zl.get("catchup") or [])[:12]:
+        cu_rows.append(
+            '<tr>'
+            f'<td class="nm">{_esc(c["name"])}<span class="cd"> {_esc(c["code"])}</span></td>'
+            f'<td class="dim">{_esc(c["theme"])}</td>'
+            f'<td class="r up">{c["chg"]:+.2f}%</td>'
+            f'<td class="r dim">{c.get("hs", 0):.1f}%</td>'
+            '</tr>')
+    cu_html = ""
+    if cu_rows:
+        cu_html = (
+            '<div class="zl-ct">补涨候选 <span class="hint">热点题材中 · 今日上涨但未封板 · 龙头高位后的接力/补涨观察</span></div>'
+            '<div class="zl-scroll"><table class="zl-tbl">'
+            '<thead><tr><th>名称</th><th>题材</th><th class="r">涨幅</th>'
+            '<th class="r">换手</th></tr></thead>'
+            '<tbody>' + ''.join(cu_rows) + '</tbody></table></div>')
+    else:
+        cu_html = ('<div class="zl-ct">补涨候选 <span class="hint">本期未取到（行业成分接口不可用）</span></div>')
+
+    # ---- 方法论（AI短剧 + 创新药 案例复盘） ----
+    method = (
+        '<div class="zl-method">'
+        '<div class="t">构造逻辑 · 从两个真实题材案例提炼</div>'
+        '<ol>'
+        '<li><b>找题材</b>：题材按「涨停家数」计 —— 某板块出现 3~5 个涨停、演变成涨停潮，'
+        '就是有资金合力的题材（上表「热点题材榜」）。</li>'
+        '<li><b>定龙头</b>：题材爆发后机会集中在涨势最猛、连板最高的龙头（上表「龙头梯队」，'
+        '最高板 = 空间龙头）。前 1~2 个板难辨强弱，通常 3~6 板「大浪淘沙」后才见真龙。</li>'
+        '<li><b>盯异动</b>：连板到一定阶段，先手获利盘下车 → 炸板/断板（上表「异动监控」）；'
+        '此时若有资金承接 = 弱转强狙击点，若承接不住 = 分歧退潮。</li>'
+        '<li><b>抓补涨</b>：龙头高位后，资金会找同题材低位股 —— 首板跟风、接力龙头、'
+        '未板补涨（上表「补涨候选」）。</li>'
+        '</ol>'
+        '<div class="case">'
+        '<b>案例 · AI短剧/漫剧（2026-10~11）：</b>10-14 传媒/游戏批量涨停→题材爆发；'
+        '新经典、慈文传媒走出 4 连板，11-05 浙文影业一字 4 连板（约 78 万手封单）+ 引力传媒 4天3板为龙头；'
+        '中文在线、捷成股份（20CM）、龙版传媒、上海电影、奥飞娱乐等为跟风补涨。'
+        '（来源：新浪财经/证券时报 2026-10-15；腾讯自选股/21财经 2026-11-05）'
+        '</div>'
+        '<div class="case">'
+        '<b>案例 · 创新药（2025-05~07）：</b>三生国健（5-19 启动、4 连板 20CM）→ 舒泰神（5-21 启动、主升约 4 倍）'
+        '为首发龙头；随后昂利康（6 月 3 连板）、常山药业（累计 +147.69%）、广生堂（7 月 4 连板 20CM）、'
+        '塞力医疗（4 连板、周 +51.55%）、联环药业为「接力龙头」——龙头接力即补涨的主线形态。'
+        '（来源：东方财富财富号 2025-07-16；中新经纬 2025-06-10；新华财经 2025-07-05）'
+        '</div>'
+        '</div>')
+
+    cap = (f'<div class="cap">数据日 {_esc(as_of)} · 来源：东方财富涨停板池/炸板池/概念板块（日频，盘前 09:15 与盘后 15:17 各更新一次）。'
+           '本板块为短线情绪观察，不构成投资建议，打板/追高为高风险行为，务必自行核验后决策。</div>')
+
+    return ('<div class="zl chart">'
+            '<div class="mhead">'
+            '<div class="t">超短线擒龙</div>'
+            '<div class="sub">热点题材 → 龙头 → 异动 → 补涨　·　数据日 <b>{}</b>　·　'
+            '涨停 {} / 炸板 {} / 最高 {} 连板</div></div>'
+            '{}'  # stats
+            '{}'  # tags
+            '{}'  # themes
+            '<div class="zl-grid">{}{}</div>'  # dragon + zhaban
+            '{}'  # catchup
+            '{}'  # method
+            '{}'  # cap
+            '</div>').format(
+        _esc(as_of), mkt.get("zt", 0), mkt.get("zb", 0), mkt.get("max_lbc", 0),
+        stats, tags, themes_html, dragon_html, zb_html, cu_html, method, cap)
+
+
 # 每个区间对应什么情况，一句话。措辞只描述"情绪处在什么状态、历史上多出现在哪"，
 # 不写买卖建议 —— 情绪指数只能说明"大家怎么想"，不能说明"接下来怎么走"。
 MOOD_ZONE_TEXT = {
@@ -2242,6 +2481,9 @@ def _js_payload(payload):
         sk = dict(latest["sz_kline"])
         sk.pop("klines", None)
         latest["sz_kline"] = sk
+    # 超短线擒龙：整段服务端渲染成 HTML，前端一行都不读（涨停板池是日频数据，
+    # 不需要前端实时重算），内联进去只是白下载几 KB 的股票列表。
+    latest.pop("zhulong", None)
     p["latest"] = latest
     return p
 
@@ -2290,6 +2532,7 @@ def render(payload):
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
     sig_sec = _signals_html(payload.get("signals") or {})
     szk_sec = _sz_kline_html(latest.get("sz_kline"))
+    zl_sec = _zhulong_html(latest.get("zhulong"))
     labs_sec = ""
     if labs_a:
         labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small>'
@@ -2362,6 +2605,9 @@ def render(payload):
 <h2>深证成指 · 技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
 {szk_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
+<h2>超短线擒龙 <small>热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq snap">盘前 09:15 / 盘后 15:17</em></h2>
+{zl_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
+
 <h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>
 <div class="charthint">
   <span class="up"><i></i>↑ 分数越高 = 越便宜 = 建议买得越多</span>
@@ -2408,7 +2654,8 @@ def render(payload):
         东方财富 push2his（GC00Y/000922/000300/UDI/USDCNH）· 美国财政部 official CSV（TIPS 与名义收益率）·
         蛋卷基金 index_eva（PE 周频序列 + PB 分位）· 天天基金（净值与申购状态）·
         中证指数官网 index-perf（000922 / H00300 沪深300全收益 / H00985 中证全指全收益）·
-        新浪 sz399006（创业板指，3000 条上限）</li>
+        新浪 sz399006（创业板指，3000 条上限）·
+        东方财富 push2ex 涨停板池 / 炸板池 / 跌停池 + 概念板块涨幅榜 + 行业成分（「超短线擒龙」板块，日频）</li>
     <li><b>跟踪误差实测</b>（纳指100 六只候选，QDII 净值按 T+1 对齐后年化）：
         广发 000055 = 0.83%　华安 040046 = 1.00%　大成 000834 = 1.03%　南方 016452 = 1.42%　天弘 018043 = 1.46%　国泰 160213 = 11.83%</li>
   </ul>
