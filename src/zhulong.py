@@ -269,6 +269,8 @@ def _dragon_reason(d):
         return "空间龙头已高位，追高风险大，仅作风向标"
     if hs < 3:
         return f"{lbc}板一字板，封单锁死买不进"
+    if zbc >= 4:
+        return f"{lbc}板反复炸板{zbc}次，分歧极大，谨慎不追"
     if zbc >= 1:
         return f"{lbc}板炸板{zbc}次后回封，弱转强可关注"
     return f"{lbc}板换手板，可等分歧转一致时介入"
@@ -288,6 +290,9 @@ def _buy_top5(themes, dragon, catchup):
 
     核心口径：这是「可以买」的榜单，不是「最热」榜单 —— 可买性权重最高，
     涨幅接近涨停（追高）的股会被大幅降权，让「低位补涨 / 换手龙头」真正排到前面。
+
+    **只看沪深主板**：沪 60xxxx / 深 00·001·002·003，创业板(30)、科创板(688)、
+    北交所(92/83/87/43) 一律排除。
 
       · 题材强度 30 分 = 所在行业涨停家数 / 当日最大涨停家数 × 30
       · 可买性 40 分：
@@ -328,32 +333,38 @@ def _buy_top5(themes, dragon, catchup):
         hs = d.get("hs", 0)
         if hs < 3:
             pos -= 6  # 一字板买不进
+        zbc = d.get("zbc", 0)
+        if zbc >= 4:
+            pos -= 6  # 反复炸板，封板质量差
+        elif zbc >= 1:
+            pos -= 2
         return pos
 
-    def _pos_label(code):
-        """北交所提示：92/83/87/43 开头门槛高、30cm 波动大。"""
-        return "北交所" if code[:2] in ("92", "83", "87", "43") else ""
+    def _is_mainboard(code):
+        """沪深主板：沪市 60xxxx、深市主板 00/001/002/003 xxxx。
+        排除创业板(30)、科创板(688)、北交所(92/83/87/43)。"""
+        return code[:2] in ("60", "00")
+
+    # 只看沪深主板
+    dragon = [d for d in dragon if _is_mainboard(d["code"])]
+    catchup = [c for c in catchup if _is_mainboard(c["code"])]
 
     cands = []
     for x in catchup:
         chg = x.get("chg", 0)
-        tag = _pos_label(x["code"])
         cands.append({
             "name": x["name"], "code": x["code"], "theme": x["theme"],
             "chg": chg, "hs": x.get("hs", 0), "kind": "补涨",
-            "tag": tag,
-            "reason": _catchup_reason(chg) + (f"（{tag}，30cm 波动大）" if tag else ""),
+            "reason": _catchup_reason(chg),
             "score": round(cnt.get(x["theme"], 1) / mx * 30
                            + _catchup_pos(chg) + _hs(x.get("hs", 0)), 1),
         })
     for d in dragon:
         lbc = d.get("lbc", 0)
-        tag = _pos_label(d["code"])
         cands.append({
             "name": d["name"], "code": d["code"], "theme": d.get("hybk", "—"),
             "chg": d.get("chg", 0), "hs": d.get("hs", 0),
             "kind": d.get("label", f"{lbc}连板"),
-            "tag": tag,
             "reason": _dragon_reason(d),
             "score": round(cnt.get(d.get("hybk", "—"), 1) / mx * 30
                            + _dragon_pos(d) + _hs(d.get("hs", 0)), 1),

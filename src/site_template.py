@@ -2116,7 +2116,7 @@ def _zhulong_html(zl):
     if buy_rows:
         buy_html = ('<div class="zl-buy">'
                     '<div class="hd">今日买入候选 · Top5 '
-                    '<span class="hint">题材强度 + 可买性 + 资金活跃 打分 · 可买性权重最高</span></div>'
+                    '<span class="hint">仅沪深主板 · 题材强度 + 可买性 + 资金活跃 打分 · 可买性权重最高</span></div>'
                     '<div class="rows">' + ''.join(buy_rows) + '</div>'
                     '</div>')
 
@@ -2651,7 +2651,7 @@ def render(payload):
 <h2>深证成指 · 技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
 {szk_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
-<h2>超短线擒龙 <small>买入候选 Top5 · 热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq snap">盘前 09:15 / 盘后 15:17</em></h2>
+<h2>超短线擒龙 <small>买入候选 Top5（仅主板） · 热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq snap">盘前 09:15 / 盘后 15:17</em></h2>
 {zl_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
 <h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>
