@@ -559,6 +559,26 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .zl-badge.cycle{border-color:var(--line-2);background:rgba(20,22,27,.04);color:var(--dim2)}
 .zl-badge.zb{border-color:rgba(156,120,47,.4);background:rgba(156,120,47,.1);color:#8a6b25}
 .zl-zb-note{font-size:10px;color:var(--dim2);margin:2px 0 0;letter-spacing:.02em;line-height:1.7}
+/* 买入候选 Top5：醒目的排名卡，第 1 名用暖色高亮 */
+.zl-buy{margin:14px 0 10px}
+.zl-buy .hd{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em;margin-bottom:10px;
+  display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.zl-buy .hd .hint{font-weight:400;color:var(--dim3);font-size:10px;letter-spacing:.02em}
+.zl-buy .rows{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.zl-buy .b{position:relative;background:linear-gradient(180deg,var(--card-a),var(--card-b));
+  border:1px solid var(--line);border-radius:10px;padding:12px 11px 11px;min-width:0}
+.zl-buy .b.top{border-color:rgba(180,69,46,.35);background:linear-gradient(180deg,#fdf6f4,#fbefe9)}
+.zl-buy .b .rk{position:absolute;top:9px;right:10px;font-size:22px;font-weight:700;
+  color:rgba(20,22,27,.07);font-variant-numeric:tabular-nums;line-height:1}
+.zl-buy .b.top .rk{color:rgba(180,69,46,.2)}
+.zl-buy .b .nm{font-size:13px;font-weight:600;color:#14161b;line-height:1.3}
+.zl-buy .b .cd{font-size:10px;color:var(--dim3);font-weight:400;margin-left:3px}
+.zl-buy .b .kb{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:4px;margin-top:6px;
+  border:1px solid rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e}
+.zl-buy .b .kb.gold{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
+.zl-buy .b .meta{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6}
+.zl-buy .b .meta .up{color:#b4452e;font-weight:600}
+.zl-buy .b .rs{font-size:10px;color:var(--dim3);margin-top:6px;line-height:1.55}
 .zl-method{background:linear-gradient(180deg,#fdfcf9,#f7f5f0);border:1px solid var(--line);
   border-radius:10px;padding:14px 16px;margin-top:18px}
 .zl-method .t{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em}
@@ -572,6 +592,10 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   .zl .zl-stats{grid-template-columns:repeat(2,1fr);gap:8px}
   .zl-tbl{font-size:11px}
   .zl-tbl th,.zl-tbl td{padding-left:5px;padding-right:5px}
+  .zl-buy .rows{grid-template-columns:repeat(2,1fr);gap:8px}
+  .zl-buy .b{padding:10px 9px 9px}
+  .zl-buy .b .nm{font-size:12px}
+  .zl-buy .b .rk{font-size:19px;top:7px;right:8px}
 }
 """
 
@@ -2075,6 +2099,27 @@ def _zhulong_html(zl):
              + _st("最高板", f"{mkt.get('max_lbc', 0)}连板" if mkt.get("max_lbc") else "—")
              + '</div>')
 
+    # ---- 买入候选 Top5（可以买的前五） ----
+    buy_rows = []
+    for i, b in enumerate(zl.get("buy") or [], 1):
+        kb_cls = "kb gold" if b.get("kind") == "补涨" else "kb"
+        top_cls = " top" if i == 1 else ""
+        buy_rows.append(
+            f'<div class="b{top_cls}"><span class="rk">{i}</span>'
+            f'<div class="nm">{_esc(b["name"])}<span class="cd">{_esc(b["code"])}</span></div>'
+            f'<span class="{kb_cls}">{_esc(b["kind"])}</span>'
+            f'<div class="meta">{_esc(b["theme"])} · 涨幅 <span class="up">{b["chg"]:+.2f}%</span>'
+            f' · 换手 {b.get("hs", 0):.1f}%</div>'
+            f'<div class="rs">{_esc(b["reason"])}</div>'
+            '</div>')
+    buy_html = ""
+    if buy_rows:
+        buy_html = ('<div class="zl-buy">'
+                    '<div class="hd">今日买入候选 · Top5 '
+                    '<span class="hint">题材强度 + 可买性 + 资金活跃 打分 · 可买性权重最高</span></div>'
+                    '<div class="rows">' + ''.join(buy_rows) + '</div>'
+                    '</div>')
+
     # ---- 题材温度（概念涨幅榜） ----
     chips = []
     for c in (zl.get("concepts") or [])[:8]:
@@ -2216,6 +2261,7 @@ def _zhulong_html(zl):
             '<div class="sub">热点题材 → 龙头 → 异动 → 补涨　·　数据日 <b>{}</b>　·　'
             '涨停 {} / 炸板 {} / 最高 {} 连板</div></div>'
             '{}'  # stats
+            '{}'  # buy_top5
             '{}'  # tags
             '{}'  # themes
             '<div class="zl-grid">{}{}</div>'  # dragon + zhaban
@@ -2224,7 +2270,7 @@ def _zhulong_html(zl):
             '{}'  # cap
             '</div>').format(
         _esc(as_of), mkt.get("zt", 0), mkt.get("zb", 0), mkt.get("max_lbc", 0),
-        stats, tags, themes_html, dragon_html, zb_html, cu_html, method, cap)
+        stats, buy_html, tags, themes_html, dragon_html, zb_html, cu_html, method, cap)
 
 
 # 每个区间对应什么情况，一句话。措辞只描述"情绪处在什么状态、历史上多出现在哪"，
@@ -2605,7 +2651,7 @@ def render(payload):
 <h2>深证成指 · 技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
 {szk_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
-<h2>超短线擒龙 <small>热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq snap">盘前 09:15 / 盘后 15:17</em></h2>
+<h2>超短线擒龙 <small>买入候选 Top5 · 热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq snap">盘前 09:15 / 盘后 15:17</em></h2>
 {zl_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
 <h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>
