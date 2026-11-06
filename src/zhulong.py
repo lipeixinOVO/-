@@ -285,11 +285,48 @@ def _catchup_reason(chg):
     return "已近涨停属追高，仅观察不追"
 
 
+_TIER_RANK = {"龙头": 0, "中军": 1, "补涨": 2}
+
+
+def _tier(lbc):
+    """梯队身份：龙头 = 3 板+真龙（大浪淘沙后见真龙），中军 = 2 板搭台，补涨 = 未涨停低位。
+
+    跟风（首板，lbc=1）不进入买入候选，故不在此列。"""
+    if lbc >= 3:
+        return "龙头"
+    if lbc == 2:
+        return "中军"
+    return "补涨"
+
+
+def _conf(tier, lbc, zbc, hs, chg):
+    """可信度：高/中/低，纯规则机械判定（同输入同输出，可回测）。
+
+    可信度 = 信号可靠性 + 参与可行性 的综合评级：
+      · 龙头(3板+)：3 板换手板(换手≥3% 且零炸板) → 高；
+                    4 板+ 高位 / 一字板买不进 / 炸板回封 → 中；反复炸板(≥4) → 低
+      · 中军(2板)：未炸板 → 中；炸板 → 低
+      · 补涨：涨幅 <8% 真低位 → 中；涨幅 ≥8% 已拉开/追高 → 低
+    """
+    if tier == "龙头":
+        if zbc >= 4:
+            return "低"
+        if lbc >= 4 or zbc >= 1 or hs < 3:
+            return "中"
+        return "高"
+    if tier == "中军":
+        return "低" if zbc >= 1 else "中"
+    return "低" if chg >= 8 else "中"
+
+
 def _buy_top5(themes, dragon, catchup):
     """买入候选 Top5 —— 三因子打分（题材强度 30 + 可买性 40 + 资金活跃 30），取前 5。
 
     核心口径：这是「可以买」的榜单，不是「最热」榜单 —— 可买性权重最高，
     涨幅接近涨停（追高）的股会被大幅降权，让「低位补涨 / 换手龙头」真正排到前面。
+
+    **龙头优先**：空间龙头（全池最高连板）固定排第 1 位；其余按梯队（龙头 > 中军 > 补涨）
+    再按总分排序。每只候选带可信度（高/中/低，由 _conf 机械判定）。
 
     **只看沪深主板**：沪 60xxxx / 深 00·001·002·003，创业板(30)、科创板(688)、
     北交所(92/83/87/43) 一律排除。
@@ -349,27 +386,38 @@ def _buy_top5(themes, dragon, catchup):
     dragon = [d for d in dragon if _is_mainboard(d["code"])]
     catchup = [c for c in catchup if _is_mainboard(c["code"])]
 
+    # 空间龙头 = 全池最高连板（并列时都算），固定排第一
+    max_lbc = max((d.get("lbc", 0) for d in dragon), default=0)
+
     cands = []
     for x in catchup:
         chg = x.get("chg", 0)
         cands.append({
             "name": x["name"], "code": x["code"], "theme": x["theme"],
-            "chg": chg, "hs": x.get("hs", 0), "kind": "补涨",
+            "chg": chg, "hs": x.get("hs", 0),
+            "lbc": 0, "kind": "补涨", "tier": "补涨",
+            "conf": _conf("补涨", 0, 0, 0, chg),
             "reason": _catchup_reason(chg),
             "score": round(cnt.get(x["theme"], 1) / mx * 30
                            + _catchup_pos(chg) + _hs(x.get("hs", 0)), 1),
         })
     for d in dragon:
         lbc = d.get("lbc", 0)
+        zbc = d.get("zbc", 0)
+        tier = _tier(lbc)
         cands.append({
             "name": d["name"], "code": d["code"], "theme": d.get("hybk", "—"),
             "chg": d.get("chg", 0), "hs": d.get("hs", 0),
-            "kind": d.get("label", f"{lbc}连板"),
+            "lbc": lbc, "kind": d.get("label", f"{lbc}连板"), "tier": tier,
+            "conf": _conf(tier, lbc, zbc, d.get("hs", 0), d.get("chg", 0)),
             "reason": _dragon_reason(d),
             "score": round(cnt.get(d.get("hybk", "—"), 1) / mx * 30
                            + _dragon_pos(d) + _hs(d.get("hs", 0)), 1),
         })
-    cands.sort(key=lambda x: -x["score"])
+    # 龙头优先：空间龙头固定第一（即使一字板买不进也作为风向标置顶），
+    # 其余按「梯队（龙头 > 中军 > 补涨）→ 总分」排序。
+    cands.sort(key=lambda c: (-(1 if c["tier"] == "龙头" and c["lbc"] == max_lbc else 0),
+                              _TIER_RANK[c["tier"]], -c["score"]))
     return cands[:5]
 
 

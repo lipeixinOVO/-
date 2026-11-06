@@ -580,6 +580,13 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .zl-buy .b .kb{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:4px;margin-top:6px;
   border:1px solid rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e}
 .zl-buy .b .kb.gold{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
+/* 可信度徽章：高=暖红（最可信）· 中=琥珀金 · 低=灰 */
+.zl-buy .b .cf{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:4px;
+  margin:6px 0 0 5px;vertical-align:bottom;border:1px solid var(--line-2);
+  background:rgba(20,22,27,.04);color:var(--dim3)}
+.zl-buy .b .cf-hi{border-color:rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e}
+.zl-buy .b .cf-mid{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
+.zl-buy .b .cf-lo{border-color:var(--line-2);background:rgba(20,22,27,.04);color:var(--dim3)}
 .zl-buy .b .meta{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6}
 .zl-buy .b .meta .up{color:#b4452e;font-weight:600}
 .zl-buy .b .rs{font-size:10px;color:var(--dim3);margin-top:6px;line-height:1.55}
@@ -895,6 +902,21 @@ function zlCatchupReason(chg){
   if(chg <= 15) return '同题材强势补涨，涨幅已拉开，等回踩不追高';
   return '已近涨停属追高，仅观察不追';
 }
+/* 梯队 + 可信度：与 src/zhulong.py 的 _tier / _conf 完全一致，改一边同步另一边 */
+function zlTier(lbc){
+  if(lbc >= 3) return '龙头';
+  if(lbc === 2) return '中军';
+  return '补涨';
+}
+function zlConf(tier, lbc, zbc, hs, chg){
+  if(tier === '龙头'){
+    if(zbc >= 4) return '低';
+    if(lbc >= 4 || zbc >= 1 || hs < 3) return '中';
+    return '高';
+  }
+  if(tier === '中军') return (zbc >= 1 ? '低' : '中');
+  return (chg >= 8 ? '低' : '中');
+}
 function zlBuy(themes, dragon, catchup){
   const cnt = {};
   themes.forEach(function(t){ cnt[t.name] = t.count; });
@@ -925,20 +947,28 @@ function zlBuy(themes, dragon, catchup){
   function mainboard(code){ const p = String(code || '').slice(0, 2); return p === '60' || p === '00'; }
   dragon = dragon.filter(function(d){ return mainboard(d.code); });
   catchup = catchup.filter(function(c){ return mainboard(c.code); });
+  let maxLbc = 0;
+  dragon.forEach(function(d){ const l = d.lbc || 0; if(l > maxLbc) maxLbc = l; });
   const cands = [];
   catchup.forEach(function(x){
     const chg = x.chg || 0;
     cands.push({name: x.name, code: x.code, theme: x.theme, chg: chg, hs: x.hs || 0,
-      kind: '补涨', reason: zlCatchupReason(chg),
+      lbc: 0, kind: '补涨', tier: '补涨', conf: zlConf('补涨', 0, 0, 0, chg), reason: zlCatchupReason(chg),
       score: Math.round((((cnt[x.theme] || 1) / mx * 30) + catchupPos(chg) + hsScore(x.hs || 0)) * 10) / 10});
   });
   dragon.forEach(function(d){
-    const lbc = d.lbc || 0;
+    const lbc = d.lbc || 0, zbc = d.zbc || 0, tier = zlTier(lbc);
     cands.push({name: d.name, code: d.code, theme: d.hybk || '—', chg: d.chg || 0, hs: d.hs || 0,
-      kind: d.label || (lbc + '连板'), reason: zlDragonReason(d),
+      lbc: lbc, kind: d.label || (lbc + '连板'), tier: tier,
+      conf: zlConf(tier, lbc, zbc, d.hs || 0, d.chg || 0), reason: zlDragonReason(d),
       score: Math.round((((cnt[d.hybk || '—'] || 1) / mx * 30) + dragonPos(d) + hsScore(d.hs || 0)) * 10) / 10});
   });
-  cands.sort(function(a, b){ return b.score - a.score; });
+  const tierRank = {'龙头': 0, '中军': 1, '补涨': 2};
+  cands.sort(function(a, b){
+    const at = (a.tier === '龙头' && a.lbc === maxLbc) ? 0 : 1;
+    const bt = (b.tier === '龙头' && b.lbc === maxLbc) ? 0 : 1;
+    return (at - bt) || ((tierRank[a.tier] - tierRank[b.tier])) || (b.score - a.score);
+  });
   return cands.slice(0, 5);
 }
 function zlCatchup(themes, pool){
@@ -993,9 +1023,12 @@ function zlRenderDyn(zl){
   (zl.buy || []).forEach(function(b, i){
     const kbCls = b.kind === '补涨' ? 'kb gold' : 'kb';
     const topCls = i === 0 ? ' top' : '';
+    const cfTxt = b.conf || '';
+    const cfCls = cfTxt === '高' ? 'cf cf-hi' : (cfTxt === '低' ? 'cf cf-lo' : 'cf cf-mid');
+    const cfBadge = cfTxt ? '<span class="' + cfCls + '">可信·' + esc(cfTxt) + '</span>' : '';
     buyRows += '<div class="b' + topCls + '"><span class="rk">' + (i + 1) + '</span>'
       + '<div class="nm">' + esc(b.name) + '<span class="cd">' + esc(b.code) + '</span></div>'
-      + '<span class="' + kbCls + '">' + esc(b.kind) + '</span>'
+      + '<span class="' + kbCls + '">' + esc(b.kind) + '</span>' + cfBadge
       + '<div class="meta">' + esc(b.theme) + ' · 涨幅 <span class="up">' + ((b.chg > 0 ? '+' : '') + b.chg.toFixed(2)) + '%</span>'
       + ' · 换手 ' + (b.hs || 0).toFixed(1) + '%</div>'
       + '<div class="rs">' + esc(b.reason) + '</div></div>';
@@ -1003,7 +1036,7 @@ function zlRenderDyn(zl){
   let buy = '';
   if(buyRows){
     buy = '<div class="zl-buy"><div class="hd">今日买入候选 · Top5 '
-      + '<span class="hint">仅沪深主板 · 题材强度 + 可买性 + 资金活跃 打分 · 可买性权重最高</span></div>'
+      + '<span class="hint">仅沪深主板 · 龙头优先 · 题材强度 + 可买性 + 资金活跃 · 可信度三档</span></div>'
       + '<div class="rows">' + buyRows + '</div></div>';
   }
   let chips = '';
@@ -2459,10 +2492,13 @@ def _zhulong_html(zl):
     for i, b in enumerate(zl.get("buy") or [], 1):
         kb_cls = "kb gold" if b.get("kind") == "补涨" else "kb"
         top_cls = " top" if i == 1 else ""
+        conf = b.get("conf") or ""
+        cf_cls = {"高": "cf cf-hi", "中": "cf cf-mid", "低": "cf cf-lo"}.get(conf, "")
+        cf_badge = f'<span class="{cf_cls}">可信·{_esc(conf)}</span>' if conf else ""
         buy_rows.append(
             f'<div class="b{top_cls}"><span class="rk">{i}</span>'
             f'<div class="nm">{_esc(b["name"])}<span class="cd">{_esc(b["code"])}</span></div>'
-            f'<span class="{kb_cls}">{_esc(b["kind"])}</span>'
+            f'<span class="{kb_cls}">{_esc(b["kind"])}</span>{cf_badge}'
             f'<div class="meta">{_esc(b["theme"])} · 涨幅 <span class="up">{b["chg"]:+.2f}%</span>'
             f' · 换手 {b.get("hs", 0):.1f}%</div>'
             f'<div class="rs">{_esc(b["reason"])}</div>'
@@ -2471,7 +2507,7 @@ def _zhulong_html(zl):
     if buy_rows:
         buy_html = ('<div class="zl-buy">'
                     '<div class="hd">今日买入候选 · Top5 '
-                    '<span class="hint">仅沪深主板 · 题材强度 + 可买性 + 资金活跃 打分 · 可买性权重最高</span></div>'
+                    '<span class="hint">仅沪深主板 · 龙头优先 · 题材强度 + 可买性 + 资金活跃 · 可信度三档</span></div>'
                     '<div class="rows">' + ''.join(buy_rows) + '</div>'
                     '</div>')
 
