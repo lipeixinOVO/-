@@ -402,7 +402,7 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .mhead .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
 .mhead .sub{font-size:10.5px;color:var(--dim2);margin-top:5px;line-height:1.85}
 .mhead .sub b{font-weight:600;color:#3f434c}
-/* 深证成指技术位：顶部「当前价 / 压力 / 支撑」提示条 */
+/* 指数技术位：顶部「当前价 / 涨跌幅 / 压力 / 支撑」提示条 */
 .szk-top{display:flex;gap:14px 30px;flex-wrap:wrap;align-items:baseline;
   margin:14px 0 12px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);
   background:rgba(20,22,27,.025)}
@@ -416,6 +416,10 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .szk-top .sup b{color:#2f7d54}
 .szk-top .pct{font-size:12px;color:var(--dim2);margin-right:5px;font-variant-numeric:tabular-nums}
 .szk-top .gap{font-size:11px;color:var(--dim3);font-variant-numeric:tabular-nums;margin-left:3px}
+.szk-top .chg{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;margin-left:9px}
+.szk-top .chg.up{color:#b4452e}
+.szk-top .chg.dn{color:#2f7d54}
+.szk-top .chg.mid{color:var(--dim2)}
 .mlegs{display:grid;grid-template-columns:repeat(auto-fill,minmax(292px,1fr));
   gap:8px 20px;margin:13px 0 8px;font-size:11px;color:var(--dim2)}
 .mleg{display:flex;align-items:baseline;gap:6px;min-width:0}
@@ -1534,7 +1538,10 @@ const LIVE = [
   {c:'hf_GC',   nm:'黄金 COMEX'},
   {c:'sh000922',nm:'中证红利'},
   {c:'sh000300',nm:'沪深300'},
-  {c:'sz399001',nm:'深证成指'}
+  {c:'sz399001',nm:'深证成指'},
+  {c:'sz399006',nm:'创业板指'},
+  {c:'sh000688',nm:'科创50'},
+  {c:'sz399673',nm:'创业板50'}
 ];
 function qcls(v){ return v>0.0001?'up':(v<-0.0001?'dn':'mid'); }
 function renderLive(){
@@ -1619,33 +1626,49 @@ function renderLive(){
     perDay+' 次整体重算</span></div>';
 }
 
-/* 深证成指技术位：当前价 + 压力/支撑距离，跟着实时行情一起每分钟刷新。
+/* 指数技术位：当前价 + 涨跌幅 + 压力/支撑距离，跟着实时行情一起每分钟刷新。
    fib 7 条线在 payload 里（服务端算好），这里用实时价重新夹出上下最近的两条。 */
 function renderSzK(){
-  const raw = window['v_sz399001']; if(!raw) return;
-  const p = String(raw).split('~');
-  const px = parseFloat(p[3]);
-  if(!px || isNaN(px)) return;
-  const SK = P.latest && P.latest.sz_kline; if(!SK || !SK.fib) return;
-  const setTxt = function(id, t){ const e=document.getElementById(id); if(e) e.textContent=t; };
-  setTxt('szk-px', fmtPx(px));
-  const pctTxt = function(v){ if(v===0) return '0%'; if(v===1) return '100%'; return (v*100).toFixed(1)+'%'; };
-  const num = function(v){ return Math.round(v).toLocaleString('zh-CN'); };
-  let res=null, sup=null;
-  SK.fib.forEach(function(f){
-    if(f.price>px && (res===null || f.price<res.price)) res=f;
-    if(f.price<px && (sup===null || f.price>sup.price)) sup=f;
+  const SK = P.latest && P.latest.sz_kline;
+  if(!SK || !SK.length) return;
+  SK.forEach(function(sz){
+    const raw = window['v_' + sz.symbol]; if(!raw) return;
+    const p = String(raw).split('~');
+    const px = parseFloat(p[3]);
+    if(!px || isNaN(px)) return;
+    if(!sz.fib) return;
+    const sfx = sz.symbol;
+    const setTxt = function(id, t){ const e=document.getElementById(id); if(e) e.textContent=t; };
+    setTxt('szk-px-' + sfx, fmtPx(px));
+    // 当日涨跌幅：A 股 14 位紧凑时间戳(20xx 开头)，涨跌幅在时间戳后两位（同 renderLive 口径）
+    let ti=-1, pct=null;
+    for(let i=p.length-1;i>=3;i--){
+      if(/^20[0-9]{12}$/.test(p[i])||/^[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(p[i])){ ti=i; break; }
+    }
+    if(ti>0) pct=parseFloat(p[ti+2]);
+    const chgEl=document.getElementById('szk-chg-' + sfx);
+    if(chgEl && pct!=null && !isNaN(pct)){
+      chgEl.textContent=(pct>0?'+':'')+pct.toFixed(2)+'%';
+      chgEl.className='chg '+(pct>0.0001?'up':(pct<-0.0001?'dn':'mid'));
+    }
+    const pctTxt = function(v){ if(v===0) return '0%'; if(v===1) return '100%'; return (v*100).toFixed(1)+'%'; };
+    const num = function(v){ return Math.round(v).toLocaleString('zh-CN'); };
+    let res=null, sup=null;
+    sz.fib.forEach(function(f){
+      if(f.price>px && (res===null || f.price<res.price)) res=f;
+      if(f.price<px && (sup===null || f.price>sup.price)) sup=f;
+    });
+    if(res){
+      setTxt('szk-res-p-' + sfx, pctTxt(res.pct));
+      setTxt('szk-res-' + sfx, num(res.price));
+      setTxt('szk-res-g-' + sfx, '+' + ((res.price-px)/px*100).toFixed(1) + '%');
+    }
+    if(sup){
+      setTxt('szk-sup-p-' + sfx, pctTxt(sup.pct));
+      setTxt('szk-sup-' + sfx, num(sup.price));
+      setTxt('szk-sup-g-' + sfx, ((sup.price-px)/px*100).toFixed(1) + '%');
+    }
   });
-  if(res){
-    setTxt('szk-res-p', pctTxt(res.pct));
-    setTxt('szk-res', num(res.price));
-    setTxt('szk-res-g', '+' + ((res.price-px)/px*100).toFixed(1) + '%');
-  }
-  if(sup){
-    setTxt('szk-sup-p', pctTxt(sup.pct));
-    setTxt('szk-sup', num(sup.price));
-    setTxt('szk-sup-g', ((sup.price-px)/px*100).toFixed(1) + '%');
-  }
 }
 let _liveSig = '';
 let _liveCellHTML = [];   // 上一轮每格的 HTML，用于逐格 diff，避免整条 innerHTML 重建
@@ -2383,9 +2406,11 @@ def _sz_kline_svg(sz, w, h, fs=9.5, klines=None):
 
 
 def _sz_kline_html(sz):
-    """深证成指技术位板块。sz 为 None 时返回空串（整段不输出）。"""
+    """单个指数的技术位板块。sz 为 None 时返回空串（整段不输出）。"""
     if not sz or not sz.get("fib"):
         return ""
+    sfx = sz["symbol"]          # 用作 DOM id 后缀，保证四个指数互不冲突
+    nm = sz.get("name") or sfx  # 注意：下面日期窗口循环的循环变量也叫 name，这里必须用别的名字
     res = sz.get("resistance") or {}
     sup = sz.get("support") or {}
     cur = sz["cur"]
@@ -2439,14 +2464,14 @@ def _sz_kline_html(sz):
 
     return f"""<div class="szk chart">
   <div class="mhead">
-    <div class="t">深证成指 · 技术位</div>
+    <div class="t">{_esc(nm)} · 技术位</div>
     <div class="sub">斐波那契回调 · 黄色分界线 = 23.6% / 38.2% / 50% / 61.8% / 80.9%　·　
-      当前价夹在「支撑 / 压力」之间，距离每分钟随实时价刷新</div>
+      当前价夹在「支撑 / 压力」之间，涨跌幅与距离每分钟随实时价刷新</div>
   </div>
   <div class="szk-top">
-    <div class="szk-now"><span class="lbl">深证成指</span><b id="szk-px">{cur:,.2f}</b><span class="rt">实时</span></div>
-    <div class="res"><span class="lbl">上方压力</span><span class="pct" id="szk-res-p">{_esc(res_pct)}</span><b id="szk-res">{_esc(res_price)}</b><span class="gap" id="szk-res-g">{_esc(res_gap_t)}</span></div>
-    <div class="sup"><span class="lbl">下方支撑</span><span class="pct" id="szk-sup-p">{_esc(sup_pct)}</span><b id="szk-sup">{_esc(sup_price)}</b><span class="gap" id="szk-sup-g">{_esc(sup_gap_t)}</span></div>
+    <div class="szk-now"><span class="lbl">{_esc(nm)}</span><b id="szk-px-{sfx}">{cur:,.2f}</b><span class="chg mid" id="szk-chg-{sfx}">—</span><span class="rt">实时</span></div>
+    <div class="res"><span class="lbl">上方压力</span><span class="pct" id="szk-res-p-{sfx}">{_esc(res_pct)}</span><b id="szk-res-{sfx}">{_esc(res_price)}</b><span class="gap" id="szk-res-g-{sfx}">{_esc(res_gap_t)}</span></div>
+    <div class="sup"><span class="lbl">下方支撑</span><span class="pct" id="szk-sup-p-{sfx}">{_esc(sup_pct)}</span><b id="szk-sup-{sfx}">{_esc(sup_price)}</b><span class="gap" id="szk-sup-g-{sfx}">{_esc(sup_gap_t)}</span></div>
   </div>
   <div class="chartbar"><div class="btns">{''.join(btns)}</div>
     <div class="delta"><span class="lb">日频数据</span>点击切换日期范围 · 「全部」看完整 0%~100% 斐波那契</div></div>
@@ -2454,6 +2479,13 @@ def _sz_kline_html(sz):
   <div class="cap">{_esc(anchor_txt)}　·　当前价/压力/支撑距离为实时（腾讯行情每 60 秒），
       K 线为日频、随跑批刷新</div>
 </div>"""
+
+
+def _sz_kline_sections(sz_list):
+    """多个指数的技术位板块拼接。空/None 返回空串。"""
+    if not sz_list:
+        return ""
+    return "".join(_sz_kline_html(sz) for sz in sz_list if sz and sz.get("fib"))
 
 
 def _zhulong_html(zl):
@@ -2917,12 +2949,16 @@ def _js_payload(payload):
         m = dict(latest["mood"])
         m.pop("history", None)
         latest["mood"] = m
-    # 深证成指技术位：K 线 600+ 根只给服务端画 SVG 用，前端一行都不读
-    # （图是服务端画好的）。前端只读 fib 7 条线 + 当前收盘价，用来每分钟重算压力/支撑距离。
-    if isinstance(latest.get("sz_kline"), dict):
-        sk = dict(latest["sz_kline"])
-        sk.pop("klines", None)
-        latest["sz_kline"] = sk
+    # 指数技术位：K 线 600+ 根只给服务端画 SVG 用，前端一行都不读
+    # （图是服务端画好的）。前端只读各指数 fib 7 条线 + 收盘价，用来每分钟重算压力/支撑距离。
+    if isinstance(latest.get("sz_kline"), list):
+        skl = []
+        for sk in latest["sz_kline"]:
+            if isinstance(sk, dict):
+                sk = dict(sk)
+                sk.pop("klines", None)
+                skl.append(sk)
+        latest["sz_kline"] = skl
     # 超短线擒龙：整段服务端渲染成 HTML，前端一行都不读（涨停板池是日频数据，
     # 不需要前端实时重算），内联进去只是白下载几 KB 的股票列表。
     latest.pop("zhulong", None)
@@ -2973,7 +3009,7 @@ def render(payload):
     mood_sec = _mood_html(latest.get("mood") or {})
     labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
     sig_sec = _signals_html(payload.get("signals") or {})
-    szk_sec = _sz_kline_html(latest.get("sz_kline"))
+    szk_sec = _sz_kline_sections(latest.get("sz_kline"))
     zl_sec = _zhulong_html(latest.get("zhulong"))
     labs_sec = ""
     if labs_a:
@@ -3044,7 +3080,7 @@ def render(payload):
 <h2>近一月涨跌 <small>价格口径 · 与分数无关 · 近 7 天单独标出</small><em class="fq snap">随跑批刷新</em></h2>
 {month_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
-<h2>深证成指 · 技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
+<h2>指数技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
 {szk_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
 <h2>超短线擒龙 <small>买入候选 Top5（仅主板） · 热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq rt">盘中每分钟实时刷新</em></h2>

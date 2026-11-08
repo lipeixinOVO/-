@@ -218,17 +218,20 @@ def run(dry=False):
 
     # 深证成指技术位（K 线 + 斐波那契回调 + 压力/支撑距离）。**纯展示，不参与打分**。
     # 单独 try，失败只记 note，不许影响主表跑批。
-    print("\n· 深证成指技术位（K 线 + 斐波那契）…", flush=True)
+    print("\n· 指数技术位（深证成指 / 创业板指 / 科创50 / 创业板50）…", flush=True)
     try:
         szk = SZK.run()
-        r, s = szk["resistance"], szk["support"]
-        print(f"  → swing {szk['swing_low']['price']}→{szk['swing_high']['price']}，"
-              f"当前 {szk['cur']}，压力 {r['price'] if r else '—'} / 支撑 {s['price'] if s else '—'}",
-              flush=True)
+        for one in szk:
+            r, s = one["resistance"], one["support"]
+            print(f"  → {one['name']} swing {one['swing_low']['price']}→{one['swing_high']['price']}，"
+                  f"当前 {one['cur']}，压力 {r['price'] if r else '—'} / 支撑 {s['price'] if s else '—'}",
+                  flush=True)
+        if not szk:
+            szk = None
     except Exception as e:  # noqa: BLE001
         szk = None
         ctx.setdefault("notes", []).append(
-            f"深证成指技术位本期取不到（仅展示项，不影响分数）：{str(e)[:90]}")
+            f"指数技术位本期取不到（仅展示项，不影响分数）：{str(e)[:90]}")
         print(f"  ✗ 失败：{e}", flush=True)
 
     # 超短线擒龙（涨停板池 → 热点题材/龙头梯队/异动/补涨）。**纯展示，不参与打分**。

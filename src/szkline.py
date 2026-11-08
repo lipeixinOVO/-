@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""深证成指技术位：日 K + 斐波那契回调线 + 压力/支撑距离。
+"""指数技术位：日 K + 斐波那契回调线 + 压力/支撑距离。
 
-纯展示模块，不参与打分。斐波那契回调线基于「最近一轮明显趋势」的 swing 低点/高点：
+覆盖深证成指、创业板指、科创50、创业板50 四个指数，纯展示模块，不参与打分。
+斐波那契回调线基于「最近一轮明显趋势」的 swing 低点/高点：
 
     swing high = 最近 WINDOW 个交易日内的最高价（最高价的那一天）
     swing low  = swing high 出现之前、同一窗口内的最低价
@@ -14,10 +15,17 @@ swing high=2026-06-22 的 16374.02，反推出的 5 条线 9734.56 / 11003.36 / 
 """
 from . import sources as S
 
-SYMBOL = "sz399001"
-NAME = "深证成指"
 WINDOW = 1200                       # 约 5 年交易日，足够覆盖「最近一轮明显趋势」
 FIB_LEVELS = [0.236, 0.382, 0.5, 0.618, 0.809]   # 只标 5 条中间线；0%/100% 是边界
+
+# 覆盖四个指数（市场前缀 sh/sz 与腾讯行情一致）。
+# 科创50 基日 2019-12-31、2020 年才发布，历史 K 线偏短（约 1600 根），其余三个都 2000 根。
+INDICES = [
+    ("sz399001", "深证成指"),
+    ("sz399006", "创业板指"),
+    ("sh000688", "科创50"),
+    ("sz399673", "创业板50"),
+]
 
 
 def _fib_levels(low, high):
@@ -39,10 +47,11 @@ def _nearest(fib, cur):
     return res, sup
 
 
-def run():
-    klines = S.cn_ohlc(SYMBOL)[-WINDOW:]
+def _one(symbol, name):
+    """单个指数的技术位。"""
+    klines = S.cn_ohlc(symbol)[-WINDOW:]
     if len(klines) < 120:
-        raise RuntimeError(f"{SYMBOL} K 线不足 120 根，无法画斐波那契")
+        raise RuntimeError(f"{symbol} K 线不足 120 根，无法画斐波那契")
 
     hi = max(klines, key=lambda r: r[3])            # 窗口内最高 high
     hi_date = hi[0]
@@ -56,8 +65,8 @@ def run():
     res, sup = _nearest(fib, cur)
 
     return {
-        "symbol": SYMBOL,
-        "name": NAME,
+        "symbol": symbol,
+        "name": name,
         # K 线只画「swing low 之后」那段：起点就是低点，图上就是「低点→高点→回落到当前」
         # 的完整故事，斐波那契 0%~100% 全部落在图内。
         "klines": [{"d": r[0], "o": r[1], "c": r[2], "h": r[3], "l": r[4]}
@@ -70,3 +79,14 @@ def run():
         "resistance": res,
         "support": sup,
     }
+
+
+def run():
+    """返回各指数的技术位列表。单个指数失败就跳过，不拖累整块。"""
+    out = []
+    for symbol, name in INDICES:
+        try:
+            out.append(_one(symbol, name))
+        except Exception:  # noqa: BLE001
+            continue
+    return out
