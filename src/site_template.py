@@ -567,33 +567,46 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .zl-badge.cycle{border-color:var(--line-2);background:rgba(20,22,27,.04);color:var(--dim2)}
 .zl-badge.zb{border-color:rgba(156,120,47,.4);background:rgba(156,120,47,.1);color:#8a6b25}
 .zl-zb-note{font-size:10px;color:var(--dim2);margin:2px 0 0;letter-spacing:.02em;line-height:1.7}
-/* 买入候选 Top5：醒目的排名卡，第 1 名用暖色高亮 */
-.zl-buy{margin:14px 0 10px}
-.zl-buy .hd{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em;margin-bottom:10px;
+/* 按题材分组 · 领涨/补涨龙头卡（精简到每题材最强的两只） */
+.zl-picks{margin:14px 0 10px}
+.zl-picks .hd{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em;margin-bottom:10px;
   display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.zl-buy .hd .hint{font-weight:400;color:var(--dim3);font-size:10px;letter-spacing:.02em}
-.zl-buy .rows{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.zl-buy .b{position:relative;background:linear-gradient(180deg,var(--card-a),var(--card-b));
-  border:1px solid var(--line);border-radius:10px;padding:12px 11px 11px;min-width:0}
-.zl-buy .b.top{border-color:rgba(180,69,46,.35);background:linear-gradient(180deg,#fdf6f4,#fbefe9)}
-.zl-buy .b .rk{position:absolute;top:9px;right:10px;font-size:22px;font-weight:700;
-  color:rgba(20,22,27,.07);font-variant-numeric:tabular-nums;line-height:1}
-.zl-buy .b.top .rk{color:rgba(180,69,46,.2)}
-.zl-buy .b .nm{font-size:13px;font-weight:600;color:#14161b;line-height:1.3}
-.zl-buy .b .cd{font-size:10px;color:var(--dim3);font-weight:400;margin-left:3px}
-.zl-buy .b .kb{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:4px;margin-top:6px;
-  border:1px solid rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e}
-.zl-buy .b .kb.gold{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
-/* 可信度徽章：高=暖红（最可信）· 中=琥珀金 · 低=灰 */
-.zl-buy .b .cf{display:inline-block;font-size:9.5px;padding:1px 7px;border-radius:4px;
-  margin:6px 0 0 5px;vertical-align:bottom;border:1px solid var(--line-2);
-  background:rgba(20,22,27,.04);color:var(--dim3)}
-.zl-buy .b .cf-hi{border-color:rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e}
-.zl-buy .b .cf-mid{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
-.zl-buy .b .cf-lo{border-color:var(--line-2);background:rgba(20,22,27,.04);color:var(--dim3)}
-.zl-buy .b .meta{font-size:10px;color:var(--dim2);margin-top:7px;line-height:1.6}
-.zl-buy .b .meta .up{color:#b4452e;font-weight:600}
-.zl-buy .b .rs{font-size:10px;color:var(--dim3);margin-top:6px;line-height:1.55}
+.zl-picks .hd .hint{font-weight:400;color:var(--dim3);font-size:10px;letter-spacing:.02em}
+.zp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.zp-card{background:linear-gradient(180deg,var(--card-a),var(--card-b));
+  border:1px solid var(--line);border-radius:12px;padding:12px 13px 11px;min-width:0}
+.zp-hd{font-size:13px;font-weight:700;color:#14161b;display:flex;align-items:baseline;gap:8px;
+  margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.zp-cnt{font-size:10px;font-weight:600;color:#b4452e;background:rgba(180,69,46,.08);
+  border:1px solid rgba(180,69,46,.28);padding:1px 8px;border-radius:10px;margin-left:auto;
+  white-space:nowrap}
+.zp-row{position:relative;display:flex;align-items:flex-start;gap:9px;padding:8px 9px;
+  border-radius:9px;margin-top:7px;border:1px solid transparent}
+.zp-row+.zp-row{margin-top:4px}
+.zp-row.buyable{background:linear-gradient(180deg,#fdf3f1,#fbeae5);border-color:rgba(180,69,46,.4)}
+.zp-row.empty{color:var(--dim3)}
+.zp-none{font-size:10px;color:var(--dim3);line-height:1.6}
+.zp-role{flex:none;font-size:9.5px;font-weight:600;letter-spacing:.04em;padding:2px 7px;border-radius:5px;
+  margin-top:1px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.zp-role.lead{border:1px solid rgba(180,69,46,.4);background:rgba(180,69,46,.1);color:#b4452e}
+.zp-role.cu{border:1px solid rgba(156,120,47,.4);background:rgba(156,120,47,.1);color:#8a6b25}
+.zp-info{flex:1;min-width:0}
+.zp-nm{font-size:12.5px;font-weight:600;color:#14161b;line-height:1.3}
+.zp-cd{font-size:10px;color:var(--dim3);font-weight:400;margin-left:4px}
+.zp-meta{font-size:10px;color:var(--dim2);margin-top:4px;line-height:1.6;font-variant-numeric:tabular-nums}
+.zp-meta .up{color:#b4452e;font-weight:600}
+.zp-rs{font-size:10px;color:var(--dim3);margin-top:4px;line-height:1.5}
+/* 可买：大大的红色「买」字圆标 */
+.zp-buy-tag{flex:none;align-self:center;width:42px;height:42px;border-radius:50%;
+  background:#c0392b;color:#fff;font-size:21px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;margin-left:6px;
+  box-shadow:0 2px 9px rgba(192,57,43,.38)}
+/* 可信度徽章（题材卡内复用）：高=暖红 · 中=琥珀金 · 低=灰 */
+.zl-picks .cf{display:inline-block;font-size:9px;padding:1px 6px;border-radius:4px;margin-left:5px;
+  vertical-align:middle;border:1px solid var(--line-2);background:rgba(20,22,27,.04);color:var(--dim3)}
+.zl-picks .cf-hi{border-color:rgba(180,69,46,.32);background:rgba(180,69,46,.07);color:#b4452e}
+.zl-picks .cf-mid{border-color:rgba(156,120,47,.34);background:rgba(156,120,47,.08);color:#8a6b25}
+.zl-picks .cf-lo{border-color:var(--line-2);background:rgba(20,22,27,.04);color:var(--dim3)}
 .zl-method{background:linear-gradient(180deg,#fdfcf9,#f7f5f0);border:1px solid var(--line);
   border-radius:10px;padding:14px 16px;margin-top:18px}
 .zl-method .t{font-size:11.5px;font-weight:600;color:#0e1013;letter-spacing:.04em}
@@ -607,10 +620,8 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   .zl .zl-stats{grid-template-columns:repeat(2,1fr);gap:8px}
   .zl-tbl{font-size:11px}
   .zl-tbl th,.zl-tbl td{padding-left:5px;padding-right:5px}
-  .zl-buy .rows{grid-template-columns:repeat(2,1fr);gap:8px}
-  .zl-buy .b{padding:10px 9px 9px}
-  .zl-buy .b .nm{font-size:12px}
-  .zl-buy .b .rk{font-size:19px;top:7px;right:8px}
+  .zp-grid{grid-template-columns:1fr}
+  .zp-buy-tag{width:38px;height:38px;font-size:19px}
 }
 """
 
@@ -921,59 +932,54 @@ function zlConf(tier, lbc, zbc, hs, chg){
   if(tier === '中军') return (zbc >= 1 ? '低' : '中');
   return (chg >= 8 ? '低' : '中');
 }
-function zlBuy(themes, dragon, catchup){
-  const cnt = {};
-  themes.forEach(function(t){ cnt[t.name] = t.count; });
-  let mx = 1; themes.forEach(function(t){ if(t.count > mx) mx = t.count; });
-  function hsScore(hs){
-    hs = Math.max(0, hs);
-    if(hs <= 5) return hs / 5 * 30;
-    if(hs <= 15) return 30;
-    if(hs <= 25) return 30 - (hs - 15) * 0.8;
-    return Math.max(0, 22 - (hs - 25) * 1.5);
-  }
-  function catchupPos(chg){
-    if(chg < 3) return 40;
-    if(chg <= 6) return 40 - (chg - 3) / 3 * 4;
-    if(chg <= 9) return 36 - (chg - 6) / 3 * 6;
-    if(chg <= 12) return 30 - (chg - 9) / 3 * 8;
-    if(chg <= 15) return 22 - (chg - 12) / 3 * 10;
-    return Math.max(0, 12 - (chg - 15) * 2.7);
-  }
-  function dragonPos(d){
-    const lbc = d.lbc || 0;
-    let pos = (lbc === 2 ? 28 : (lbc === 3 ? 24 : (lbc === 4 ? 14 : 6)));
-    if((d.hs || 0) < 3) pos -= 6;
-    if((d.zbc || 0) >= 4) pos -= 6;
-    else if((d.zbc || 0) >= 1) pos -= 2;
-    return pos;
-  }
+function zlBuyable(tier, lbc, zbc, hs, chg){
+  if(tier === '补涨') return chg < 8;
+  return hs >= 3 && zbc === 0 && lbc < 4;
+}
+function zlThemePicks(themes, dragon, catchup, nTheme){
+  nTheme = nTheme || 5;
   function mainboard(code){ const p = String(code || '').slice(0, 2); return p === '60' || p === '00'; }
   dragon = dragon.filter(function(d){ return mainboard(d.code); });
   catchup = catchup.filter(function(c){ return mainboard(c.code); });
-  let maxLbc = 0;
-  dragon.forEach(function(d){ const l = d.lbc || 0; if(l > maxLbc) maxLbc = l; });
-  const cands = [];
-  catchup.forEach(function(x){
-    const chg = x.chg || 0;
-    cands.push({name: x.name, code: x.code, theme: x.theme, chg: chg, hs: x.hs || 0,
-      lbc: 0, kind: '补涨', tier: '补涨', conf: zlConf('补涨', 0, 0, 0, chg), reason: zlCatchupReason(chg),
-      score: Math.round((((cnt[x.theme] || 1) / mx * 30) + catchupPos(chg) + hsScore(x.hs || 0)) * 10) / 10});
-  });
+  const leadBy = {};
   dragon.forEach(function(d){
-    const lbc = d.lbc || 0, zbc = d.zbc || 0, tier = zlTier(lbc);
-    cands.push({name: d.name, code: d.code, theme: d.hybk || '—', chg: d.chg || 0, hs: d.hs || 0,
-      lbc: lbc, kind: d.label || (lbc + '连板'), tier: tier,
-      conf: zlConf(tier, lbc, zbc, d.hs || 0, d.chg || 0), reason: zlDragonReason(d),
-      score: Math.round((((cnt[d.hybk || '—'] || 1) / mx * 30) + dragonPos(d) + hsScore(d.hs || 0)) * 10) / 10});
+    const k = d.hybk || '—';
+    const cur = leadBy[k];
+    if(!cur || (d.lbc || 0) > (cur.lbc || 0)) leadBy[k] = d;
   });
-  const tierRank = {'龙头': 0, '中军': 1, '补涨': 2};
-  cands.sort(function(a, b){
-    const at = (a.tier === '龙头' && a.lbc === maxLbc) ? 0 : 1;
-    const bt = (b.tier === '龙头' && b.lbc === maxLbc) ? 0 : 1;
-    return (at - bt) || ((tierRank[a.tier] - tierRank[b.tier])) || (b.score - a.score);
+  const cuBy = {};
+  catchup.forEach(function(c){
+    if(!cuBy[c.theme]) cuBy[c.theme] = [];
+    cuBy[c.theme].push(c);
   });
-  return cands.slice(0, 5);
+  const picks = [];
+  themes.slice(0, nTheme).forEach(function(t){
+    const name = t.name;
+    const ld = leadBy[name];
+    let leader = null;
+    if(ld){
+      const lbc = ld.lbc || 0, zbc = ld.zbc || 0, hs = ld.hs || 0, chg = ld.chg || 0;
+      const tier = zlTier(lbc);
+      leader = {name: ld.name, code: ld.code, label: ld.label, lbc: lbc, chg: chg, hs: hs,
+        fund: ld.fund, tier: tier, conf: zlConf(tier, lbc, zbc, hs, chg),
+        buyable: zlBuyable(tier, lbc, zbc, hs, chg), reason: zlDragonReason(ld)};
+    }
+    const cus = (cuBy[name] || []).slice();
+    cus.sort(function(a, b){
+      const ab = (a.chg < 8) ? 0 : 1, bb = (b.chg < 8) ? 0 : 1;
+      return (ab - bb) || (b.chg - a.chg);
+    });
+    const cu = cus[0] || null;
+    let cp = null;
+    if(cu){
+      const chg = cu.chg || 0, hs = cu.hs || 0;
+      cp = {name: cu.name, code: cu.code, chg: chg, hs: hs, tier: '补涨',
+        conf: zlConf('补涨', 0, 0, 0, chg), buyable: zlBuyable('补涨', 0, 0, 0, chg),
+        reason: zlCatchupReason(chg)};
+    }
+    picks.push({theme: name, count: t.count, leader: leader, catchup: cp});
+  });
+  return picks;
 }
 function zlCatchup(themes, pool){
   const ztCodes = {};
@@ -1023,25 +1029,37 @@ function zlRenderDyn(zl){
     + st('跌停', (mkt.dt != null ? mkt.dt : '—'), 'dn')
     + st('最高板', (mkt.max_lbc ? mkt.max_lbc + '连板' : '—'), '')
     + '</div>';
-  let buyRows = '';
-  (zl.buy || []).forEach(function(b, i){
-    const kbCls = b.kind === '补涨' ? 'kb gold' : 'kb';
-    const topCls = i === 0 ? ' top' : '';
-    const cfTxt = b.conf || '';
-    const cfCls = cfTxt === '高' ? 'cf cf-hi' : (cfTxt === '低' ? 'cf cf-lo' : 'cf cf-mid');
-    const cfBadge = cfTxt ? '<span class="' + cfCls + '">可信·' + esc(cfTxt) + '</span>' : '';
-    buyRows += '<div class="b' + topCls + '"><span class="rk">' + (i + 1) + '</span>'
-      + '<div class="nm">' + esc(b.name) + '<span class="cd">' + esc(b.code) + '</span></div>'
-      + '<span class="' + kbCls + '">' + esc(b.kind) + '</span>' + cfBadge
-      + '<div class="meta">' + esc(b.theme) + ' · 涨幅 <span class="up">' + ((b.chg > 0 ? '+' : '') + b.chg.toFixed(2)) + '%</span>'
-      + ' · 换手 ' + (b.hs || 0).toFixed(1) + '%</div>'
-      + '<div class="rs">' + esc(b.reason) + '</div></div>';
+  const confCls = function(txt){ return txt === '高' ? 'cf cf-hi' : (txt === '低' ? 'cf cf-lo' : 'cf cf-mid'); };
+  const pickRow = function(label, badgeCls, p){
+    if(!p) return '<div class="zp-row empty"><span class="zp-role ' + badgeCls + '">' + label + '</span>'
+      + '<span class="zp-none">本期无</span></div>';
+    const buyCls = p.buyable ? ' buyable' : '';
+    const buyTag = p.buyable ? '<span class="zp-buy-tag">买</span>' : '';
+    const cf = p.conf ? '<span class="' + confCls(p.conf) + '">可信·' + esc(p.conf) + '</span>' : '';
+    return '<div class="zp-row' + buyCls + '">'
+      + '<span class="zp-role ' + badgeCls + '">' + label + '</span>'
+      + '<div class="zp-info">'
+      +   '<div class="zp-nm">' + esc(p.name) + '<span class="zp-cd">' + esc(p.code) + '</span></div>'
+      +   '<div class="zp-meta">' + (p.label ? esc(p.label) + ' · ' : '')
+      +     '涨幅 <span class="up">' + ((p.chg > 0 ? '+' : '') + p.chg.toFixed(2)) + '%</span>'
+      +     (p.lbc ? ' · 封单 ' + esc(p.fund || '—') : '')
+      +     ' · 换手 ' + (p.hs || 0).toFixed(1) + '%</div>'
+      +   '<div class="zp-rs">' + esc(p.reason) + '</div>'
+      + '</div>' + cf + buyTag + '</div>';
+  };
+  let pickCards = '';
+  (zl.picks || []).forEach(function(pk){
+    pickCards += '<div class="zp-card">'
+      + '<div class="zp-hd">' + esc(pk.theme) + '<span class="zp-cnt">' + pk.count + '家涨停</span></div>'
+      + pickRow('领涨龙头', 'lead', pk.leader)
+      + pickRow('补涨龙头', 'cu', pk.catchup)
+      + '</div>';
   });
-  let buy = '';
-  if(buyRows){
-    buy = '<div class="zl-buy"><div class="hd">今日买入候选 · Top5 '
-      + '<span class="hint">仅沪深主板 · 龙头优先 · 题材强度 + 可买性 + 资金活跃 · 可信度三档</span></div>'
-      + '<div class="rows">' + buyRows + '</div></div>';
+  let picksHtml = '';
+  if(pickCards){
+    picksHtml = '<div class="zl-picks"><div class="hd">按题材分组 · 领涨/补涨龙头 '
+      + '<span class="hint">每个热点题材只留最强的两只 · 可买标红 + 红色「买」字</span></div>'
+      + '<div class="zp-grid">' + pickCards + '</div></div>';
   }
   let chips = '';
   (zl.concepts || []).slice(0, 8).forEach(function(c){
@@ -1118,7 +1136,7 @@ function zlRenderDyn(zl){
   }else{
     cuHtml = '<div class="zl-ct">补涨候选 <span class="hint">本期未取到（行业成分接口不可用）</span></div>';
   }
-  return stats + buy + tags + themesHtml + '<div class="zl-grid">' + dragonHtml + zbHtml + '</div>' + cuHtml;
+  return stats + picksHtml + tags + themesHtml + '<div class="zl-grid">' + dragonHtml + zbHtml + '</div>' + cuHtml;
 }
 function zlFetch(url){
   const ctl = ('AbortController' in window) ? new AbortController() : null;
@@ -1185,7 +1203,7 @@ function refreshZhulong(){
           max_lbc: pool.reduce(function(a, r){ return Math.max(a, r.lbc); }, 0)
         },
         concepts: concepts, themes: themes, dragon: dragon,
-        zhaban: zb, catchup: catchup, buy: zlBuy(themes, dragon, catchup)
+        zhaban: zb, catchup: catchup, picks: zlThemePicks(themes, dragon, catchup)
       };
       const html = zlRenderDyn(zl);
       if(html !== _zlLastHtml){ dyn.innerHTML = html; _zlLastHtml = html; }
@@ -2519,29 +2537,45 @@ def _zhulong_html(zl):
              + _st("最高板", f"{mkt.get('max_lbc', 0)}连板" if mkt.get("max_lbc") else "—")
              + '</div>')
 
-    # ---- 买入候选 Top5（可以买的前五） ----
-    buy_rows = []
-    for i, b in enumerate(zl.get("buy") or [], 1):
-        kb_cls = "kb gold" if b.get("kind") == "补涨" else "kb"
-        top_cls = " top" if i == 1 else ""
-        conf = b.get("conf") or ""
-        cf_cls = {"高": "cf cf-hi", "中": "cf cf-mid", "低": "cf cf-lo"}.get(conf, "")
-        cf_badge = f'<span class="{cf_cls}">可信·{_esc(conf)}</span>' if conf else ""
-        buy_rows.append(
-            f'<div class="b{top_cls}"><span class="rk">{i}</span>'
-            f'<div class="nm">{_esc(b["name"])}<span class="cd">{_esc(b["code"])}</span></div>'
-            f'<span class="{kb_cls}">{_esc(b["kind"])}</span>{cf_badge}'
-            f'<div class="meta">{_esc(b["theme"])} · 涨幅 <span class="up">{b["chg"]:+.2f}%</span>'
-            f' · 换手 {b.get("hs", 0):.1f}%</div>'
-            f'<div class="rs">{_esc(b["reason"])}</div>'
-            '</div>')
-    buy_html = ""
-    if buy_rows:
-        buy_html = ('<div class="zl-buy">'
-                    '<div class="hd">今日买入候选 · Top5 '
-                    '<span class="hint">仅沪深主板 · 龙头优先 · 题材强度 + 可买性 + 资金活跃 · 可信度三档</span></div>'
-                    '<div class="rows">' + ''.join(buy_rows) + '</div>'
-                    '</div>')
+    # ---- 按题材分组的领涨/补涨龙头卡（精简到每题材最强） ----
+    def _conf_cls(txt):
+        return {"高": "cf cf-hi", "中": "cf cf-mid", "低": "cf cf-lo"}.get(txt, "cf cf-mid")
+
+    def _pick_row(label, badge_cls, p):
+        if not p:
+            return (f'<div class="zp-row empty"><span class="zp-role {badge_cls}">{label}</span>'
+                    '<span class="zp-none">本期无</span></div>')
+        buy_cls = " buyable" if p.get("buyable") else ""
+        buy_tag = '<span class="zp-buy-tag">买</span>' if p.get("buyable") else ""
+        conf = p.get("conf") or ""
+        cf = (f'<span class="{_conf_cls(conf)}">可信·{_esc(conf)}</span>' if conf else "")
+        label_txt = f'{_esc(p["label"])} · ' if p.get("label") else ""
+        fund_txt = f' · 封单 {_esc(p.get("fund") or "—")}' if p.get("lbc") else ""
+        return (f'<div class="zp-row{buy_cls}">'
+                f'<span class="zp-role {badge_cls}">{label}</span>'
+                f'<div class="zp-info">'
+                f'<div class="zp-nm">{_esc(p["name"])}<span class="zp-cd">{_esc(p["code"])}</span></div>'
+                f'<div class="zp-meta">{label_txt}涨幅 <span class="up">{p["chg"]:+.2f}%</span>'
+                f'{fund_txt} · 换手 {p.get("hs", 0):.1f}%</div>'
+                f'<div class="zp-rs">{_esc(p["reason"])}</div>'
+                f'</div>{cf}{buy_tag}</div>')
+
+    pick_cards = []
+    for pk in (zl.get("picks") or []):
+        lead = _pick_row("领涨龙头", "lead", pk.get("leader"))
+        cu = _pick_row("补涨龙头", "cu", pk.get("catchup"))
+        pick_cards.append(
+            f'<div class="zp-card">'
+            f'<div class="zp-hd">{_esc(pk["theme"])}<span class="zp-cnt">{pk["count"]}家涨停</span></div>'
+            f'{lead}{cu}'
+            f'</div>')
+    picks_html = ""
+    if pick_cards:
+        picks_html = ('<div class="zl-picks">'
+                      '<div class="hd">按题材分组 · 领涨/补涨龙头 '
+                      '<span class="hint">每个热点题材只留最强的两只 · 可买标红 + 红色「买」字</span></div>'
+                      '<div class="zp-grid">' + ''.join(pick_cards) + '</div>'
+                      '</div>')
 
     # ---- 题材温度（概念涨幅榜） ----
     chips = []
@@ -2688,7 +2722,7 @@ def _zhulong_html(zl):
             ' <span class="zl-at" id="zl-at"></span></div></div>'
             '<div id="zl-dyn">'
             '{}'  # stats
-            '{}'  # buy_top5
+            '{}'  # picks (按题材分组龙头卡)
             '{}'  # tags
             '{}'  # themes
             '<div class="zl-grid">{}{}</div>'  # dragon + zhaban
@@ -2698,7 +2732,7 @@ def _zhulong_html(zl):
             '{}'  # cap
             '</div>').format(
         _esc(as_of), mkt.get("zt", 0), mkt.get("zb", 0), mkt.get("max_lbc", 0),
-        stats, buy_html, tags, themes_html, dragon_html, zb_html, cu_html, method, cap)
+        stats, picks_html, tags, themes_html, dragon_html, zb_html, cu_html, method, cap)
 
 
 # 每个区间对应什么情况，一句话。措辞只描述"情绪处在什么状态、历史上多出现在哪"，
@@ -3083,7 +3117,7 @@ def render(payload):
 <h2>指数技术位 <small>斐波那契回调 · 压力/支撑 · 不参与打分</small><em class="fq rt">当前价每分钟实时</em></h2>
 {szk_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
-<h2>超短线擒龙 <small>买入候选 Top5（仅主板） · 热点题材 · 龙头梯队 · 异动 · 补涨 · 不参与打分</small><em class="fq rt">盘中每分钟实时刷新</em></h2>
+<h2>超短线擒龙 <small>按题材分组 · 领涨/补涨龙头（可买标红） · 热点题材 · 龙头梯队 · 异动 · 不参与打分</small><em class="fq rt">盘中每分钟实时刷新</em></h2>
 {zl_sec or '<div class="notes"><div class="cap">该模块数据不足，本期不画</div></div>'}
 
 <h2>分数历史 <small>分数越高越便宜 → 买得越多 · 50 分 = 1.0×</small><em class="fq snap">每交易日 6 次</em></h2>

@@ -285,9 +285,6 @@ def _catchup_reason(chg):
     return "已近涨停属追高，仅观察不追"
 
 
-_TIER_RANK = {"龙头": 0, "中军": 1, "补涨": 2}
-
-
 def _tier(lbc):
     """梯队身份：龙头 = 3 板+真龙（大浪淘沙后见真龙），中军 = 2 板搭台，补涨 = 未涨停低位。
 
@@ -319,106 +316,93 @@ def _conf(tier, lbc, zbc, hs, chg):
     return "低" if chg >= 8 else "中"
 
 
-def _buy_top5(themes, dragon, catchup):
-    """买入候选 Top5 —— 三因子打分（题材强度 30 + 可买性 40 + 资金活跃 30），取前 5。
+def _is_mainboard(code):
+    """沪深主板：沪市 60xxxx、深市主板 00/001/002/003 xxxx。
+    排除创业板(30)、科创板(688)、北交所(92/83/87/43)。"""
+    return code[:2] in ("60", "00")
 
-    核心口径：这是「可以买」的榜单，不是「最热」榜单 —— 可买性权重最高，
-    涨幅接近涨停（追高）的股会被大幅降权，让「低位补涨 / 换手龙头」真正排到前面。
 
-    **龙头优先**：空间龙头（全池最高连板）固定排第 1 位；其余按梯队（龙头 > 中军 > 补涨）
-    再按总分排序。每只候选带可信度（高/中/低，由 _conf 机械判定）。
+def _buyable(tier, lbc, zbc, hs, chg):
+    """是否可买：纯规则机械判定（同输入同输出，可回测）。
+
+      · 补涨：涨幅 < 8%（真低位）→ 可买；≥8% 已拉开/追高 → 不可买
+      · 龙头/中军：换手板(换手≥3%) 且 零炸板 且 未到 4 板高位 → 可买；
+        一字板(换手<3) / 4 板+高位 / 炸板 → 不可买
+    """
+    if tier == "补涨":
+        return chg < 8
+    return hs >= 3 and zbc == 0 and lbc < 4
+
+
+def _theme_picks(themes, dragon, catchup, n_theme=5):
+    """按题材分组的「领涨龙头 + 补涨龙头」，精简到每题材最强，标注可买性。
+
+    用户要「按题材分类、精简出题材里最强的」——不做全局 Top5 打分，而是每个热点题材
+    挑两只最强的：
+      · 领涨龙头 = 题材内连板最高的龙（lbc>=2 中封板最强的那只）
+      · 补涨龙头 = 题材内低位补涨里最值得买的一只（可买优先，再涨幅高优先）
+    每只带 buyable（可买=True/False）与 reason，可买的在界面标红 + 大字「买」。
 
     **只看沪深主板**：沪 60xxxx / 深 00·001·002·003，创业板(30)、科创板(688)、
     北交所(92/83/87/43) 一律排除。
-
-      · 题材强度 30 分 = 所在行业涨停家数 / 当日最大涨停家数 × 30
-      · 可买性 40 分：
-          补涨股（未涨停）：涨幅越低越可买（<3% 满分 40，>15% 近涨停只剩 4）
-          龙头：2板28 / 3板24 / 4板14 / 5板+6；一字/秒板再减 6
-      · 资金活跃 30 分 = 换手 5~15% 最佳；<2% 无人气、>25% 巨量分歧，均递减
     """
-    cnt = {t["name"]: t["count"] for t in themes}
-    mx = max((t["count"] for t in themes), default=1)
-
-    def _hs(hs):
-        hs = max(0, hs)
-        if hs <= 5:
-            return hs / 5 * 30
-        if hs <= 15:
-            return 30
-        if hs <= 25:
-            return 30 - (hs - 15) * 0.8
-        return max(0, 22 - (hs - 25) * 1.5)
-
-    def _catchup_pos(chg):
-        """补涨可买性：涨幅越低越可买。"""
-        if chg < 3:
-            return 40
-        if chg <= 6:
-            return 40 - (chg - 3) / 3 * 4      # 3→40，6→36
-        if chg <= 9:
-            return 36 - (chg - 6) / 3 * 6      # 6→36，9→30
-        if chg <= 12:
-            return 30 - (chg - 9) / 3 * 8      # 9→30，12→22
-        if chg <= 15:
-            return 22 - (chg - 12) / 3 * 10    # 12→22，15→12
-        return max(0, 12 - (chg - 15) * 2.7)   # 15→12，18→4
-
-    def _dragon_pos(d):
-        lbc = d.get("lbc", 0)
-        pos = {2: 28, 3: 24, 4: 14}.get(lbc, 6)
-        hs = d.get("hs", 0)
-        if hs < 3:
-            pos -= 6  # 一字板买不进
-        zbc = d.get("zbc", 0)
-        if zbc >= 4:
-            pos -= 6  # 反复炸板，封板质量差
-        elif zbc >= 1:
-            pos -= 2
-        return pos
-
-    def _is_mainboard(code):
-        """沪深主板：沪市 60xxxx、深市主板 00/001/002/003 xxxx。
-        排除创业板(30)、科创板(688)、北交所(92/83/87/43)。"""
-        return code[:2] in ("60", "00")
-
-    # 只看沪深主板
     dragon = [d for d in dragon if _is_mainboard(d["code"])]
     catchup = [c for c in catchup if _is_mainboard(c["code"])]
 
-    # 空间龙头 = 全池最高连板（并列时都算），固定排第一
-    max_lbc = max((d.get("lbc", 0) for d in dragon), default=0)
-
-    cands = []
-    for x in catchup:
-        chg = x.get("chg", 0)
-        cands.append({
-            "name": x["name"], "code": x["code"], "theme": x["theme"],
-            "chg": chg, "hs": x.get("hs", 0),
-            "lbc": 0, "kind": "补涨", "tier": "补涨",
-            "conf": _conf("补涨", 0, 0, 0, chg),
-            "reason": _catchup_reason(chg),
-            "score": round(cnt.get(x["theme"], 1) / mx * 30
-                           + _catchup_pos(chg) + _hs(x.get("hs", 0)), 1),
-        })
+    # 领涨龙头：按行业(hybk)分组，每组取连板最高
+    lead_by = {}
     for d in dragon:
-        lbc = d.get("lbc", 0)
-        zbc = d.get("zbc", 0)
-        tier = _tier(lbc)
-        cands.append({
-            "name": d["name"], "code": d["code"], "theme": d.get("hybk", "—"),
-            "chg": d.get("chg", 0), "hs": d.get("hs", 0),
-            "lbc": lbc, "kind": d.get("label", f"{lbc}连板"), "tier": tier,
-            "conf": _conf(tier, lbc, zbc, d.get("hs", 0), d.get("chg", 0)),
-            "reason": _dragon_reason(d),
-            "score": round(cnt.get(d.get("hybk", "—"), 1) / mx * 30
-                           + _dragon_pos(d) + _hs(d.get("hs", 0)), 1),
+        k = d.get("hybk") or "—"
+        cur = lead_by.get(k)
+        if cur is None or d["lbc"] > cur["lbc"]:
+            lead_by[k] = d
+
+    # 补涨：按题材(theme)分组
+    cu_by = {}
+    for c in catchup:
+        cu_by.setdefault(c["theme"], []).append(c)
+
+    picks = []
+    for t in themes[:n_theme]:
+        name = t["name"]
+        ld = lead_by.get(name)
+
+        leader = None
+        if ld:
+            lbc, zbc, hs = ld["lbc"], ld["zbc"], ld["hs"]
+            tier = _tier(lbc)
+            leader = {
+                "name": ld["name"], "code": ld["code"], "label": ld["label"],
+                "lbc": lbc, "chg": ld["chg"], "hs": hs, "fund": ld.get("fund"),
+                "tier": tier,
+                "conf": _conf(tier, lbc, zbc, hs, ld["chg"]),
+                "buyable": _buyable(tier, lbc, zbc, hs, ld["chg"]),
+                "reason": _dragon_reason(ld),
+            }
+
+        cus = cu_by.get(name, [])
+        # 补涨龙头：可买(chg<8)优先，再涨幅高优先（启动迹象强但未追高）
+        cus.sort(key=lambda c: (-(1 if c["chg"] < 8 else 0), -c["chg"]))
+        cu = cus[0] if cus else None
+
+        catchup_pick = None
+        if cu:
+            chg, hs = cu["chg"], cu["hs"]
+            catchup_pick = {
+                "name": cu["name"], "code": cu["code"], "chg": chg, "hs": hs,
+                "tier": "补涨",
+                "conf": _conf("补涨", 0, 0, 0, chg),
+                "buyable": _buyable("补涨", 0, 0, 0, chg),
+                "reason": _catchup_reason(chg),
+            }
+
+        picks.append({
+            "theme": name,
+            "count": t["count"],
+            "leader": leader,
+            "catchup": catchup_pick,
         })
-    # 龙头优先：空间龙头固定第一（即使一字板买不进也作为风向标置顶），
-    # 其余按「梯队（龙头 > 中军 > 补涨）→ 总分」排序。
-    cands.sort(key=lambda c: (-(1 if c["tier"] == "龙头" and c["lbc"] == max_lbc else 0),
-                              _TIER_RANK[c["tier"]], -c["score"]))
-    return cands[:5]
+    return picks
 
 
 def run():
@@ -469,8 +453,8 @@ def run():
     except Exception as e:  # noqa: BLE001
         notes.append(f"补涨候选取不到（行业成分接口）：{str(e)[:80]}")
 
-    # 买入候选 Top5（补涨 + 龙头 综合打分）
-    buy = _buy_top5(themes, dragon, catchup)
+    # 按题材分组的领涨/补涨龙头（精简到每题材最强）
+    picks = _theme_picks(themes, dragon, catchup)
 
     return {
         "as_of": date,
@@ -487,6 +471,6 @@ def run():
         "first": first,
         "zhaban": zb,
         "catchup": catchup,
-        "buy": buy,
+        "picks": picks,
         "notes": notes,
     }
