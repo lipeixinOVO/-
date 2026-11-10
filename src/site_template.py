@@ -839,12 +839,14 @@ function refreshMood(){
     .then(done, done);
 }
 
-/* ---------- 超短线擒龙：A 股交易时段每分钟直连东财刷新 ----------
+/* ---------- 超短线擒龙：A 股交易时段直连东财刷新 ----------
    涨停/炸板/跌停池、概念板块、行业成分都是东财公开接口，带 CORS（实测
    Access-Control-Allow-Origin 回显请求 Origin），浏览器能直接 fetch。
    服务端跑批仍保留，作为盘前盘后 + 首屏快照；前端只在 A 股交易时段
-   （工作日 09:30-11:30 / 13:00-15:00）每分钟重拉重算，失败一律静默降级到快照。
-   逻辑与 src/zhulong.py 完全一致（字段口径、三因子打分），改一边记得同步另一边。 */
+   （工作日 09:30-11:30 / 13:00-15:00）每分钟重拉数据：涨停/炸板/跌停/最高板
+   计数每分钟刷新，题材卡/领涨龙头/题材榜等「结构」每 5 分钟才重排一次
+   （避免盘中分钟级跳变，用户要求「别变得太快」）。失败一律静默降级到快照。
+   逻辑与 src/zhulong.py 完全一致（字段口径、梯队/可信度/可买判定），改一边记得同步另一边。 */
 
 function zlInSession(){
   const n = new Date();
@@ -1020,14 +1022,14 @@ function zlCatchup(themes, pool){
 }
 function zlRenderDyn(zl){
   const mkt = zl.market || {};
-  const st = function(lbl, val, cls){
-    return '<div class="st"><span class="lbl">' + lbl + '</span><b class="' + (cls || '') + '">' + esc(val) + '</b></div>';
+  const st = function(lbl, val, cls, id){
+    return '<div class="st"><span class="lbl">' + lbl + '</span><b id="' + id + '" class="' + (cls || '') + '">' + esc(val) + '</b></div>';
   };
   const stats = '<div class="zl-stats">'
-    + st('涨停', (mkt.zt != null ? mkt.zt : '—'), 'up')
-    + st('炸板', (mkt.zb != null ? mkt.zb : '—'), '')
-    + st('跌停', (mkt.dt != null ? mkt.dt : '—'), 'dn')
-    + st('最高板', (mkt.max_lbc ? mkt.max_lbc + '连板' : '—'), '')
+    + st('涨停', (mkt.zt != null ? mkt.zt : '—'), 'up', 'zl-st-zt')
+    + st('炸板', (mkt.zb != null ? mkt.zb : '—'), '', 'zl-st-zb')
+    + st('跌停', (mkt.dt != null ? mkt.dt : '—'), 'dn', 'zl-st-dt')
+    + st('最高板', (mkt.max_lbc ? mkt.max_lbc + '连板' : '—'), '', 'zl-st-max')
     + '</div>';
   const confCls = function(txt){ return txt === '高' ? 'cf cf-hi' : (txt === '低' ? 'cf cf-lo' : 'cf cf-mid'); };
   const pickRow = function(label, badgeCls, p){
@@ -1147,6 +1149,7 @@ function zlFetch(url){
   return p.then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
 }
 let _zlBusy = false, _zlFail = 0, _zlNext = 0, _zlIndMap = null, _zlLastHtml = '';
+let _zlStructNext = 0;   // 题材卡/领涨龙头等「结构」下次允许重排的时间戳（每 5 分钟一次）
 function zlSetAt(txt, cls){
   const at = document.getElementById('zl-at');
   if(at){ at.textContent = txt || ''; at.className = 'zl-at' + (cls ? ' ' + cls : ''); }
@@ -1205,12 +1208,21 @@ function refreshZhulong(){
         concepts: concepts, themes: themes, dragon: dragon,
         zhaban: zb, catchup: catchup, picks: zlThemePicks(themes, dragon, catchup)
       };
-      const html = zlRenderDyn(zl);
-      if(html !== _zlLastHtml){ dyn.innerHTML = html; _zlLastHtml = html; }
       const set = function(id, t){ const e = document.getElementById(id); if(e) e.textContent = t; };
+      // 结构（题材卡/领涨龙头/题材榜/龙头梯队/异动/补涨）：每 5 分钟才重排一次，
+      // 避免盘中涨停家数分钟级累积导致题材卡顺序与领涨龙头跳来跳去（用户要求「别变得太快」）。
+      if(Date.now() >= _zlStructNext){
+        _zlStructNext = Date.now() + 300000;
+        const html = zlRenderDyn(zl);
+        if(html !== _zlLastHtml){ dyn.innerHTML = html; _zlLastHtml = html; }
+      }
+      // 计数（涨停/炸板/跌停/最高板）：每分钟刷新，保留「盘面在动」的实时感。
       set('zl-date', date.slice(0, 4) + '-' + date.slice(4, 6) + '-' + date.slice(6, 8));
       set('zl-zt', pool.length); set('zl-zb', zb.length);
       set('zl-maxlbc', zl.market.max_lbc + ' 连板');
+      set('zl-st-zt', pool.length); set('zl-st-zb', zb.length);
+      set('zl-st-dt', dtPool.length);
+      set('zl-st-max', zl.market.max_lbc ? zl.market.max_lbc + '连板' : '—');
       zlDone(true, date);
     }).catch(function(){ zlDone(false); });
   }).catch(function(){ zlDone(false); });
@@ -2526,15 +2538,16 @@ def _zhulong_html(zl):
     as_of = f"{_d[:4]}-{_d[4:6]}-{_d[6:8]}" if len(_d) == 8 else _d
 
     # ---- 盘面概览 ----
-    def _st(lbl, val, cls=""):
+    def _st(lbl, val, cls="", sid=""):
+        sid_attr = f' id="{sid}"' if sid else ""
         return (f'<div class="st"><span class="lbl">{lbl}</span>'
-                f'<b class="{cls}">{_esc(val)}</b></div>')
+                f'<b{sid_attr} class="{cls}">{_esc(val)}</b></div>')
 
     stats = ('<div class="zl-stats">'
-             + _st("涨停", mkt.get("zt", "—"), "up")
-             + _st("炸板", mkt.get("zb", "—"))
-             + _st("跌停", mkt.get("dt", "—"), "dn")
-             + _st("最高板", f"{mkt.get('max_lbc', 0)}连板" if mkt.get("max_lbc") else "—")
+             + _st("涨停", mkt.get("zt", "—"), "up", "zl-st-zt")
+             + _st("炸板", mkt.get("zb", "—"), "", "zl-st-zb")
+             + _st("跌停", mkt.get("dt", "—"), "dn", "zl-st-dt")
+             + _st("最高板", f"{mkt.get('max_lbc', 0)}连板" if mkt.get("max_lbc") else "—", "", "zl-st-max")
              + '</div>')
 
     # ---- 按题材分组的领涨/补涨龙头卡（精简到每题材最强） ----
