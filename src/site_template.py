@@ -402,6 +402,17 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .mhead .t{font-size:13.5px;font-weight:600;color:#0e1013;letter-spacing:.01em}
 .mhead .sub{font-size:10.5px;color:var(--dim2);margin-top:5px;line-height:1.85}
 .mhead .sub b{font-weight:600;color:#3f434c}
+/* 指数技术位：顶部指数切换 tab（4 个指数合并进一个图，切 tab 换指数） */
+.szk-idx-tabs{display:inline-flex;flex-wrap:wrap;margin:12px 2px 2px;border:1px solid var(--line-2);
+  border-radius:10px;overflow:hidden}
+.szk-idx-tabs button{font-family:inherit;font-size:12px;letter-spacing:.03em;padding:7px 18px;
+  border:none;border-right:1px solid var(--line-2);background:transparent;color:#3d4048;
+  cursor:pointer;transition:background .18s ease,color .18s ease;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent}
+.szk-idx-tabs button:last-child{border-right:none}
+.szk-idx-tabs button:hover{color:var(--gold-l)}
+.szk-idx-tabs button.on{background:rgba(156,120,47,.16);color:#5c4519;font-weight:600}
+.szk-idx[hidden]{display:none}
 /* 指数技术位：顶部「当前价 / 涨跌幅 / 压力 / 支撑」提示条 */
 .szk-top{display:flex;gap:14px 30px;flex-wrap:wrap;align-items:baseline;
   margin:14px 0 12px;padding:13px 16px;border-radius:10px;border:1px solid var(--line);
@@ -519,6 +530,7 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   /* 二十二年 / 深证成指的多窗口按钮要在一行里排开，手机上把内边距收紧 */
   .eqw .chartbar button,.szk .chartbar button{font-size:11.5px;padding:5px 9px;letter-spacing:.02em}
   .eqw .chartbar .delta,.szk .chartbar .delta{margin-left:0;font-size:10px}
+  .szk-idx-tabs button{font-size:11px;padding:6px 12px}
   .charthint{font-size:11.5px;gap:12px}
 }
 
@@ -1730,7 +1742,7 @@ function loadLive(){
 
 /* 二十二年那张图的窗口切换（服务端已生成好几份 SVG，这里只切显示） */
 function bindEqw(){
-  const roots=document.querySelectorAll('.eqw,.szk');
+  const roots=document.querySelectorAll('.eqw');
   Array.prototype.forEach.call(roots,function(root){
     const btns=root.querySelectorAll('.chartbar button');
     const panes=root.querySelectorAll('.sw');
@@ -1746,8 +1758,41 @@ function bindEqw(){
   });
 }
 
+/* 指数技术位：4 个指数合并进一个板块，两级切换 ——
+   一级 = 指数 tab（.szk-idx-tabs button ↔ .szk-idx），二级 = 日期范围（每个 pane 内独立）。 */
+function bindSzK(){
+  const root=document.getElementById('szk-root');
+  if(!root) return;
+  const tabs=root.querySelectorAll('.szk-idx-tabs button');
+  const idxPanes=root.querySelectorAll('.szk-idx');
+  Array.prototype.forEach.call(tabs,function(tab){
+    tab.onclick=function(){
+      const idx=tab.getAttribute('data-idx');
+      Array.prototype.forEach.call(tabs,function(t){ t.classList.toggle('on', t===tab); });
+      Array.prototype.forEach.call(idxPanes,function(p){
+        p.hidden=(p.getAttribute('data-idx')!==idx);
+      });
+    };
+  });
+  // 每个指数 pane 内的日期范围切换独立绑定，互不串台
+  Array.prototype.forEach.call(idxPanes,function(pane){
+    const btns=pane.querySelectorAll('.chartbar button');
+    const sws=pane.querySelectorAll('.sw');
+    Array.prototype.forEach.call(btns,function(b){
+      b.onclick=function(){
+        Array.prototype.forEach.call(btns,function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        Array.prototype.forEach.call(sws,function(p){
+          p.hidden=(p.getAttribute('data-k')!==b.getAttribute('data-k'));
+        });
+      };
+    });
+  });
+}
+
 render();
 bindEqw();
+bindSzK();
 loadLive();
 // 市场情绪直连 CNN。首次延迟 12 秒，别和首屏的几个请求抢带宽（后台时它自己会跳过）。
 setTimeout(function(){ refreshMood(); }, 12000);
@@ -2435,8 +2480,9 @@ def _sz_kline_svg(sz, w, h, fs=9.5, klines=None):
     return "".join(o)
 
 
-def _sz_kline_html(sz):
-    """单个指数的技术位板块。sz 为 None 时返回空串（整段不输出）。"""
+def _sz_kline_html(sz, hidden=False):
+    """单个指数的 pane（不含外层 .szk chart 与标题），供 _sz_kline_sections 合并。
+    hidden=True 时整段带 hidden（默认显示第一个指数）。"""
     if not sz or not sz.get("fib"):
         return ""
     sfx = sz["symbol"]          # 用作 DOM id 后缀，保证四个指数互不冲突
@@ -2492,12 +2538,8 @@ def _sz_kline_html(sz):
                   f'→「{sz["swing_high"]["date"]} 高点 {sz["swing_high"]["price"]:,.0f}」，'
                   f'未来创新高/新低会自动重画')
 
-    return f"""<div class="szk chart">
-  <div class="mhead">
-    <div class="t">{_esc(nm)} · 技术位</div>
-    <div class="sub">斐波那契回调 · 黄色分界线 = 23.6% / 38.2% / 50% / 61.8% / 80.9%　·　
-      当前价夹在「支撑 / 压力」之间，涨跌幅与距离每分钟随实时价刷新</div>
-  </div>
+    hid_attr = " hidden" if hidden else ""
+    return f"""<div class="szk-idx" data-idx="{sfx}"{hid_attr}>
   <div class="szk-top">
     <div class="szk-now"><span class="lbl">{_esc(nm)}</span><b id="szk-px-{sfx}">{cur:,.2f}</b><span class="chg mid" id="szk-chg-{sfx}">—</span><span class="rt">实时</span></div>
     <div class="res"><span class="lbl">上方压力</span><span class="pct" id="szk-res-p-{sfx}">{_esc(res_pct)}</span><b id="szk-res-{sfx}">{_esc(res_price)}</b><span class="gap" id="szk-res-g-{sfx}">{_esc(res_gap_t)}</span></div>
@@ -2512,10 +2554,27 @@ def _sz_kline_html(sz):
 
 
 def _sz_kline_sections(sz_list):
-    """多个指数的技术位板块拼接。空/None 返回空串。"""
-    if not sz_list:
+    """多个指数合并成一个「指数技术位」板块：顶部 tab 切换指数，只占一个图的高度。"""
+    items = [sz for sz in (sz_list or []) if sz and sz.get("fib")]
+    if not items:
         return ""
-    return "".join(_sz_kline_html(sz) for sz in sz_list if sz and sz.get("fib"))
+    names = " / ".join(sz.get("name") or sz["symbol"] for sz in items)
+    tabs, panes = [], []
+    for i, sz in enumerate(items):
+        sfx = sz["symbol"]
+        nm = sz.get("name") or sfx
+        on_attr = ' class="on"' if i == 0 else ""
+        tabs.append(f'<button type="button" data-idx="{sfx}"{on_attr}>{_esc(nm)}</button>')
+        panes.append(_sz_kline_html(sz, hidden=(i != 0)))
+    return f"""<div class="szk chart" id="szk-root">
+  <div class="mhead">
+    <div class="t">指数技术位</div>
+    <div class="sub">{_esc(names)}　·　斐波那契回调 · 黄色分界线 = 23.6% / 38.2% / 50% / 61.8% / 80.9%　·　
+      当前价夹在「支撑 / 压力」之间，涨跌幅与距离每分钟随实时价刷新</div>
+  </div>
+  <div class="szk-idx-tabs">{''.join(tabs)}</div>
+  {''.join(panes)}
+</div>"""
 
 
 def _zhulong_html(zl):
