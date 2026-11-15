@@ -62,6 +62,56 @@ def sina_us_daily(symbol):
     return [tuple(x) for x in _cached(f"us_{symbol}", _go)]
 
 
+def usixj_daily():
+    """usIXJ（iShares 全球医疗保健 ETF）日线：[(date, close)]，升序。
+
+    usIXJ 跟踪 S&P Global 1200 Health Care (Sector) Capped Index —— 正是广发
+    全球医疗保健指数(000369)跟踪的「标普全球1200医疗保健指数」，用它做该标的
+    的行情代理（指数官方点位需订阅，公开拿不到）。
+
+    数据源两层：
+      1. 种子 data/usixj_seed.json —— 本地用腾讯自选股 CLI 一次性导出的约 5 年
+         （1200 根）历史快照，随仓库提交。腾讯公开 web 接口（web.ifzq.gtimg.cn）
+         对美股 ETF 只回传最新 1 根、拿不到全历史，所以历史靠这份种子。
+      2. 每日增量 —— 跑批时用腾讯 fqkline 拉最新一根，日期新于种子末尾就追加。
+    两者合并后按日期去重升序。腾讯 fqkline 对美股 ETF 只回 1 根是已知限制，
+    所以历史深度 = 种子长度 + 每日累积，不会突然变多。
+    """
+    seed_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                             "data", "usixj_seed.json")
+
+    def _go():
+        merged = {}
+        try:
+            with open(seed_path, encoding="utf-8") as f:
+                for x in json.load(f):
+                    try:
+                        merged[str(x[0])] = float(x[1])
+                    except (IndexError, TypeError, ValueError):
+                        continue
+        except Exception:  # noqa: BLE001
+            pass
+        try:
+            url = ("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
+                   "?param=usIXJ,day,,,5,qfq")
+            js = fetch_json(url, timeout=20, retries=2)
+            d = (js.get("data") or {}).get("usIXJ") or {}
+            for r in (d.get("day") or d.get("qfqday") or []):
+                try:
+                    # day 行 = [date, open, close, high, low, volume, ...]
+                    merged[str(r[0])] = float(r[2])
+                except (IndexError, TypeError, ValueError):
+                    continue
+        except Exception:  # noqa: BLE001
+            pass
+        out = [[d, c] for d, c in sorted(merged.items())]
+        if not out:
+            raise RuntimeError("usIXJ 无数据（种子空且腾讯 fqkline 未返回）")
+        return out
+
+    return [tuple(x) for x in _cached("usixj_daily", _go)]
+
+
 MSCI_INDEX_CODES = {
     "106801": "MSCI World Health Care（全球医疗保健，官方 index code）",
     "990100": "MSCI World（全球发达市场宽基，用于相对比价基准）",

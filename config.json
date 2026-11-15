@@ -108,14 +108,13 @@
       "data_note": "新浪外盘期货 GC（COMEX 黄金连续，2016 起）为主——云端实测可访问；东财 101.GC00Y 在 GitHub Runner 上会断连，仅作备用。两者末 2500 日窗口基本重合，分数差异 <0.5 分"
     },
     {
-      "id": "MSCI_HEALTH",
-      "name": "MSCI 全球医疗保健指数",
+      "id": "SPG1200_HEALTH",
+      "name": "标普全球1200医疗保健指数",
       "kind": "index",
       "advisory_only": false,
       "data": {
-        "type": "msci",
-        "code": "106801",
-        "variant": "NETR"
+        "type": "usixj",
+        "symbol": "usIXJ"
       },
       "benchmark": {
         "type": "msci",
@@ -133,7 +132,7 @@
         "fund_name": "广发全球医疗保健指数人民币(QDII)A",
         "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用"
       },
-      "note": "评分口径：MSCI 官方指数点位（106801，净总回报口径，1999 年起）。不再用基金累计净值。"
+      "note": "评分口径：标普全球1200医疗保健指数（S&P Global 1200 Health Care Sector Capped Index），用 usIXJ（iShares 全球医疗保健 ETF）作行情代理——两者跟踪同一指数。历史约 5 年（腾讯自选股种子 + 每日增量），比价基准仍用 MSCI World。此前误配为 MSCI 全球医疗（106801），已更正。"
     },
     {
       "id": "CSI_DIVIDEND",

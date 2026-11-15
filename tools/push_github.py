@@ -98,7 +98,7 @@ def ensure_repo():
     print("仓库不存在，创建中…")
     r = requests.post(f"{API}/user/repos", headers=H, timeout=30, json={
         "name": REPO,
-        "description": "定投台 · 五标的定投倍数看板（纳指100 / 黄金 / MSCI全球医疗 / 中证红利 / 纳指综指）",
+        "description": "定投台 · 五标的定投倍数看板（纳指100 / 黄金 / 标普全球1200医疗 / 中证红利 / 纳指综指）",
         "private": False,
         "has_issues": True,
         "has_wiki": False,

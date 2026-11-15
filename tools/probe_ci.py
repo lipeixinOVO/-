@@ -50,11 +50,13 @@ TARGETS = [
      "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/"
      "daily_treasury_real_yield_curve/Text?data=daily_treasury_real_yield_curve"
      "&field_tdr_date_value=2026&type=datetime", ""),
-    ("MSCI 106801",
+    ("MSCI 990100（比价基准）",
      "https://app2.msci.com/products/service/index/indexmaster/getLevelDataForGraph"
      "?currency_symbol=USD&index_variant=NETR&start_date=20260901&end_date=20261022"
-     "&data_frequency=DAILY&index_codes=106801",
+     "&data_frequency=DAILY&index_codes=990100",
      "https://www.msci.com/end-of-day-data-search"),
+    ("腾讯 usIXJ 日K（标普全球1200医疗代理）",
+     "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=usIXJ,day,,,5,qfq", ""),
     ("Stooq 美元指数 dx.f",
      "https://stooq.com/q/d/l/?s=dx.f&i=d", ""),
     ("Stooq 黄金 xauusd",

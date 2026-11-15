@@ -31,6 +31,8 @@ _FETCHERS = {
                            f"东方财富 push2his {d['secid']}"),
     "msci": lambda d: (S.msci_index(d["code"], d.get("variant", "NETR")),
                        f"MSCI 官方指数接口 index_codes={d['code']}（{d.get('variant', 'NETR')}）"),
+    "usixj": lambda d: (S.usixj_daily(),
+                        "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）"),
     "csindex": lambda d: (S.csindex_perf(d["code"], d.get("start", "2004-01-01")),
                           f"中证指数官网 indexCode={d['code']}"),
     "sina_gold": lambda d: (S.sina_gold_daily(d.get("symbol", "GC")),
@@ -89,7 +91,7 @@ def load_series(cfg, as_of=None, ctx=None):
 # ---------------------------------------------------------------- 估值锚（蛋卷）
 
 def load_valuation_anchors(ctx):
-    """蛋卷只覆盖 A 股与主流指数；MSCI 全球医疗不在其中（已实测 detail 返回空）。
+    """蛋卷只覆盖 A 股与主流指数；标普全球1200医疗不在其中（已实测 detail 返回空）。
 
     pe_hist 保留日期，回填历史时才不会用到"未来"的 PE 数据。
     """
@@ -279,13 +281,20 @@ def compute_gold(cfg, ctx, as_of=None):
 
 
 def compute_health(cfg, ctx, as_of=None):
-    """MSCI 全球医疗保健指数（106801）。
+    """标普全球1200医疗保健指数（用 usIXJ 作行情代理）。
 
-    估值缺口：MSCI 官方仅提供当前快照 PE/PB（www.msci.com/indexes/index/106801），
-    历史 PE 序列需订阅（接口 404 实测），蛋卷亦未覆盖该指数。
+    广发全球医疗保健指数(000369)跟踪的是「标普全球1200医疗保健指数」
+    （S&P Global 1200 Health Care Sector Capped Index），不是 MSCI 指数。
+    usIXJ（iShares 全球医疗保健 ETF）跟踪的正是同一指数，故用它代理行情。
+
+    估值缺口：标普官方仅提供当前快照 PE/PB，历史 PE 序列需订阅；蛋卷亦未覆盖该指数。
     因此估值维度用两个**真实可得**的代理：
-      ① 医疗 / MSCI World 比价 10 年分位 —— 衡量"医疗相对全球大盘贵不贵"（相对估值）
-      ② 距 10 年对数回归趋势偏离 —— 近似 CAPE 思路，衡量"涨得超前长期轨道多少"（绝对估值代理）
+      ① 医疗 / MSCI World 比价分位 —— 衡量"医疗相对全球大盘贵不贵"（相对估值）
+      ② 距对数回归趋势偏离 —— 近似 CAPE 思路，衡量"涨得超前长期轨道多少"（绝对估值代理）
+
+    口径注意：usIXJ 免费公开历史仅约 5 年（1200 根），所以本标的的分位是「近 5 年」口径
+    （其余标的是「近 10 年」），对数趋势窗口相应降到 4 年。这是数据源限制，不是刻意简化，
+    已在指标 note 里标注。
     """
     ser = load_series(cfg, as_of, ctx)
     closes = ser["closes"]
@@ -298,9 +307,9 @@ def compute_health(cfg, ctx, as_of=None):
             ratio = E.ratio_series(list(zip(ser["dates"], closes)),
                                    list(zip(bm["dates"], bm["closes"])))
             if len(ratio) > 250:
-                ms.append(E.mk_metric("医疗 / MSCI World 比价 10年分位", [x[1] for x in ratio][-E.WINDOW:],
-                                      False, 60, _src("MSCI 106801 ÷ MSCI 990100"), "", unit="",
-                                      note="比价越高=医疗相对全球大盘越贵，分数越低"))
+                ms.append(E.mk_metric("医疗 / MSCI World 比价分位", [x[1] for x in ratio][-E.WINDOW:],
+                                      False, 60, _src("usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）"), "", unit="",
+                                      note="比价越高=医疗相对全球大盘越贵，分数越低；usIXJ 仅约 5 年历史，故为近 5 年分位"))
         except Exception as e:  # noqa: BLE001
             ctx.setdefault("errors", []).append(f"医疗/全球比价: {e}")
 
@@ -309,17 +318,21 @@ def compute_health(cfg, ctx, as_of=None):
     # 10-21 的回填分（50.9）与实际（43.2）差 7.7 分。
     if "_health_resid" not in ctx:
         full = load_series(cfg, None, ctx)
-        ctx["_health_resid"] = E.log_resid_dated(full["closes"], full["dates"], 2500, 21)
+        # usIXJ 免费历史仅约 5 年（1200 根），10 年（2500 日）窗口算不出对数趋势，
+        # 降到 2 年（500 日）窗口 + 5 日采样密度，保证采样点 ≥30 能算分位。
+        resid_win = 2500 if len(full["closes"]) >= 2500 else 500
+        resid_step = 21 if len(full["closes"]) >= 2500 else 10
+        ctx["_health_resid"] = E.log_resid_dated(full["closes"], full["dates"], resid_win, resid_step)
     resid = [v for d, v in ctx["_health_resid"] if not as_of or d <= as_of]
     if resid:
-        ms.append(E.mk_metric("距 10 年对数趋势偏离", resid[-600:], False, 40,
+        ms.append(E.mk_metric("距对数趋势偏离", resid[-600:], False, 40,
                               ser["src"], "", unit="%",
-                              note="偏离长期对数趋势越多=越贵；CAPE 近似思路，MSCI 历史 PE 序列不可得时用它代理"))
+                              note="偏离对数趋势越多=越贵；CAPE 近似思路。usIXJ 仅约 5 年历史，趋势窗口取 2 年（其余标的为 10 年）"))
 
     dims = [
         E.build_dimension("valuation", cfg["weights"]["valuation"], ms,
-                          anchor="MSCI 官方 PE 历史不可得（需订阅）；用相对 MSCI World 比价 + 对数趋势偏离代理。"
-                                 "官方快照 2026-08-31：PE 22.44、PB 4.85、股息率 1.77%"),
+                          anchor="标普全球1200医疗保健指数官方 PE 历史不可得（需订阅）；用相对 MSCI World 比价 + 对数趋势偏离代理。"
+                                 "usIXJ ETF PE-TTM 约 27.6（Yahoo，2026-11 快照）"),
         E.build_dimension("trend", cfg["weights"]["trend"],
                           _trend_dims(closes, 50, 50, ser["src"])),
         E.build_dimension("sentiment", cfg["weights"]["sentiment"],
@@ -385,6 +398,6 @@ COMPUTERS = {
     "IXIC": compute_ixic,
     "NDX": compute_ndx,
     "GOLD": compute_gold,
-    "MSCI_HEALTH": compute_health,
+    "SPG1200_HEALTH": compute_health,
     "CSI_DIVIDEND": compute_dividend,
 }

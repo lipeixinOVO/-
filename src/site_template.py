@@ -1402,7 +1402,7 @@ function renderChart(){
   //   下面这张表与 Python 的 MONTH_COLORS 必须逐字一致（selfcheck 有断言比对）。
   const COLORS = {
     IXIC:'#111827', NDX:'#2f6fb0', GOLD:'#a8752a',
-    MSCI_HEALTH:'#2f7d5e', CSI_DIVIDEND:'#b4512f'
+    SPG1200_HEALTH:'#2f7d5e', CSI_DIVIDEND:'#b4512f'
   };
   const COLORS_FB = ['#5b4b8a','#7a7f8c','#3f7f9e','#8a6b25','#9c4f4f'];
   const colorOf = function(id, i){ return COLORS[id] || COLORS_FB[i % COLORS_FB.length]; };
@@ -1578,6 +1578,7 @@ const LIVE = [
   {c:'usIXIC',  nm:'纳斯达克综合'},
   {c:'usNDX',   nm:'纳斯达克100'},
   {c:'hf_GC',   nm:'黄金 COMEX'},
+  {c:'usIXJ',   nm:'全球医疗保健'},
   {c:'sh000922',nm:'中证红利'},
   {c:'sh000300',nm:'沪深300'},
   {c:'sz399001',nm:'深证成指'},
@@ -1617,14 +1618,6 @@ function renderLive(){
       (pct==null||isNaN(pct)?'':'<span class="ch '+qcls(pct)+'">'+
         (pct>0?'+':'')+pct.toFixed(2)+'%</span>')+'</div></div>');
   });
-  // MSCI 全球医疗没有公开实时源：显示官方 EOD 收盘价，明确标「收盘」不冒充实时。
-  // 更新时机写在下面的 stamp 里 —— 否则那个日期看起来像永远卡住不动。
-  const h=(P.latest.assets||[]).filter(function(a){ return /医疗/.test(a.name); })[0];
-  if(h&&h.price!=null){
-    const md=String(h.price_date||'').slice(5);
-    cells.push('<div class="cell"><div class="nm">MSCI 全球医疗<i>EOD'+(md?' '+md:'')+'</i></div>'+
-      '<div class="px">'+fmtPx(h.price)+'</div></div>');
-  }
   if(!cells.length){ box.style.display='none'; return; }
   box.style.display='';   // 之前失败被隐藏的，恢复显示（否则成功一次后永远看不见）
   // 「本次 HH:MM:SS」是刻意加的：页面挂在后台或接口静默失败时，这一行会停住不动，
@@ -1663,7 +1656,6 @@ function renderLive(){
     '<div class="stamp">'+
     '<span>行情时间 <b>'+(stamp?esc(stamp):'—')+
     '</b> · 腾讯行情每 60 秒刷新（本次 <i class="now">'+at+'</i>）</span>'+
-    '<span>MSCI 全球医疗无实时源，用官方 <b>EOD 收盘</b>；每交易日 06:37 / 08:07 跑批时更新</span>'+
     '<span><b>实时价不参与打分</b>；分数、卡片收盘价、各类曲线每交易日 '+
     perDay+' 次整体重算</span></div>';
 }
@@ -2152,7 +2144,7 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     vmin, vmax = min(ticks[0], vmin - pad), max(ticks[-1], vmax + pad)
 
     # 右侧留白不再写死 54：末值标签现在要带指数名，按最长的那个名字算，
-    # 否则「MSCI 全球医疗保健指数 +6.02%」会直接跑出画布被裁掉。
+    # 否则「标普全球1200医疗保健指数 +6.02%」会直接跑出画布被裁掉。
     # 窄画布（430 单位）一行放不下「名称 +x%」，改成名称在上、百分比在下两行。
     stack = w < 600
     nfs, pfs = fs, fs + 1            # 名称字号 / 百分比字号（百分比大一号、加粗）
@@ -2278,7 +2270,7 @@ MONTH_COLORS = {
     "IXIC": "#111827",
     "NDX": "#2f6fb0",
     "GOLD": "#a8752a",
-    "MSCI_HEALTH": "#2f7d5e",
+    "SPG1200_HEALTH": "#2f7d5e",
     "CSI_DIVIDEND": "#b4512f",
 }
 MONTH_FALLBACK = ["#5b4b8a", "#7a7f8c", "#3f7f9e", "#8a6b25", "#9c4f4f"]
@@ -3225,7 +3217,7 @@ def render(payload):
   <div class="warnbox">
     <b>已知口径缺口（不掩盖）</b><br>
     · 纳斯达克综合指数自身 PE 不可得 → 用纳指100(NDX) 估值代理<br>
-    · <b>MSCI 全球医疗保健指数的 PE 历史不可得</b>（官方基本面接口需订阅，实测 404；蛋卷未覆盖）→ 估值改用「医疗/MSCI World 比价分位」+「距 10 年对数趋势偏离」两个真实代理。官方快照 2026-08-31：PE 22.44、PB 4.85<br>
+    · <b>标普全球1200医疗保健指数的 PE 历史不可得</b>（官方基本面接口需订阅；蛋卷未覆盖）→ 估值改用「医疗/MSCI World 比价分位」+「距 10 年对数趋势偏离」两个真实代理。行情用 usIXJ（iShares 全球医疗 ETF，跟踪同一指数）代理<br>
     · 中证红利真实股息率历史序列不可得 → 用 PE 分位反向代理<br>
     · A 股 10Y 国债未接入（中债接口需鉴权）→ 红利宏观用「相对沪深300 强弱」+「沪深300 PE 分位」替代<br>
     · 黄金价格分位为名义口径，未做通胀调整<br>
@@ -3234,7 +3226,7 @@ def render(payload):
     · 创业板指公开接口只回溯到 2014-06 → 创红比分位是「近 12 年」口径，不是全历史
   </div>
   <ul>
-    <li><b>数据来源</b>：MSCI 官方指数接口（106801 / 990100）· 新浪财经 US_MinKService（.IXIC/.NDX/.INX）·
+    <li><b>数据来源</b>：腾讯自选股 usIXJ（标普全球1200医疗 · iShares 全球医疗 ETF，历史种子 + 每日增量）· MSCI 官方指数接口（990100 比价基准）· 新浪财经 US_MinKService（.IXIC/.NDX/.INX）·
         东方财富 push2his（GC00Y/000922/000300/UDI/USDCNH）· 美国财政部 official CSV（TIPS 与名义收益率）·
         蛋卷基金 index_eva（PE 周频序列 + PB 分位）· 天天基金（净值与申购状态）·
         中证指数官网 index-perf（000922 / H00300 沪深300全收益 / H00985 中证全指全收益）·
