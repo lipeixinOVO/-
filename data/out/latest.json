@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-18 23:35:56",
-  "generated_at_ts": 1795016156,
+  "generated_at": "2026-11-19 16:53:57",
+  "generated_at_ts": 1795078437,
   "generated_tz": "Asia/Shanghai",
   "trade_date": "2026-11-18",
   "base_amount": 1000,
@@ -48,14 +48,14 @@
       "name": "纳斯达克综合指数",
       "kind": "index_ref",
       "advisory_only": true,
-      "price": 24328.38,
-      "price_date": "2026-11-17",
+      "price": 24429.88,
+      "price_date": "2026-11-18",
       "month": {
         "base_date": "2026-10-19",
         "base": 26430.89,
-        "end_date": "2026-11-17",
-        "end": 24328.38,
-        "n": 22,
+        "end_date": "2026-11-18",
+        "end": 24429.88,
+        "n": 23,
         "pts": [
           [
             "2026-10-19",
@@ -144,51 +144,55 @@
           [
             "2026-11-17",
             -7.95
+          ],
+          [
+            "2026-11-18",
+            -7.57
           ]
         ],
-        "chg_month": -7.95,
-        "chg_week": -2.94,
-        "week_from": "2026-11-10",
+        "chg_month": -7.57,
+        "chg_week": -4.07,
+        "week_from": "2026-11-11",
         "week_n": 5,
         "hi": 1.03,
         "lo": -8.01
       },
-      "score": 58.66,
+      "score": 58.32,
       "multiplier": 1.2,
       "label": "温和加码",
-      "band_pos": 22.2,
+      "band_pos": 19.3,
       "completeness": 1.0,
       "suggest_amount": null,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 65.41,
+          "score": 64.73,
           "anchor": "纳斯达克综合指数自身 PE 不可得，用纳指100(NDX) 估值代理",
           "metrics": [
             {
               "name": "纳指100 PE-TTM 10年分位",
-              "raw": 25.4871,
+              "raw": 25.6085,
               "unit": "",
-              "pct": 14.59,
-              "score": 85.41,
+              "pct": 15.37,
+              "score": 84.63,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "纳指100 PB 分位",
-              "raw": 7.9078,
+              "raw": 7.9444,
               "unit": "",
-              "pct": 54.6,
-              "score": 45.4,
+              "pct": 55.16,
+              "score": 44.84,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-19 08:52 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.154"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.1684"
             }
           ],
           "missing_ratio": 0.0
@@ -196,30 +200,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 84.53,
+          "score": 84.05,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.0325,
+              "raw": -0.0287,
               "unit": "%",
-              "pct": 14.29,
-              "score": 85.71,
+              "pct": 14.57,
+              "score": 85.43,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.1185,
+              "raw": -0.1149,
               "unit": "%",
-              "pct": 16.65,
-              "score": 83.35,
+              "pct": 17.33,
+              "score": 82.67,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -229,30 +233,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 88.69,
+          "score": 88.42,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.3067,
+              "raw": 0.3035,
               "unit": "%",
-              "pct": 89.44,
-              "score": 89.44,
+              "pct": 88.88,
+              "score": 88.88,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.0636,
+              "raw": -0.0658,
               "unit": "%",
-              "pct": 12.44,
-              "score": 87.56,
+              "pct": 12.28,
+              "score": 87.72,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -262,30 +266,30 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 0.68,
+          "score": 0.8,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0289,
+              "raw": 0.0288,
               "unit": "%",
-              "pct": 99.55,
-              "score": 0.45,
+              "pct": 99.51,
+              "score": 0.49,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.051,
+              "raw": 0.0507,
               "unit": "%",
-              "pct": 98.79,
-              "score": 1.21,
+              "pct": 98.48,
+              "score": 1.52,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -295,28 +299,28 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0367,
-        "dev": -0.0325
+        "ma200_slope_60d": 0.0364,
+        "dev": -0.0287
       },
       "execution": {},
       "fund_meta": {},
       "gates": [],
       "note": "仅作市场温度参考，不产生买入动作",
-      "conclusion": "综合 58.7 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
+      "conclusion": "综合 58.3 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
     },
     {
       "id": "NDX",
       "name": "纳斯达克100指数",
       "kind": "index",
       "advisory_only": false,
-      "price": 27001.79,
-      "price_date": "2026-11-17",
+      "price": 27116.26,
+      "price_date": "2026-11-18",
       "month": {
         "base_date": "2026-10-19",
         "base": 29529.34,
-        "end_date": "2026-11-17",
-        "end": 27001.79,
-        "n": 22,
+        "end_date": "2026-11-18",
+        "end": 27116.26,
+        "n": 23,
         "pts": [
           [
             "2026-10-19",
@@ -405,51 +409,55 @@
           [
             "2026-11-17",
             -8.56
+          ],
+          [
+            "2026-11-18",
+            -8.17
           ]
         ],
-        "chg_month": -8.56,
-        "chg_week": -2.66,
-        "week_from": "2026-11-10",
+        "chg_month": -8.17,
+        "chg_week": -4.43,
+        "week_from": "2026-11-11",
         "week_n": 5,
         "hi": 0.99,
         "lo": -9.82
       },
-      "score": 61.13,
+      "score": 60.82,
       "multiplier": 1.2,
       "label": "温和加码",
-      "band_pos": 42.8,
+      "band_pos": 40.2,
       "completeness": 1.0,
       "suggest_amount": 1200.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 69.41,
+          "score": 68.71,
           "anchor": "纳指100(NDX) 指数自身 PE/PB，蛋卷口径",
           "metrics": [
             {
               "name": "纳指100 PE-TTM 10年分位",
-              "raw": 25.4871,
+              "raw": 25.6085,
               "unit": "",
-              "pct": 14.59,
-              "score": 85.41,
+              "pct": 15.37,
+              "score": 84.63,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "纳指100 PB 分位",
-              "raw": 7.9078,
+              "raw": 7.9444,
               "unit": "",
-              "pct": 54.6,
-              "score": 45.4,
+              "pct": 55.16,
+              "score": 44.84,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-19 08:52 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.154"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.1684"
             }
           ],
           "missing_ratio": 0.0
@@ -457,30 +465,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 87.09,
+          "score": 86.57,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.0375,
+              "raw": -0.0337,
               "unit": "%",
-              "pct": 12.28,
-              "score": 87.72,
+              "pct": 12.93,
+              "score": 87.07,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.1352,
+              "raw": -0.1316,
               "unit": "%",
-              "pct": 13.53,
-              "score": 86.47,
+              "pct": 13.93,
+              "score": 86.07,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -490,30 +498,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 91.81,
+          "score": 91.8,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.3551,
+              "raw": 0.3519,
               "unit": "%",
-              "pct": 93.28,
-              "score": 93.28,
+              "pct": 93.08,
+              "score": 93.08,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.0696,
+              "raw": -0.0717,
               "unit": "%",
-              "pct": 10.4,
-              "score": 89.6,
+              "pct": 10.12,
+              "score": 89.88,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-18 15:34 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -523,30 +531,30 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 0.68,
+          "score": 0.8,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0289,
+              "raw": 0.0288,
               "unit": "%",
-              "pct": 99.55,
-              "score": 0.45,
+              "pct": 99.51,
+              "score": 0.49,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.051,
+              "raw": 0.0507,
               "unit": "%",
-              "pct": 98.79,
-              "score": 1.21,
+              "pct": 98.48,
+              "score": 1.52,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -556,8 +564,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.045,
-        "dev": -0.0375
+        "ma200_slope_60d": 0.0447,
+        "dev": -0.0337
       },
       "execution": {
         "why": "6 只候选实测年化跟踪误差最低（0.83%）；华安1.00% / 大成1.03% / 南方1.42% / 天弘1.46% / 国泰11.83%",
@@ -614,156 +622,156 @@
         }
       ],
       "note": "评分口径：纳指100 指数本身。落地基金 000055。",
-      "conclusion": "综合 61.1 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
+      "conclusion": "综合 60.8 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
     },
     {
       "id": "GOLD",
       "name": "黄金（COMEX 主力连续）",
       "kind": "commodity",
       "advisory_only": false,
-      "price": 3760.3,
-      "price_date": "2026-11-18",
+      "price": 3737.1,
+      "price_date": "2026-11-19",
       "month": {
-        "base_date": "2026-10-19",
-        "base": 4160.2,
-        "end_date": "2026-11-18",
-        "end": 3760.3,
+        "base_date": "2026-10-20",
+        "base": 4142.6,
+        "end_date": "2026-11-19",
+        "end": 3737.1,
         "n": 23,
         "pts": [
           [
-            "2026-10-19",
+            "2026-10-20",
             0.0
           ],
           [
-            "2026-10-20",
-            -0.42
-          ],
-          [
             "2026-10-21",
-            -0.02
+            0.4
           ],
           [
             "2026-10-22",
-            -2.89
+            -2.48
           ],
           [
             "2026-10-23",
-            -3.62
+            -3.21
           ],
           [
             "2026-10-26",
-            -3.11
+            -2.7
           ],
           [
             "2026-10-27",
-            -2.09
+            -1.68
           ],
           [
             "2026-10-28",
-            -1.9
+            -1.48
           ],
           [
             "2026-10-29",
-            -3.05
+            -2.64
           ],
           [
             "2026-10-30",
-            -6.63
+            -6.23
           ],
           [
             "2026-11-02",
-            -4.9
+            -4.49
           ],
           [
             "2026-11-03",
-            -5.29
+            -4.89
           ],
           [
             "2026-11-04",
-            -2.12
+            -1.7
           ],
           [
             "2026-11-05",
-            -1.5
+            -1.08
           ],
           [
             "2026-11-06",
-            -1.94
+            -1.52
           ],
           [
             "2026-11-09",
-            -0.26
+            0.17
           ],
           [
             "2026-11-10",
-            -2.88
+            -2.47
           ],
           [
             "2026-11-11",
-            -3.99
+            -3.58
           ],
           [
             "2026-11-12",
-            -6.69
+            -6.3
           ],
           [
             "2026-11-13",
-            -6.55
+            -6.16
           ],
           [
             "2026-11-16",
-            -7.24
+            -6.85
           ],
           [
             "2026-11-17",
-            -7.43
+            -7.03
           ],
           [
             "2026-11-18",
-            -9.61
+            -10.01
+          ],
+          [
+            "2026-11-19",
+            -9.79
           ]
         ],
-        "chg_month": -9.61,
-        "chg_week": -5.86,
-        "week_from": "2026-11-11",
+        "chg_month": -9.79,
+        "chg_week": -3.73,
+        "week_from": "2026-11-12",
         "week_n": 5,
-        "hi": 0.0,
-        "lo": -9.61
+        "hi": 0.4,
+        "lo": -10.01
       },
-      "score": 57.01,
+      "score": 57.34,
       "multiplier": 1.0,
       "label": "温和加码",
-      "band_pos": 8.4,
+      "band_pos": 11.2,
       "completeness": 1.0,
       "suggest_amount": 1000.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 15,
-          "score": 18.3,
+          "score": 20.7,
           "anchor": "黄金无 PE，用 10 年价格分位 + 金/股比价",
           "metrics": [
             {
               "name": "金价 10 年名义分位",
-              "raw": 3760.3,
+              "raw": 3737.1,
               "unit": "",
               "pct": 88.04,
               "score": 11.96,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-18 15:34 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "未做通胀调整，属近似口径"
             },
             {
               "name": "金价 / 标普500 比价分位",
-              "raw": 0.5247,
+              "raw": 0.509,
               "unit": "",
-              "pct": 72.19,
-              "score": 27.81,
+              "pct": 66.19,
+              "score": 33.81,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-18 15:34 取）",
+              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "金/股比价越高说明黄金相对股票越贵"
             }
@@ -773,30 +781,30 @@
         {
           "key": "trend",
           "weight": 30,
-          "score": 100.0,
+          "score": 99.96,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.1543,
+              "raw": -0.1582,
               "unit": "%",
-              "pct": 0.0,
-              "score": 100.0,
+              "pct": 0.04,
+              "score": 99.96,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-18 15:34 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.3096,
+              "raw": -0.3139,
               "unit": "%",
-              "pct": 0.0,
-              "score": 100.0,
+              "pct": 0.04,
+              "score": 99.96,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-18 15:34 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -806,30 +814,30 @@
         {
           "key": "sentiment",
           "weight": 25,
-          "score": 96.23,
+          "score": 96.02,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.2849,
+              "raw": 0.2813,
               "unit": "%",
-              "pct": 93.72,
-              "score": 93.72,
+              "pct": 93.4,
+              "score": 93.4,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪外盘期货 GC 日线（2026-11-18 15:34 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.191,
+              "raw": -0.1971,
               "unit": "%",
-              "pct": 0.0,
-              "score": 100.0,
+              "pct": 0.04,
+              "score": 99.96,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-18 15:34 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -839,30 +847,30 @@
         {
           "key": "macro",
           "weight": 30,
-          "score": 0.68,
+          "score": 0.8,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0289,
+              "raw": 0.0288,
               "unit": "%",
-              "pct": 99.55,
-              "score": 0.45,
+              "pct": 99.51,
+              "score": 0.49,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.051,
+              "raw": 0.0507,
               "unit": "%",
-              "pct": 98.79,
-              "score": 1.21,
+              "pct": 98.48,
+              "score": 1.52,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -872,8 +880,8 @@
       ],
       "trend_flag": {
         "flag": "breakdown",
-        "ma200_slope_60d": -0.0215,
-        "dev": -0.1543
+        "ma200_slope_60d": -0.0237,
+        "dev": -0.1582
       },
       "execution": {
         "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
@@ -923,20 +931,20 @@
         }
       ],
       "note": "评分口径：COMEX 黄金主力连续合约日线",
-      "conclusion": "综合 57.0 分 → 1.0 倍（温和加码）：估值偏贵，价格在均值下方。"
+      "conclusion": "综合 57.3 分 → 1.0 倍（温和加码）：估值偏贵，价格在均值下方。"
     },
     {
       "id": "SPG1200_HEALTH",
       "name": "标普全球1200医疗保健指数",
       "kind": "index",
       "advisory_only": false,
-      "price": 111.59,
+      "price": 110.7,
       "price_date": "2026-11-18",
       "month": {
         "base_date": "2026-10-19",
         "base": 106.43,
         "end_date": "2026-11-18",
-        "end": 111.59,
+        "end": 110.7,
         "n": 21,
         "pts": [
           [
@@ -1021,50 +1029,50 @@
           ],
           [
             "2026-11-18",
-            4.85
+            4.01
           ]
         ],
-        "chg_month": 4.85,
-        "chg_week": -2.85,
+        "chg_month": 4.01,
+        "chg_week": -3.62,
         "week_from": "2026-11-11",
         "week_n": 3,
         "hi": 8.55,
         "lo": 0.0
       },
-      "score": 35.11,
+      "score": 36.83,
       "multiplier": 0.8,
       "label": "偏贵，略减",
-      "band_pos": 59.2,
+      "band_pos": 73.6,
       "completeness": 1.0,
       "suggest_amount": 800.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 35,
-          "score": 47.18,
+          "score": 47.6,
           "anchor": "标普全球1200医疗保健指数官方 PE 历史不可得（需订阅）；用相对 MSCI World 比价 + 对数趋势偏离代理。usIXJ ETF PE-TTM 约 27.6（Yahoo，2026-11 快照）",
           "metrics": [
             {
               "name": "医疗 / MSCI World 比价分位",
               "raw": 0.0073,
               "unit": "",
-              "pct": 31.69,
-              "score": 68.31,
+              "pct": 31.0,
+              "score": 69.0,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-18 15:34 取）",
+              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "比价越高=医疗相对全球大盘越贵，分数越低；usIXJ 仅约 5 年历史，故为近 5 年分位"
             },
             {
               "name": "距对数趋势偏离",
-              "raw": 0.0773,
+              "raw": 0.0693,
               "unit": "%",
               "pct": 84.51,
               "score": 15.49,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-18 15:34 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "偏离对数趋势越多=越贵；CAPE 近似思路。usIXJ 仅约 5 年历史，趋势窗口取 2 年（其余标的为 10 年）"
             }
@@ -1074,30 +1082,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 18.44,
+          "score": 21.98,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": 0.1187,
+              "raw": 0.1099,
               "unit": "%",
-              "pct": 98.2,
-              "score": 1.8,
+              "pct": 96.7,
+              "score": 3.3,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-18 15:34 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.0341,
+              "raw": -0.0418,
               "unit": "%",
-              "pct": 64.92,
-              "score": 35.08,
+              "pct": 59.33,
+              "score": 40.67,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-18 15:34 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1107,30 +1115,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 69.25,
+          "score": 72.59,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.2309,
+              "raw": 0.2454,
               "unit": "%",
-              "pct": 94.07,
-              "score": 94.07,
+              "pct": 97.12,
+              "score": 97.12,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-18 15:34 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": 0.0444,
+              "raw": 0.036,
               "unit": "%",
-              "pct": 67.98,
-              "score": 32.02,
+              "pct": 64.21,
+              "score": 35.79,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-18 15:34 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -1140,30 +1148,30 @@
         {
           "key": "macro",
           "weight": 20,
-          "score": 0.68,
+          "score": 0.8,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0289,
+              "raw": 0.0288,
               "unit": "%",
-              "pct": 99.55,
-              "score": 0.45,
+              "pct": 99.51,
+              "score": 0.49,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.051,
+              "raw": 0.0507,
               "unit": "%",
-              "pct": 98.79,
-              "score": 1.21,
+              "pct": 98.48,
+              "score": 1.52,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-18 15:34 取）",
+              "source": "美国财政部 yield_curve（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -1173,8 +1181,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0288,
-        "dev": 0.1187
+        "ma200_slope_60d": 0.0287,
+        "dev": 0.1099
       },
       "execution": {
         "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用",
@@ -1192,7 +1200,7 @@
       "fund_meta": {},
       "gates": [],
       "note": "评分口径：标普全球1200医疗保健指数（S&P Global 1200 Health Care Sector Capped Index），用 usIXJ（iShares 全球医疗保健 ETF）作行情代理——两者跟踪同一指数。历史约 5 年（腾讯自选股种子 + 每日增量），比价基准仍用 MSCI World。此前误配为 MSCI 全球医疗（106801），已更正。",
-      "conclusion": "综合 35.1 分 → 0.8 倍（偏贵，略减）：估值中性，价格明显高于均值。"
+      "conclusion": "综合 36.8 分 → 0.8 倍（偏贵，略减）：估值中性，价格明显高于均值。"
     },
     {
       "id": "CSI_DIVIDEND",
@@ -1329,7 +1337,7 @@
               "score": 11.43,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "真实股息率=0.0439，历史股息率序列不可得，用 PE 分位反向代理"
             },
@@ -1341,7 +1349,7 @@
               "score": 38.52,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "蛋卷口径"
             }
@@ -1362,7 +1370,7 @@
               "score": 65.63,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-18 15:34 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1374,7 +1382,7 @@
               "score": 45.82,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-18 15:34 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1395,7 +1403,7 @@
               "score": 37.58,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-18 15:34 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1407,7 +1415,7 @@
               "score": 45.66,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-18 15:34 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "放量（恐慌或狂热）给分，需结合趋势看"
             }
@@ -1428,7 +1436,7 @@
               "score": 12.2,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "东财 000922 ÷ 000300（2026-11-18 15:34 取）",
+              "source": "东财 000922 ÷ 000300（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "红利相对大盘越强，性价比越低"
             },
@@ -1440,7 +1448,7 @@
               "score": 65.5,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-18 15:34 取）",
+              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-19 08:52 取）",
               "fetched_at": "",
               "note": "大盘越贵，资金越倾向高股息防御，红利相对吸引力上升 → 方向为正"
             }
@@ -1478,11 +1486,11 @@
   ],
   "alternatives": [],
   "macro": {
-    "ust_10y_real": 2.89,
-    "ust_10y_nominal": 5.1,
+    "ust_10y_real": 2.88,
+    "ust_10y_nominal": 5.07,
     "dxy": null,
     "usdcnh": null,
-    "gold_spot": 3762.18
+    "gold_spot": 3733.87
   },
   "errors": [],
   "data_notes": [
@@ -3103,8 +3111,8 @@
     },
     "cyb_ratio": {
       "as_of": "2026-11-18",
-      "from": "2014-07-16",
-      "cyb": 2311.62,
+      "from": "2014-07-17",
+      "cyb": 2293.34,
       "div": 5573.61,
       "ratio": 0.4147,
       "ref": 0.3,
@@ -3113,499 +3121,499 @@
       "min_d": "2024-08-27",
       "max": 0.8647,
       "max_d": "2026-06-30",
-      "n": 3000,
+      "n": 2999,
       "series": [
         [
-          "2014-07-16",
-          0.5788
+          "2014-07-17",
+          0.5796
         ],
         [
-          "2014-07-22",
-          0.5766
+          "2014-07-23",
+          0.5611
         ],
         [
-          "2014-07-29",
-          0.5472
+          "2014-07-30",
+          0.554
         ],
         [
-          "2014-08-05",
-          0.5506
+          "2014-08-06",
+          0.551
         ],
         [
-          "2014-08-12",
+          "2014-08-13",
+          0.553
+        ],
+        [
+          "2014-08-20",
+          0.5697
+        ],
+        [
+          "2014-08-27",
+          0.5785
+        ],
+        [
+          "2014-09-02",
+          0.5808
+        ],
+        [
+          "2014-09-10",
+          0.584
+        ],
+        [
+          "2014-09-17",
+          0.58
+        ],
+        [
+          "2014-09-24",
+          0.5827
+        ],
+        [
+          "2014-10-08",
+          0.5881
+        ],
+        [
+          "2014-10-15",
+          0.5852
+        ],
+        [
+          "2014-10-21",
+          0.5841
+        ],
+        [
+          "2014-10-28",
+          0.5856
+        ],
+        [
+          "2014-11-04",
           0.559
         ],
         [
-          "2014-08-19",
-          0.57
+          "2014-11-11",
+          0.5363
         ],
         [
-          "2014-08-26",
-          0.5751
+          "2014-11-18",
+          0.5414
         ],
         [
-          "2014-09-01",
-          0.5836
+          "2014-11-25",
+          0.5391
         ],
         [
-          "2014-09-09",
-          0.5781
+          "2014-12-01",
+          0.5289
         ],
         [
-          "2014-09-16",
-          0.5794
+          "2014-12-08",
+          0.4915
         ],
         [
-          "2014-09-23",
-          0.585
+          "2014-12-15",
+          0.5071
         ],
         [
-          "2014-09-30",
-          0.5861
+          "2014-12-22",
+          0.4414
         ],
         [
-          "2014-10-14",
-          0.5866
+          "2014-12-29",
+          0.4385
         ],
         [
-          "2014-10-20",
-          0.5847
+          "2015-01-07",
+          0.4236
         ],
         [
-          "2014-10-27",
-          0.587
+          "2015-01-13",
+          0.4639
         ],
         [
-          "2014-11-03",
-          0.5637
+          "2015-01-20",
+          0.5043
         ],
         [
-          "2014-11-10",
-          0.5472
+          "2015-01-27",
+          0.4911
         ],
         [
-          "2014-11-17",
-          0.5354
+          "2015-02-03",
+          0.5104
         ],
         [
-          "2014-11-24",
-          0.5364
+          "2015-02-10",
+          0.5229
         ],
         [
-          "2014-11-28",
-          0.5373
-        ],
-        [
-          "2014-12-05",
-          0.5088
-        ],
-        [
-          "2014-12-12",
-          0.5008
-        ],
-        [
-          "2014-12-19",
-          0.4664
-        ],
-        [
-          "2014-12-26",
-          0.4474
-        ],
-        [
-          "2015-01-06",
-          0.4271
-        ],
-        [
-          "2015-01-12",
-          0.4633
-        ],
-        [
-          "2015-01-19",
-          0.4947
-        ],
-        [
-          "2015-01-26",
-          0.4894
-        ],
-        [
-          "2015-02-02",
-          0.503
-        ],
-        [
-          "2015-02-09",
-          0.5207
-        ],
-        [
-          "2015-02-16",
-          0.5521
+          "2015-02-17",
+          0.5476
         ],
         [
           "2015-03-02",
           0.557
         ],
         [
-          "2015-03-06",
-          0.5553
+          "2015-03-09",
+          0.5568
         ],
         [
-          "2015-03-13",
-          0.5639
+          "2015-03-16",
+          0.5719
         ],
         [
-          "2015-03-20",
-          0.5592
+          "2015-03-23",
+          0.5677
         ],
         [
-          "2015-03-27",
-          0.5673
+          "2015-03-30",
+          0.5456
         ],
         [
-          "2015-04-03",
-          0.568
+          "2015-04-07",
+          0.5611
         ],
         [
           "2015-04-13",
           0.5394
         ],
         [
-          "2015-04-17",
-          0.5088
+          "2015-04-20",
+          0.5117
         ],
         [
-          "2015-04-24",
-          0.5541
+          "2015-04-27",
+          0.5479
         ],
         [
-          "2015-05-04",
-          0.5647
+          "2015-05-05",
+          0.5769
         ],
         [
-          "2015-05-11",
-          0.6441
+          "2015-05-12",
+          0.6548
         ],
         [
-          "2015-05-18",
-          0.6716
+          "2015-05-19",
+          0.6605
         ],
         [
           "2015-05-25",
           0.6241
         ],
         [
-          "2015-05-29",
-          0.6598
+          "2015-06-01",
+          0.6554
         ],
         [
-          "2015-06-05",
-          0.6457
+          "2015-06-08",
+          0.6049
         ],
         [
-          "2015-06-12",
-          0.6263
+          "2015-06-15",
+          0.601
         ],
         [
-          "2015-06-19",
-          0.6051
+          "2015-06-23",
+          0.6144
         ],
         [
-          "2015-06-29",
-          0.553
+          "2015-06-30",
+          0.5585
         ],
         [
-          "2015-07-06",
-          0.5759
+          "2015-07-07",
+          0.5627
         ],
         [
-          "2015-07-10",
-          0.5657
+          "2015-07-13",
+          0.5733
         ],
         [
-          "2015-07-17",
-          0.6019
+          "2015-07-20",
+          0.613
         ],
         [
-          "2015-07-24",
-          0.6132
+          "2015-07-27",
+          0.6195
         ],
         [
-          "2015-07-31",
-          0.5843
+          "2015-08-03",
+          0.5485
         ],
         [
-          "2015-08-07",
-          0.5655
+          "2015-08-10",
+          0.5677
         ],
         [
-          "2015-08-14",
-          0.5558
+          "2015-08-17",
+          0.546
         ],
         [
-          "2015-08-20",
-          0.5652
+          "2015-08-21",
+          0.5577
         ],
         [
-          "2015-08-27",
-          0.5369
+          "2015-08-28",
+          0.5406
         ],
         [
-          "2015-09-07",
-          0.5247
+          "2015-09-08",
+          0.5363
         ],
         [
-          "2015-09-14",
-          0.529
+          "2015-09-15",
+          0.5238
         ],
         [
-          "2015-09-21",
-          0.5668
+          "2015-09-22",
+          0.5625
         ],
         [
-          "2015-09-28",
-          0.5834
+          "2015-09-29",
+          0.5868
         ],
         [
           "2015-10-12",
           0.5968
         ],
         [
-          "2015-10-16",
-          0.611
+          "2015-10-19",
+          0.602
         ],
         [
-          "2015-10-23",
-          0.6272
+          "2015-10-26",
+          0.6204
         ],
         [
-          "2015-10-30",
-          0.6171
+          "2015-11-02",
+          0.617
         ],
         [
-          "2015-11-06",
-          0.6271
+          "2015-11-09",
+          0.633
         ],
         [
-          "2015-11-13",
-          0.6368
+          "2015-11-16",
+          0.6488
         ],
         [
           "2015-11-20",
           0.6421
         ],
         [
-          "2015-11-26",
-          0.6425
+          "2015-11-27",
+          0.6334
         ],
         [
-          "2015-12-03",
-          0.6197
+          "2015-12-04",
+          0.6253
         ],
         [
-          "2015-12-10",
-          0.6349
+          "2015-12-11",
+          0.6352
         ],
         [
-          "2015-12-17",
-          0.6473
+          "2015-12-18",
+          0.6465
         ],
         [
-          "2015-12-24",
-          0.6272
+          "2015-12-25",
+          0.6241
         ],
         [
           "2015-12-31",
           0.6203
         ],
         [
-          "2016-01-07",
-          0.5801
+          "2016-01-08",
+          0.5645
         ],
         [
-          "2016-01-14",
-          0.5779
+          "2016-01-15",
+          0.5825
         ],
         [
-          "2016-01-21",
-          0.5868
+          "2016-01-22",
+          0.5905
         ],
         [
-          "2016-01-28",
-          0.5724
+          "2016-01-29",
+          0.5812
         ],
         [
-          "2016-02-04",
-          0.6097
+          "2016-02-05",
+          0.6032
         ],
         [
           "2016-02-18",
           0.6097
         ],
         [
-          "2016-02-24",
-          0.5995
+          "2016-02-25",
+          0.591
         ],
         [
-          "2016-03-02",
-          0.5575
+          "2016-03-03",
+          0.554
         ],
         [
-          "2016-03-09",
-          0.5459
+          "2016-03-10",
+          0.5442
         ],
         [
-          "2016-03-16",
-          0.5438
+          "2016-03-17",
+          0.567
         ],
         [
-          "2016-03-23",
-          0.5976
+          "2016-03-24",
+          0.5955
         ],
         [
           "2016-03-30",
           0.5934
         ],
         [
-          "2016-04-06",
-          0.5956
+          "2016-04-07",
+          0.5917
         ],
         [
-          "2016-04-13",
-          0.5929
+          "2016-04-14",
+          0.5987
         ],
         [
-          "2016-04-20",
-          0.5714
+          "2016-04-21",
+          0.5648
         ],
         [
-          "2016-04-27",
-          0.5702
+          "2016-04-28",
+          0.5736
         ],
         [
-          "2016-05-05",
-          0.5842
+          "2016-05-06",
+          0.5751
         ],
         [
-          "2016-05-12",
-          0.5574
+          "2016-05-13",
+          0.556
         ],
         [
           "2016-05-19",
           0.5665
         ],
         [
-          "2016-05-25",
-          0.5742
+          "2016-05-26",
+          0.5782
         ],
         [
-          "2016-06-01",
-          0.5833
-        ],
-        [
-          "2016-06-08",
-          0.5892
-        ],
-        [
-          "2016-06-17",
-          0.5775
-        ],
-        [
-          "2016-06-24",
+          "2016-06-02",
           0.5873
+        ],
+        [
+          "2016-06-13",
+          0.5697
+        ],
+        [
+          "2016-06-20",
+          0.5765
+        ],
+        [
+          "2016-06-27",
+          0.597
         ],
         [
           "2016-07-01",
           0.5965
         ],
         [
-          "2016-07-07",
-          0.5939
+          "2016-07-08",
+          0.5998
         ],
         [
-          "2016-07-14",
-          0.5995
+          "2016-07-15",
+          0.5908
         ],
         [
-          "2016-07-21",
-          0.5919
+          "2016-07-22",
+          0.5945
         ],
         [
-          "2016-07-28",
-          0.5566
+          "2016-07-29",
+          0.5526
         ],
         [
-          "2016-08-04",
-          0.5549
+          "2016-08-05",
+          0.5491
         ],
         [
           "2016-08-11",
           0.5432
         ],
         [
-          "2016-08-17",
-          0.5484
+          "2016-08-18",
+          0.548
         ],
         [
-          "2016-08-24",
-          0.5495
+          "2016-08-25",
+          0.5494
         ],
         [
-          "2016-08-31",
-          0.5498
+          "2016-09-01",
+          0.552
         ],
         [
-          "2016-09-07",
-          0.5513
+          "2016-09-08",
+          0.5533
         ],
         [
-          "2016-09-14",
-          0.5527
+          "2016-09-19",
+          0.5524
         ],
         [
           "2016-09-23",
           0.5467
         ],
         [
-          "2016-09-29",
-          0.5482
+          "2016-09-30",
+          0.5477
         ],
         [
-          "2016-10-13",
-          0.5536
+          "2016-10-14",
+          0.5499
         ],
         [
-          "2016-10-20",
-          0.5466
+          "2016-10-21",
+          0.541
         ],
         [
-          "2016-10-27",
-          0.5385
+          "2016-10-28",
+          0.5375
         ],
         [
-          "2016-11-03",
-          0.5319
+          "2016-11-04",
+          0.5317
         ],
         [
           "2016-11-10",
           0.5238
         ],
         [
-          "2016-11-16",
-          0.5305
+          "2016-11-17",
+          0.5234
         ],
         [
-          "2016-11-23",
-          0.5164
+          "2016-11-24",
+          0.5089
         ],
         [
-          "2016-11-30",
-          0.5136
+          "2016-12-01",
+          0.5083
         ],
         [
-          "2016-12-07",
-          0.5088
+          "2016-12-08",
+          0.5043
         ],
         [
-          "2016-12-14",
-          0.48
+          "2016-12-15",
+          0.4885
         ],
         [
           "2016-12-21",
@@ -3616,20 +3624,20 @@
           0.486
         ],
         [
-          "2017-01-04",
-          0.4839
+          "2017-01-05",
+          0.4815
         ],
         [
-          "2017-01-11",
-          0.4746
+          "2017-01-12",
+          0.4757
         ],
         [
-          "2017-01-18",
-          0.4505
+          "2017-01-19",
+          0.4511
         ],
         [
-          "2017-01-25",
-          0.4508
+          "2017-01-26",
+          0.4537
         ],
         [
           "2017-02-08",
@@ -3640,96 +3648,96 @@
           0.4478
         ],
         [
-          "2017-02-21",
-          0.4468
+          "2017-02-22",
+          0.444
         ],
         [
-          "2017-02-28",
-          0.4508
+          "2017-03-01",
+          0.4515
         ],
         [
-          "2017-03-07",
-          0.4615
+          "2017-03-08",
+          0.4596
         ],
         [
-          "2017-03-14",
-          0.4571
+          "2017-03-15",
+          0.4555
         ],
         [
-          "2017-03-21",
-          0.4528
+          "2017-03-22",
+          0.4524
         ],
         [
           "2017-03-28",
           0.4494
         ],
         [
-          "2017-04-05",
-          0.4434
+          "2017-04-06",
+          0.4419
         ],
         [
-          "2017-04-12",
-          0.429
+          "2017-04-13",
+          0.4293
         ],
         [
-          "2017-04-19",
-          0.4245
+          "2017-04-20",
+          0.4238
         ],
         [
-          "2017-04-26",
-          0.4195
+          "2017-04-27",
+          0.4257
         ],
         [
-          "2017-05-04",
-          0.4323
+          "2017-05-05",
+          0.4299
         ],
         [
           "2017-05-11",
           0.425
         ],
         [
-          "2017-05-17",
-          0.4273
+          "2017-05-18",
+          0.4272
         ],
         [
-          "2017-05-24",
-          0.4163
+          "2017-05-25",
+          0.411
         ],
         [
-          "2017-06-02",
-          0.4024
+          "2017-06-05",
+          0.408
         ],
         [
-          "2017-06-09",
-          0.4035
+          "2017-06-12",
+          0.3979
         ],
         [
-          "2017-06-16",
-          0.4149
+          "2017-06-19",
+          0.4134
         ],
         [
           "2017-06-23",
           0.4039
         ],
         [
-          "2017-06-29",
-          0.4008
+          "2017-06-30",
+          0.4016
         ],
         [
-          "2017-07-06",
-          0.4073
+          "2017-07-07",
+          0.4063
         ],
         [
-          "2017-07-13",
-          0.3938
+          "2017-07-14",
+          0.3841
         ],
         [
-          "2017-07-20",
-          0.368
+          "2017-07-21",
+          0.3686
         ],
         [
-          "2017-07-27",
-          0.3817
+          "2017-07-28",
+          0.3785
         ],
         [
           "2017-08-03",
@@ -3740,20 +3748,20 @@
           0.3836
         ],
         [
-          "2017-08-16",
-          0.4019
+          "2017-08-17",
+          0.4018
         ],
         [
-          "2017-08-23",
-          0.3936
+          "2017-08-24",
+          0.3914
         ],
         [
-          "2017-08-30",
-          0.3928
+          "2017-08-31",
+          0.3974
         ],
         [
-          "2017-09-06",
-          0.4079
+          "2017-09-07",
+          0.4062
         ],
         [
           "2017-09-13",
@@ -3764,20 +3772,20 @@
           0.4039
         ],
         [
-          "2017-09-26",
-          0.3942
+          "2017-09-27",
+          0.3969
         ],
         [
-          "2017-10-10",
-          0.4057
+          "2017-10-11",
+          0.4012
         ],
         [
-          "2017-10-17",
-          0.3986
+          "2017-10-18",
+          0.3941
         ],
         [
-          "2017-10-24",
-          0.3982
+          "2017-10-25",
+          0.3997
         ],
         [
           "2017-10-31",
@@ -3788,20 +3796,20 @@
           0.3884
         ],
         [
-          "2017-11-13",
-          0.3916
+          "2017-11-14",
+          0.3922
         ],
         [
-          "2017-11-20",
-          0.3829
+          "2017-11-21",
+          0.3773
         ],
         [
-          "2017-11-27",
-          0.3702
+          "2017-11-28",
+          0.3768
         ],
         [
-          "2017-12-04",
-          0.3806
+          "2017-12-05",
+          0.3714
         ],
         [
           "2017-12-11",
@@ -3812,48 +3820,48 @@
           0.3818
         ],
         [
-          "2017-12-22",
-          0.3772
+          "2017-12-25",
+          0.3727
         ],
         [
-          "2017-12-29",
-          0.3689
+          "2018-01-02",
+          0.3659
         ],
         [
-          "2018-01-08",
-          0.3647
+          "2018-01-09",
+          0.3644
         ],
         [
-          "2018-01-15",
-          0.3496
+          "2018-01-16",
+          0.344
         ],
         [
-          "2018-01-22",
-          0.3461
+          "2018-01-23",
+          0.342
         ],
         [
           "2018-01-29",
           0.3502
         ],
         [
-          "2018-02-02",
-          0.3363
+          "2018-02-05",
+          0.3311
         ],
         [
-          "2018-02-09",
-          0.3447
+          "2018-02-12",
+          0.3527
         ],
         [
-          "2018-02-23",
-          0.3439
+          "2018-02-26",
+          0.353
         ],
         [
-          "2018-03-02",
-          0.3704
+          "2018-03-05",
+          0.3759
         ],
         [
-          "2018-03-09",
-          0.3801
+          "2018-03-12",
+          0.3846
         ],
         [
           "2018-03-16",
@@ -3864,20 +3872,20 @@
           0.3746
         ],
         [
-          "2018-03-29",
-          0.4005
+          "2018-03-30",
+          0.413
         ],
         [
-          "2018-04-09",
-          0.4074
+          "2018-04-10",
+          0.3993
         ],
         [
-          "2018-04-16",
-          0.4101
+          "2018-04-17",
+          0.4025
         ],
         [
-          "2018-04-23",
-          0.3956
+          "2018-04-24",
+          0.3996
         ],
         [
           "2018-05-02",
@@ -3888,20 +3896,20 @@
           0.4051
         ],
         [
-          "2018-05-15",
-          0.4015
+          "2018-05-16",
+          0.4013
         ],
         [
-          "2018-05-22",
-          0.4045
+          "2018-05-23",
+          0.402
         ],
         [
-          "2018-05-29",
-          0.3897
+          "2018-05-30",
+          0.3865
         ],
         [
-          "2018-06-05",
-          0.3813
+          "2018-06-06",
+          0.3807
         ],
         [
           "2018-06-12",
@@ -3912,20 +3920,20 @@
           0.3624
         ],
         [
-          "2018-06-26",
-          0.3724
+          "2018-06-27",
+          0.3725
         ],
         [
-          "2018-07-03",
-          0.3937
+          "2018-07-04",
+          0.3873
         ],
         [
-          "2018-07-10",
-          0.3865
+          "2018-07-11",
+          0.3856
         ],
         [
-          "2018-07-17",
-          0.3975
+          "2018-07-18",
+          0.3934
         ],
         [
           "2018-07-24",
@@ -3936,20 +3944,20 @@
           0.371
         ],
         [
-          "2018-08-06",
-          0.3654
+          "2018-08-07",
+          0.3659
         ],
         [
-          "2018-08-13",
-          0.3804
+          "2018-08-14",
+          0.3774
         ],
         [
-          "2018-08-20",
-          0.367
+          "2018-08-21",
+          0.3678
         ],
         [
-          "2018-08-27",
-          0.3698
+          "2018-08-28",
+          0.3701
         ],
         [
           "2018-09-03",
@@ -3960,20 +3968,20 @@
           0.359
         ],
         [
-          "2018-09-14",
-          0.3501
+          "2018-09-17",
+          0.3491
         ],
         [
-          "2018-09-21",
-          0.3457
+          "2018-09-25",
+          0.3472
         ],
         [
-          "2018-10-08",
-          0.3416
+          "2018-10-09",
+          0.3403
         ],
         [
-          "2018-10-15",
-          0.3345
+          "2018-10-16",
+          0.3288
         ],
         [
           "2018-10-22",
@@ -3988,16 +3996,16 @@
           0.3456
         ],
         [
-          "2018-11-09",
-          0.3454
+          "2018-11-12",
+          0.3517
         ],
         [
-          "2018-11-16",
-          0.3546
+          "2018-11-19",
+          0.3486
         ],
         [
-          "2018-11-23",
-          0.3423
+          "2018-11-26",
+          0.3413
         ],
         [
           "2018-11-30",
@@ -4012,20 +4020,20 @@
           0.3361
         ],
         [
-          "2018-12-20",
-          0.3305
+          "2018-12-21",
+          0.3308
         ],
         [
-          "2018-12-27",
-          0.3264
+          "2018-12-28",
+          0.3259
         ],
         [
-          "2019-01-07",
-          0.3265
+          "2019-01-08",
+          0.3248
         ],
         [
-          "2019-01-14",
-          0.3181
+          "2019-01-15",
+          0.3202
         ],
         [
           "2019-01-21",
@@ -4036,20 +4044,20 @@
           0.3138
         ],
         [
-          "2019-02-01",
-          0.3127
+          "2019-02-11",
+          0.3189
         ],
         [
-          "2019-02-15",
-          0.3264
+          "2019-02-18",
+          0.3318
         ],
         [
-          "2019-02-22",
-          0.3397
+          "2019-02-25",
+          0.3437
         ],
         [
-          "2019-03-01",
-          0.3483
+          "2019-03-04",
+          0.3555
         ],
         [
           "2019-03-08",
@@ -4060,20 +4068,20 @@
           0.3635
         ],
         [
-          "2019-03-21",
-          0.3621
+          "2019-03-22",
+          0.3578
         ],
         [
-          "2019-03-28",
-          0.3527
+          "2019-03-29",
+          0.3571
         ],
         [
-          "2019-04-04",
-          0.3539
+          "2019-04-08",
+          0.343
         ],
         [
-          "2019-04-12",
-          0.3396
+          "2019-04-15",
+          0.3374
         ],
         [
           "2019-04-19",
@@ -4084,20 +4092,20 @@
           0.3523
         ],
         [
-          "2019-05-07",
-          0.3317
+          "2019-05-08",
+          0.3314
         ],
         [
-          "2019-05-14",
-          0.3354
+          "2019-05-15",
+          0.337
         ],
         [
-          "2019-05-21",
-          0.3327
+          "2019-05-22",
+          0.3338
         ],
         [
-          "2019-05-28",
-          0.3352
+          "2019-05-29",
+          0.3346
         ],
         [
           "2019-06-04",
@@ -4112,16 +4120,16 @@
           0.3361
         ],
         [
-          "2019-06-25",
-          0.3395
+          "2019-06-26",
+          0.3407
         ],
         [
-          "2019-07-02",
-          0.3481
+          "2019-07-03",
+          0.3431
         ],
         [
-          "2019-07-09",
-          0.3446
+          "2019-07-10",
+          0.3459
         ],
         [
           "2019-07-16",
@@ -4136,16 +4144,16 @@
           0.3596
         ],
         [
-          "2019-08-05",
-          0.366
+          "2019-08-06",
+          0.3669
         ],
         [
-          "2019-08-12",
-          0.3709
+          "2019-08-13",
+          0.3702
         ],
         [
-          "2019-08-19",
-          0.3834
+          "2019-08-20",
+          0.381
         ],
         [
           "2019-08-26",
@@ -4160,16 +4168,16 @@
           0.3938
         ],
         [
-          "2019-09-16",
-          0.3902
+          "2019-09-17",
+          0.3883
         ],
         [
-          "2019-09-23",
-          0.3908
+          "2019-09-24",
+          0.3929
         ],
         [
-          "2019-09-30",
-          0.3881
+          "2019-10-08",
+          0.3825
         ],
         [
           "2019-10-14",
@@ -4184,20 +4192,20 @@
           0.3953
         ],
         [
-          "2019-11-01",
-          0.3947
+          "2019-11-04",
+          0.3969
         ],
         [
-          "2019-11-08",
-          0.4003
+          "2019-11-11",
+          0.3986
         ],
         [
-          "2019-11-15",
-          0.4039
+          "2019-11-18",
+          0.4017
         ],
         [
-          "2019-11-22",
-          0.4019
+          "2019-11-25",
+          0.3924
         ],
         [
           "2019-11-29",
@@ -4208,20 +4216,20 @@
           0.4093
         ],
         [
-          "2019-12-12",
-          0.4034
+          "2019-12-13",
+          0.4076
         ],
         [
-          "2019-12-19",
-          0.4097
+          "2019-12-20",
+          0.4073
         ],
         [
-          "2019-12-26",
-          0.4111
+          "2019-12-27",
+          0.4059
         ],
         [
-          "2020-01-03",
-          0.4079
+          "2020-01-06",
+          0.4146
         ],
         [
           "2020-01-10",
@@ -4236,16 +4244,16 @@
           0.4565
         ],
         [
-          "2020-02-07",
-          0.4884
+          "2020-02-10",
+          0.4874
         ],
         [
-          "2020-02-14",
-          0.4884
+          "2020-02-17",
+          0.4962
         ],
         [
-          "2020-02-21",
-          0.5067
+          "2020-02-24",
+          0.5188
         ],
         [
           "2020-02-28",
@@ -4260,15 +4268,15 @@
           0.487
         ],
         [
-          "2020-03-19",
-          0.4825
+          "2020-03-20",
+          0.481
         ],
         [
-          "2020-03-26",
-          0.4813
+          "2020-03-27",
+          0.472
         ],
         [
-          "2020-04-02",
+          "2020-04-03",
           0.4786
         ],
         [
@@ -4284,16 +4292,16 @@
           0.4985
         ],
         [
-          "2020-04-30",
-          0.506
-        ],
-        [
-          "2020-05-12",
+          "2020-05-06",
           0.5154
         ],
         [
-          "2020-05-19",
-          0.5243
+          "2020-05-13",
+          0.5188
+        ],
+        [
+          "2020-05-20",
+          0.5221
         ],
         [
           "2020-05-26",
@@ -4308,16 +4316,16 @@
           0.5311
         ],
         [
-          "2020-06-15",
-          0.5546
+          "2020-06-16",
+          0.5554
         ],
         [
-          "2020-06-22",
-          0.5737
+          "2020-06-23",
+          0.5833
         ],
         [
-          "2020-07-01",
-          0.5812
+          "2020-07-02",
+          0.5695
         ],
         [
           "2020-07-08",
@@ -4332,16 +4340,16 @@
           0.608
         ],
         [
-          "2020-07-28",
-          0.6114
+          "2020-07-29",
+          0.6242
         ],
         [
-          "2020-08-04",
-          0.6201
+          "2020-08-05",
+          0.6264
         ],
         [
-          "2020-08-11",
-          0.592
+          "2020-08-12",
+          0.584
         ],
         [
           "2020-08-18",
@@ -4360,16 +4368,16 @@
           0.5801
         ],
         [
-          "2020-09-14",
-          0.5722
+          "2020-09-15",
+          0.5745
         ],
         [
-          "2020-09-21",
-          0.5617
+          "2020-09-22",
+          0.5669
         ],
         [
-          "2020-09-28",
-          0.573
+          "2020-09-29",
+          0.5803
         ],
         [
           "2020-10-13",
@@ -4384,16 +4392,16 @@
           0.5918
         ],
         [
-          "2020-11-02",
-          0.605
+          "2020-11-03",
+          0.6054
         ],
         [
-          "2020-11-09",
-          0.5962
+          "2020-11-10",
+          0.5894
         ],
         [
-          "2020-11-16",
-          0.5628
+          "2020-11-17",
+          0.5478
         ],
         [
           "2020-11-23",
@@ -4408,16 +4416,16 @@
           0.5679
         ],
         [
-          "2020-12-11",
-          0.571
+          "2020-12-14",
+          0.5833
         ],
         [
-          "2020-12-18",
-          0.59
+          "2020-12-21",
+          0.6096
         ],
         [
-          "2020-12-25",
-          0.6158
+          "2020-12-28",
+          0.6204
         ],
         [
           "2021-01-04",
@@ -4432,16 +4440,16 @@
           0.6789
         ],
         [
-          "2021-01-22",
-          0.7259
+          "2021-01-25",
+          0.7359
         ],
         [
-          "2021-01-29",
-          0.706
+          "2021-02-01",
+          0.705
         ],
         [
-          "2021-02-05",
-          0.7181
+          "2021-02-08",
+          0.7297
         ],
         [
           "2021-02-19",
@@ -4456,16 +4464,16 @@
           0.598
         ],
         [
-          "2021-03-11",
-          0.5718
+          "2021-03-12",
+          0.5692
         ],
         [
-          "2021-03-18",
-          0.5632
+          "2021-03-19",
+          0.5528
         ],
         [
-          "2021-03-25",
-          0.5609
+          "2021-03-26",
+          0.5726
         ],
         [
           "2021-04-01",
@@ -4484,12 +4492,12 @@
           0.6042
         ],
         [
-          "2021-04-29",
-          0.6126
+          "2021-04-30",
+          0.6237
         ],
         [
-          "2021-05-11",
-          0.5804
+          "2021-05-12",
+          0.5827
         ],
         [
           "2021-05-18",
@@ -4508,12 +4516,12 @@
           0.6239
         ],
         [
-          "2021-06-15",
-          0.639
+          "2021-06-16",
+          0.6203
         ],
         [
-          "2021-06-22",
-          0.644
+          "2021-06-23",
+          0.6421
         ],
         [
           "2021-06-29",
@@ -4532,16 +4540,16 @@
           0.6819
         ],
         [
-          "2021-07-26",
-          0.6809
+          "2021-07-27",
+          0.673
         ],
         [
-          "2021-08-02",
-          0.7172
+          "2021-08-03",
+          0.7226
         ],
         [
-          "2021-08-09",
-          0.6982
+          "2021-08-10",
+          0.6994
         ],
         [
           "2021-08-16",
@@ -4556,16 +4564,16 @@
           0.6207
         ],
         [
-          "2021-09-03",
-          0.5711
+          "2021-09-06",
+          0.5888
         ],
         [
-          "2021-09-10",
-          0.5701
+          "2021-09-13",
+          0.5534
         ],
         [
-          "2021-09-17",
-          0.581
+          "2021-09-22",
+          0.5677
         ],
         [
           "2021-09-28",
@@ -4580,16 +4588,16 @@
           0.6272
         ],
         [
-          "2021-10-25",
-          0.6476
+          "2021-10-26",
+          0.6484
         ],
         [
-          "2021-11-01",
-          0.6677
+          "2021-11-02",
+          0.6831
         ],
         [
-          "2021-11-08",
-          0.6882
+          "2021-11-09",
+          0.6906
         ],
         [
           "2021-11-15",
@@ -4608,12 +4616,12 @@
           0.6688
         ],
         [
-          "2021-12-10",
-          0.6773
+          "2021-12-13",
+          0.6834
         ],
         [
-          "2021-12-17",
-          0.6695
+          "2021-12-20",
+          0.6555
         ],
         [
           "2021-12-24",
@@ -4632,12 +4640,12 @@
           0.6038
         ],
         [
-          "2022-01-21",
-          0.5751
+          "2022-01-24",
+          0.5819
         ],
         [
-          "2022-01-28",
-          0.5807
+          "2022-02-07",
+          0.5676
         ],
         [
           "2022-02-11",
@@ -4656,12 +4664,12 @@
           0.5158
         ],
         [
-          "2022-03-10",
-          0.518
+          "2022-03-11",
+          0.5206
         ],
         [
-          "2022-03-17",
-          0.5536
+          "2022-03-18",
+          0.54
         ],
         [
           "2022-03-24",
@@ -4680,12 +4688,12 @@
           0.4715
         ],
         [
-          "2022-04-22",
-          0.4478
+          "2022-04-25",
+          0.4464
         ],
         [
-          "2022-04-29",
-          0.4621
+          "2022-05-05",
+          0.453
         ],
         [
           "2022-05-11",
@@ -4704,16 +4712,16 @@
           0.4769
         ],
         [
-          "2022-06-08",
-          0.5027
+          "2022-06-09",
+          0.4902
         ],
         [
-          "2022-06-15",
-          0.5012
+          "2022-06-16",
+          0.5111
         ],
         [
-          "2022-06-22",
-          0.5386
+          "2022-06-23",
+          0.5476
         ],
         [
           "2022-06-29",
@@ -4732,12 +4740,12 @@
           0.5566
         ],
         [
-          "2022-07-26",
-          0.5494
+          "2022-07-27",
+          0.5491
         ],
         [
-          "2022-08-02",
-          0.5582
+          "2022-08-03",
+          0.5551
         ],
         [
           "2022-08-09",
@@ -4756,12 +4764,12 @@
           0.5161
         ],
         [
-          "2022-09-05",
-          0.4961
+          "2022-09-06",
+          0.4884
         ],
         [
-          "2022-09-13",
-          0.4917
+          "2022-09-14",
+          0.4867
         ],
         [
           "2022-09-20",
@@ -4780,12 +4788,12 @@
           0.4952
         ],
         [
-          "2022-10-24",
-          0.4896
+          "2022-10-25",
+          0.4869
         ],
         [
-          "2022-10-31",
-          0.4965
+          "2022-11-01",
+          0.5058
         ],
         [
           "2022-11-07",
@@ -4804,12 +4812,12 @@
           0.461
         ],
         [
-          "2022-12-02",
-          0.4694
+          "2022-12-05",
+          0.4615
         ],
         [
-          "2022-12-09",
-          0.4699
+          "2022-12-12",
+          0.4729
         ],
         [
           "2022-12-16",
@@ -4828,12 +4836,12 @@
           0.4883
         ],
         [
-          "2023-01-13",
-          0.4967
+          "2023-01-16",
+          0.504
         ],
         [
-          "2023-01-20",
-          0.5064
+          "2023-01-30",
+          0.5137
         ],
         [
           "2023-02-03",
@@ -4856,8 +4864,8 @@
           0.4547
         ],
         [
-          "2023-03-09",
-          0.4519
+          "2023-03-10",
+          0.4597
         ],
         [
           "2023-03-16",
@@ -4880,8 +4888,8 @@
           0.4593
         ],
         [
-          "2023-04-20",
-          0.4433
+          "2023-04-21",
+          0.4402
         ],
         [
           "2023-04-27",
@@ -4904,12 +4912,12 @@
           0.4216
         ],
         [
-          "2023-06-05",
-          0.4192
+          "2023-06-06",
+          0.4156
         ],
         [
-          "2023-06-12",
-          0.4098
+          "2023-06-13",
+          0.4133
         ],
         [
           "2023-06-19",
@@ -4928,12 +4936,12 @@
           0.4338
         ],
         [
-          "2023-07-18",
-          0.4352
+          "2023-07-19",
+          0.4289
         ],
         [
-          "2023-07-25",
-          0.4272
+          "2023-07-26",
+          0.4261
         ],
         [
           "2023-08-01",
@@ -4952,12 +4960,12 @@
           0.4092
         ],
         [
-          "2023-08-28",
-          0.4006
+          "2023-08-29",
+          0.4112
         ],
         [
-          "2023-09-04",
-          0.4078
+          "2023-09-05",
+          0.4097
         ],
         [
           "2023-09-11",
@@ -4980,8 +4988,8 @@
           0.3817
         ],
         [
-          "2023-10-23",
-          0.3794
+          "2023-10-24",
+          0.3797
         ],
         [
           "2023-10-30",
@@ -5004,8 +5012,8 @@
           0.3831
         ],
         [
-          "2023-12-01",
-          0.3834
+          "2023-12-04",
+          0.3799
         ],
         [
           "2023-12-08",
@@ -5028,8 +5036,8 @@
           0.3457
         ],
         [
-          "2024-01-12",
-          0.35
+          "2024-01-15",
+          0.3452
         ],
         [
           "2024-01-19",
@@ -5052,8 +5060,8 @@
           0.3259
         ],
         [
-          "2024-03-01",
-          0.3369
+          "2024-03-04",
+          0.3373
         ],
         [
           "2024-03-08",
@@ -5076,12 +5084,12 @@
           0.3358
         ],
         [
-          "2024-04-15",
-          0.3215
+          "2024-04-16",
+          0.3162
         ],
         [
-          "2024-04-22",
-          0.3129
+          "2024-04-23",
+          0.3187
         ],
         [
           "2024-04-29",
@@ -5104,8 +5112,8 @@
           0.3201
         ],
         [
-          "2024-06-05",
-          0.3279
+          "2024-06-06",
+          0.3253
         ],
         [
           "2024-06-13",
@@ -5128,8 +5136,8 @@
           0.319
         ],
         [
-          "2024-07-17",
-          0.3245
+          "2024-07-18",
+          0.3281
         ],
         [
           "2024-07-24",
@@ -5152,8 +5160,8 @@
           0.3094
         ],
         [
-          "2024-08-27",
-          0.3045
+          "2024-08-28",
+          0.3062
         ],
         [
           "2024-09-03",
@@ -5176,8 +5184,8 @@
           0.4039
         ],
         [
-          "2024-10-16",
-          0.3726
+          "2024-10-17",
+          0.3777
         ],
         [
           "2024-10-23",
@@ -5200,8 +5208,8 @@
           0.4149
         ],
         [
-          "2024-11-26",
-          0.404
+          "2024-11-27",
+          0.4105
         ],
         [
           "2024-12-03",
@@ -5252,8 +5260,8 @@
           0.4286
         ],
         [
-          "2025-03-04",
-          0.4128
+          "2025-03-05",
+          0.4109
         ],
         [
           "2025-03-11",
@@ -5276,8 +5284,8 @@
           0.3528
         ],
         [
-          "2025-04-15",
-          0.3597
+          "2025-04-16",
+          0.3537
         ],
         [
           "2025-04-22",
@@ -5300,8 +5308,8 @@
           0.3699
         ],
         [
-          "2025-05-29",
-          0.3699
+          "2025-05-30",
+          0.366
         ],
         [
           "2025-06-06",
@@ -5324,8 +5332,8 @@
           0.3906
         ],
         [
-          "2025-07-10",
-          0.3914
+          "2025-07-11",
+          0.3974
         ],
         [
           "2025-07-17",
@@ -5424,8 +5432,8 @@
           0.5897
         ],
         [
-          "2026-01-07",
-          0.5953
+          "2026-01-08",
+          0.5924
         ],
         [
           "2026-01-14",
@@ -5448,8 +5456,8 @@
           0.5693
         ],
         [
-          "2026-02-25",
-          0.5799
+          "2026-02-26",
+          0.5798
         ],
         [
           "2026-03-04",
@@ -27180,6 +27188,13 @@
           "c": 10659.41,
           "h": 10722.67,
           "l": 10515.14
+        },
+        {
+          "d": "2026-11-19",
+          "o": 10591.73,
+          "c": 10583.2,
+          "h": 10664.29,
+          "l": 10505.84
         }
       ],
       "swing_low": {
@@ -27220,8 +27235,8 @@
           "price": 16374.02
         }
       ],
-      "cur": 10659.41,
-      "cur_date": "2026-11-18",
+      "cur": 10583.2,
+      "cur_date": "2026-11-19",
       "resistance": {
         "pct": 0.382,
         "price": 11003.36
@@ -31938,6 +31953,13 @@
           "c": 2311.62,
           "h": 2329.91,
           "l": 2265.76
+        },
+        {
+          "d": "2026-11-19",
+          "o": 2290.21,
+          "c": 2293.34,
+          "h": 2315.78,
+          "l": 2271.99
         }
       ],
       "swing_low": {
@@ -31978,8 +32000,8 @@
           "price": 4380.41
         }
       ],
-      "cur": 2311.62,
-      "cur_date": "2026-11-18",
+      "cur": 2293.34,
+      "cur_date": "2026-11-19",
       "resistance": {
         "pct": 0.382,
         "price": 2589.8
@@ -36696,6 +36718,13 @@
           "c": 1247.99,
           "h": 1263.5,
           "l": 1213.76
+        },
+        {
+          "d": "2026-11-19",
+          "o": 1242.28,
+          "c": 1270.78,
+          "h": 1276.78,
+          "l": 1220.38
         }
       ],
       "swing_low": {
@@ -36736,15 +36765,15 @@
           "price": 2255.25
         }
       ],
-      "cur": 1247.99,
-      "cur_date": "2026-11-18",
+      "cur": 1270.78,
+      "cur_date": "2026-11-19",
       "resistance": {
-        "pct": 0.382,
-        "price": 1254.39
+        "pct": 0.5,
+        "price": 1445.49
       },
       "support": {
-        "pct": 0.236,
-        "price": 1017.94
+        "pct": 0.382,
+        "price": 1254.39
       }
     },
     {
@@ -41454,6 +41483,13 @@
           "c": 2288.97,
           "h": 2308.31,
           "l": 2240.98
+        },
+        {
+          "d": "2026-11-19",
+          "o": 2264.11,
+          "c": 2273.04,
+          "h": 2293.23,
+          "l": 2244.95
         }
       ],
       "swing_low": {
@@ -41494,8 +41530,8 @@
           "price": 4715.43
         }
       ],
-      "cur": 2288.97,
-      "cur_date": "2026-11-18",
+      "cur": 2273.04,
+      "cur_date": "2026-11-19",
       "resistance": {
         "pct": 0.382,
         "price": 2673.74
@@ -41507,341 +41543,248 @@
     }
   ],
   "zhulong": {
-    "as_of": "20261118",
+    "as_of": "20261119",
     "empty": false,
     "market": {
-      "zt": 41,
+      "zt": 23,
       "zb": 24,
-      "dt": 40,
-      "max_lbc": 4
+      "dt": 68,
+      "max_lbc": 3
     },
     "concepts": [
       {
-        "name": "算力租赁",
-        "code": "BK1792",
-        "chg": 3.62
+        "name": "昨日连板_含一字",
+        "code": "BK1051",
+        "chg": 4.17
       },
       {
-        "name": "东数西算",
-        "code": "BK1064",
-        "chg": 2.99
+        "name": "昨日连板",
+        "code": "BK0816",
+        "chg": 1.87
       },
       {
-        "name": "F5G概念",
-        "code": "BK1088",
-        "chg": 2.77
+        "name": "第四代半导体",
+        "code": "BK1121",
+        "chg": 1.18
       },
       {
-        "name": "昨日首板",
-        "code": "BK1630",
-        "chg": 2.08
+        "name": "大基金持股",
+        "code": "BK1688",
+        "chg": 0.66
       },
       {
-        "name": "科技风格",
-        "code": "BK1713",
-        "chg": 2.0
+        "name": "科创板做市商",
+        "code": "BK1107",
+        "chg": 0.64
       },
       {
-        "name": "算力概念",
-        "code": "BK1134",
-        "chg": 1.96
+        "name": "茅指数",
+        "code": "BK0999",
+        "chg": 0.62
       },
       {
-        "name": "反转股",
-        "code": "BK1716",
-        "chg": 1.82
+        "name": "昨日涨停_含一字",
+        "code": "BK1050",
+        "chg": 0.42
       },
       {
-        "name": "英伟达概念",
-        "code": "BK1161",
-        "chg": 1.78
+        "name": "超级品牌",
+        "code": "BK0811",
+        "chg": 0.36
       }
     ],
     "themes": [
       {
+        "name": "半导体",
+        "count": 3,
+        "max_lbc": 1,
+        "leader": "大港股份"
+      },
+      {
+        "name": "电子化学",
+        "count": 2,
+        "max_lbc": 1,
+        "leader": "格林达"
+      },
+      {
+        "name": "化学制品",
+        "count": 2,
+        "max_lbc": 1,
+        "leader": "红 宝 丽"
+      },
+      {
+        "name": "家电零部",
+        "count": 2,
+        "max_lbc": 1,
+        "leader": "康盛股份"
+      },
+      {
         "name": "IT服务Ⅱ",
-        "count": 7,
-        "max_lbc": 2,
+        "count": 1,
+        "max_lbc": 3,
         "leader": "真视通"
-      },
-      {
-        "name": "通信服务",
-        "count": 5,
-        "max_lbc": 1,
-        "leader": "北纬科技"
-      },
-      {
-        "name": "通用设备",
-        "count": 3,
-        "max_lbc": 2,
-        "leader": "泰嘉股份"
-      },
-      {
-        "name": "计算机设",
-        "count": 3,
-        "max_lbc": 2,
-        "leader": "卡莱特"
-      },
-      {
-        "name": "纺织制造",
-        "count": 2,
-        "max_lbc": 1,
-        "leader": "华升股份"
-      },
-      {
-        "name": "元件",
-        "count": 2,
-        "max_lbc": 1,
-        "leader": "深南电路"
-      },
-      {
-        "name": "工程机械",
-        "count": 1,
-        "max_lbc": 4,
-        "leader": "华东重机"
-      },
-      {
-        "name": "环保设备",
-        "count": 1,
-        "max_lbc": 2,
-        "leader": "盛剑科技"
       },
       {
         "name": "装修装饰",
         "count": 1,
-        "max_lbc": 2,
+        "max_lbc": 3,
         "leader": "全筑股份"
       },
       {
-        "name": "化学原料",
+        "name": "环保设备",
+        "count": 1,
+        "max_lbc": 3,
+        "leader": "盛剑科技"
+      },
+      {
+        "name": "纺织制造",
         "count": 1,
         "max_lbc": 2,
-        "leader": "双环科技"
+        "leader": "华升股份"
       },
       {
-        "name": "通信设备",
+        "name": "环境治理",
         "count": 1,
-        "max_lbc": 1,
-        "leader": "武汉凡谷"
-      },
-      {
-        "name": "家电零部",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "春光科技"
-      },
-      {
-        "name": "白色家电",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "澳柯玛"
-      },
-      {
-        "name": "其他电源",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "动力源"
+        "max_lbc": 2,
+        "leader": "京蓝科技"
       },
       {
         "name": "小家电",
         "count": 1,
         "max_lbc": 1,
-        "leader": "爱仕达"
+        "leader": "九阳股份"
       },
       {
-        "name": "黑色家电",
+        "name": "综合Ⅱ",
         "count": 1,
         "max_lbc": 1,
-        "leader": "四川长虹"
-      },
-      {
-        "name": "其他电子",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "创益通"
+        "leader": "毅昌科技"
       },
       {
         "name": "汽车零部",
         "count": 1,
         "max_lbc": 1,
-        "leader": "众泰汽车"
+        "leader": "襄阳轴承"
       },
       {
-        "name": "环境治理",
+        "name": "电网设备",
         "count": 1,
         "max_lbc": 1,
-        "leader": "京蓝科技"
+        "leader": "广电电气"
+      },
+      {
+        "name": "物流",
+        "count": 1,
+        "max_lbc": 1,
+        "leader": "原尚股份"
       },
       {
         "name": "房地产开",
         "count": 1,
         "max_lbc": 1,
-        "leader": "香江控股"
+        "leader": "金科股份"
       },
       {
-        "name": "光学光电",
+        "name": "元件",
         "count": 1,
         "max_lbc": 1,
-        "leader": "鸿合科技"
+        "leader": "中京电子"
       },
       {
-        "name": "消费电子",
+        "name": "专业工程",
         "count": 1,
         "max_lbc": 1,
-        "leader": "利通电子"
+        "leader": "时空科技"
       },
       {
-        "name": "专业服务",
+        "name": "塑料",
         "count": 1,
         "max_lbc": 1,
-        "leader": "胜科纳米"
-      },
-      {
-        "name": "风电设备",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "恒润股份"
-      },
-      {
-        "name": "调味发酵",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "莲花控股"
+        "leader": "兴业股份"
       }
     ],
     "dragon": [
       {
-        "code": "002685",
-        "name": "华东重机",
-        "price": 7.37,
-        "chg": 10.0,
-        "hs": 2.2,
-        "hybk": "工程机械",
-        "lbc": 4,
-        "ct": 4,
-        "zbc": 0,
-        "fund": "5.32亿",
-        "amount": "1.63亿",
-        "fbt": "09:25",
-        "zf": null,
-        "label": "4连板",
-        "cycle": ""
-      },
-      {
-        "code": "600410",
-        "name": "华胜天成",
-        "price": 16.82,
-        "chg": 10.01,
-        "hs": 19.03,
+        "code": "002771",
+        "name": "真视通",
+        "price": 14.38,
+        "chg": 10.02,
+        "hs": 2.36,
         "hybk": "IT服务Ⅱ",
-        "lbc": 2,
+        "lbc": 3,
         "ct": 3,
         "zbc": 0,
-        "fund": "2.84亿",
-        "amount": "34.12亿",
-        "fbt": "09:55",
-        "zf": null,
-        "label": "2连板",
-        "cycle": "4天3板"
-      },
-      {
-        "code": "603324",
-        "name": "盛剑科技",
-        "price": 22.9,
-        "chg": 9.99,
-        "hs": 1.34,
-        "hybk": "环保设备",
-        "lbc": 2,
-        "ct": 2,
-        "zbc": 0,
-        "fund": "5479万",
-        "amount": "4492万",
+        "fund": "2.08亿",
+        "amount": "6129万",
         "fbt": "09:25",
         "zf": null,
-        "label": "2连板",
+        "label": "3连板",
         "cycle": ""
       },
       {
         "code": "603030",
         "name": "全筑股份",
-        "price": 2.13,
-        "chg": 9.79,
-        "hs": 1.33,
+        "price": 2.34,
+        "chg": 9.86,
+        "hs": 2.44,
         "hybk": "装修装饰",
-        "lbc": 2,
-        "ct": 2,
+        "lbc": 3,
+        "ct": 3,
         "zbc": 0,
-        "fund": "8633万",
-        "amount": "3740万",
+        "fund": "9618万",
+        "amount": "7520万",
         "fbt": "09:25",
         "zf": null,
-        "label": "2连板",
+        "label": "3连板",
         "cycle": ""
       },
       {
-        "code": "002771",
-        "name": "真视通",
-        "price": 13.07,
-        "chg": 10.02,
-        "hs": 7.91,
-        "hybk": "IT服务Ⅱ",
+        "code": "603324",
+        "name": "盛剑科技",
+        "price": 25.19,
+        "chg": 10.0,
+        "hs": 7.04,
+        "hybk": "环保设备",
+        "lbc": 3,
+        "ct": 3,
+        "zbc": 0,
+        "fund": "2848万",
+        "amount": "2.44亿",
+        "fbt": "09:37",
+        "zf": null,
+        "label": "3连板",
+        "cycle": ""
+      },
+      {
+        "code": "600156",
+        "name": "华升股份",
+        "price": 8.9,
+        "chg": 10.01,
+        "hs": 16.79,
+        "hybk": "纺织制造",
         "lbc": 2,
         "ct": 2,
-        "zbc": 0,
-        "fund": "1.08亿",
-        "amount": "1.86亿",
+        "zbc": 3,
+        "fund": "4992万",
+        "amount": "5.97亿",
         "fbt": "09:30",
         "zf": null,
         "label": "2连板",
         "cycle": ""
       },
       {
-        "code": "000707",
-        "name": "双环科技",
-        "price": 5.05,
-        "chg": 10.02,
-        "hs": 14.94,
-        "hybk": "化学原料",
+        "code": "000711",
+        "name": "京蓝科技",
+        "price": 3.83,
+        "chg": 10.06,
+        "hs": 11.29,
+        "hybk": "环境治理",
         "lbc": 2,
         "ct": 2,
         "zbc": 1,
-        "fund": "1623万",
-        "amount": "4.07亿",
-        "fbt": "09:42",
-        "zf": null,
-        "label": "2连板",
-        "cycle": ""
-      },
-      {
-        "code": "301391",
-        "name": "卡莱特",
-        "price": 46.66,
-        "chg": 20.01,
-        "hs": 10.15,
-        "hybk": "计算机设",
-        "lbc": 2,
-        "ct": 2,
-        "zbc": 0,
-        "fund": "4568万",
-        "amount": "3.95亿",
-        "fbt": "10:15",
-        "zf": null,
-        "label": "2连板",
-        "cycle": ""
-      },
-      {
-        "code": "002843",
-        "name": "泰嘉股份",
-        "price": 17.34,
-        "chg": 10.03,
-        "hs": 27.57,
-        "hybk": "通用设备",
-        "lbc": 2,
-        "ct": 2,
-        "zbc": 1,
-        "fund": "5311万",
-        "amount": "11.16亿",
-        "fbt": "13:27",
+        "fund": "5826万",
+        "amount": "9.59亿",
+        "fbt": "13:25",
         "zf": null,
         "label": "2连板",
         "cycle": ""
@@ -41849,562 +41792,307 @@
     ],
     "first": [
       {
-        "code": "002148",
-        "name": "北纬科技",
-        "price": 8.92,
-        "chg": 9.99,
-        "hs": 42.02,
-        "hybk": "通信服务",
-        "lbc": 1,
-        "ct": 5,
-        "zbc": 4,
-        "fund": "7539万",
-        "amount": "16.76亿",
-        "fbt": "09:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": "6天5板"
-      },
-      {
-        "code": "002194",
-        "name": "武汉凡谷",
-        "price": 9.31,
-        "chg": 10.05,
-        "hs": 3.47,
-        "hybk": "通信设备",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "1.23亿",
-        "amount": "1.66亿",
-        "fbt": "09:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600405",
-        "name": "动力源",
-        "price": 4.62,
-        "chg": 10.0,
-        "hs": 3.33,
-        "hybk": "其他电源",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "6443万",
-        "amount": "9341万",
-        "fbt": "09:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600336",
-        "name": "澳柯玛",
-        "price": 6.14,
-        "chg": 10.04,
-        "hs": 1.35,
-        "hybk": "白色家电",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "3247万",
-        "amount": "6532万",
-        "fbt": "09:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "603657",
-        "name": "春光科技",
-        "price": 33.94,
-        "chg": 10.02,
-        "hs": 1.2,
-        "hybk": "家电零部",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "4501万",
-        "amount": "5472万",
-        "fbt": "09:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "002403",
-        "name": "爱仕达",
-        "price": 11.36,
-        "chg": 9.97,
-        "hs": 2.85,
+        "code": "002242",
+        "name": "九阳股份",
+        "price": 31.21,
+        "chg": 10.01,
+        "hs": 23.74,
         "hybk": "小家电",
         "lbc": 1,
+        "ct": 2,
+        "zbc": 13,
+        "fund": "6449万",
+        "amount": "51.29亿",
+        "fbt": "09:25",
+        "zf": null,
+        "label": "首板",
+        "cycle": "3天2板"
+      },
+      {
+        "code": "002420",
+        "name": "毅昌科技",
+        "price": 6.42,
+        "chg": 9.93,
+        "hs": 1.84,
+        "hybk": "综合Ⅱ",
+        "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "8870万",
-        "amount": "9492万",
+        "fund": "4.96亿",
+        "amount": "4764万",
+        "fbt": "09:25",
+        "zf": null,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "603931",
+        "name": "格林达",
+        "price": 29.15,
+        "chg": 10.0,
+        "hs": 3.12,
+        "hybk": "电子化学",
+        "lbc": 1,
+        "ct": 2,
+        "zbc": 1,
+        "fund": "8442万",
+        "amount": "1.78亿",
         "fbt": "09:31",
         "zf": null,
         "label": "首板",
-        "cycle": ""
+        "cycle": "3天2板"
       },
       {
-        "code": "600839",
-        "name": "四川长虹",
-        "price": 5.68,
-        "chg": 10.08,
-        "hs": 2.29,
-        "hybk": "黑色家电",
+        "code": "002165",
+        "name": "红 宝 丽",
+        "price": 6.3,
+        "chg": 9.95,
+        "hs": 6.79,
+        "hybk": "化学制品",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "2.10亿",
-        "amount": "5.90亿",
+        "fund": "5669万",
+        "amount": "3.07亿",
+        "fbt": "09:32",
+        "zf": null,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "002418",
+        "name": "康盛股份",
+        "price": 4.02,
+        "chg": 10.14,
+        "hs": 5.28,
+        "hybk": "家电零部",
+        "lbc": 1,
+        "ct": 1,
+        "zbc": 0,
+        "fund": "5735万",
+        "amount": "2.36亿",
         "fbt": "09:35",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "300991",
-        "name": "创益通",
-        "price": 22.68,
-        "chg": 20.0,
-        "hs": 7.33,
-        "hybk": "其他电子",
+        "code": "002077",
+        "name": "大港股份",
+        "price": 12.11,
+        "chg": 9.99,
+        "hs": 8.75,
+        "hybk": "半导体",
         "lbc": 1,
         "ct": 1,
-        "zbc": 0,
-        "fund": "2310万",
-        "amount": "1.67亿",
-        "fbt": "09:45",
+        "zbc": 2,
+        "fund": "5677万",
+        "amount": "6.08亿",
+        "fbt": "09:40",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "000889",
-        "name": "中嘉博创",
-        "price": 3.38,
-        "chg": 10.1,
-        "hs": 6.45,
-        "hybk": "通信服务",
+        "code": "600520",
+        "name": "三佳科技",
+        "price": 22.17,
+        "chg": 10.02,
+        "hs": 7.07,
+        "hybk": "半导体",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "7820万",
-        "amount": "1.86亿",
-        "fbt": "09:45",
+        "fund": "5721万",
+        "amount": "2.43亿",
+        "fbt": "09:42",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "000980",
-        "name": "众泰汽车",
-        "price": 1.67,
-        "chg": 9.87,
-        "hs": 4.51,
+        "code": "000678",
+        "name": "襄阳轴承",
+        "price": 16.74,
+        "chg": 9.99,
+        "hs": 32.73,
         "hybk": "汽车零部",
         "lbc": 1,
         "ct": 1,
-        "zbc": 0,
-        "fund": "5153万",
-        "amount": "3.73亿",
-        "fbt": "09:46",
+        "zbc": 9,
+        "fund": "5416万",
+        "amount": "24.49亿",
+        "fbt": "09:43",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "000410",
-        "name": "沈阳机床",
-        "price": 5.71,
-        "chg": 10.02,
-        "hs": 5.45,
-        "hybk": "通用设备",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 3,
-        "fund": "3875万",
-        "amount": "6.04亿",
-        "fbt": "09:49",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "000711",
-        "name": "京蓝科技",
-        "price": 3.48,
-        "chg": 10.13,
-        "hs": 3.34,
-        "hybk": "环境治理",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "5189万",
-        "amount": "2.63亿",
-        "fbt": "09:51",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "300324",
-        "name": "旋极信息",
-        "price": 4.44,
-        "chg": 20.0,
-        "hs": 18.51,
-        "hybk": "计算机设",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "5955万",
-        "amount": "13.26亿",
-        "fbt": "09:58",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "000158",
-        "name": "常山北明",
-        "price": 12.43,
+        "code": "601616",
+        "name": "广电电气",
+        "price": 3.74,
         "chg": 10.0,
-        "hs": 4.79,
-        "hybk": "IT服务Ⅱ",
+        "hs": 4.75,
+        "hybk": "电网设备",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.63亿",
-        "amount": "9.19亿",
-        "fbt": "10:02",
+        "fund": "2360万",
+        "amount": "1.48亿",
+        "fbt": "09:52",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "000815",
-        "name": "美利云",
-        "price": 14.31,
+        "code": "301348",
+        "name": "蓝箭电子",
+        "price": 21.66,
+        "chg": 20.0,
+        "hs": 19.41,
+        "hybk": "半导体",
+        "lbc": 1,
+        "ct": 1,
+        "zbc": 1,
+        "fund": "5123万",
+        "amount": "7.84亿",
+        "fbt": "10:16",
+        "zf": null,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "603813",
+        "name": "原尚股份",
+        "price": 22.9,
         "chg": 9.99,
-        "hs": 10.52,
-        "hybk": "IT服务Ⅱ",
+        "hs": 2.51,
+        "hybk": "物流",
         "lbc": 1,
         "ct": 1,
-        "zbc": 1,
-        "fund": "1.13亿",
-        "amount": "10.24亿",
-        "fbt": "10:05",
+        "zbc": 0,
+        "fund": "7249万",
+        "amount": "5848万",
+        "fbt": "10:17",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "002197",
-        "name": "证通电子",
-        "price": 6.11,
-        "chg": 10.09,
-        "hs": 7.19,
-        "hybk": "计算机设",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 2,
-        "fund": "4257万",
-        "amount": "2.29亿",
-        "fbt": "10:12",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "603887",
-        "name": "城地香江",
-        "price": 8.18,
-        "chg": 9.95,
-        "hs": 7.94,
-        "hybk": "IT服务Ⅱ",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "7553万",
-        "amount": "3.82亿",
-        "fbt": "10:14",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600162",
-        "name": "香江控股",
-        "price": 3.29,
-        "chg": 10.03,
-        "hs": 4.72,
+        "code": "000656",
+        "name": "金科股份",
+        "price": 1.02,
+        "chg": 9.68,
+        "hs": 6.51,
         "hybk": "房地产开",
         "lbc": 1,
         "ct": 1,
-        "zbc": 3,
-        "fund": "2110万",
-        "amount": "4.93亿",
-        "fbt": "10:55",
+        "zbc": 2,
+        "fund": "3951万",
+        "amount": "6.14亿",
+        "fbt": "10:23",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "002929",
-        "name": "润建股份",
-        "price": 53.76,
-        "chg": 10.01,
-        "hs": 16.13,
-        "hybk": "通信服务",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "1.30亿",
-        "amount": "17.99亿",
-        "fbt": "11:14",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600156",
-        "name": "华升股份",
-        "price": 8.09,
-        "chg": 10.07,
-        "hs": 14.47,
-        "hybk": "纺织制造",
+        "code": "002579",
+        "name": "中京电子",
+        "price": 12.17,
+        "chg": 10.04,
+        "hs": 13.33,
+        "hybk": "元件",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "4984万",
-        "amount": "4.49亿",
-        "fbt": "11:14",
+        "fund": "1.01亿",
+        "amount": "9.15亿",
+        "fbt": "10:27",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "603220",
-        "name": "中贝通信",
-        "price": 15.62,
+        "code": "600619",
+        "name": "海立股份",
+        "price": 15.07,
         "chg": 10.0,
-        "hs": 9.78,
-        "hybk": "通信服务",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "9980万",
-        "amount": "7.98亿",
-        "fbt": "11:14",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "002042",
-        "name": "华孚时尚",
-        "price": 3.96,
-        "chg": 10.0,
-        "hs": 9.93,
-        "hybk": "纺织制造",
+        "hs": 14.3,
+        "hybk": "家电零部",
         "lbc": 1,
         "ct": 2,
-        "zbc": 3,
-        "fund": "3954万",
-        "amount": "6.37亿",
-        "fbt": "11:18",
-        "zf": null,
-        "label": "首板",
-        "cycle": "4天2板"
-      },
-      {
-        "code": "603629",
-        "name": "利通电子",
-        "price": 60.93,
-        "chg": 10.0,
-        "hs": 10.03,
-        "hybk": "消费电子",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "2.39亿",
-        "amount": "21.15亿",
-        "fbt": "11:26",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "002955",
-        "name": "鸿合科技",
-        "price": 27.39,
-        "chg": 10.0,
-        "hs": 3.26,
-        "hybk": "光学光电",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "3446万",
-        "amount": "1.78亿",
-        "fbt": "11:26",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "688316",
-        "name": "青云科技-U",
-        "price": 50.82,
-        "chg": 20.0,
-        "hs": 13.45,
-        "hybk": "IT服务Ⅱ",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "3165万",
-        "amount": "3.06亿",
-        "fbt": "13:17",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "920924",
-        "name": "广脉科技",
-        "price": 15.34,
-        "chg": 30.0,
-        "hs": 16.74,
-        "hybk": "通信服务",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "3834万",
-        "amount": "1.55亿",
-        "fbt": "13:18",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "688757",
-        "name": "胜科纳米",
-        "price": 27.84,
-        "chg": 20.0,
-        "hs": 13.44,
-        "hybk": "专业服务",
-        "lbc": 1,
-        "ct": 1,
         "zbc": 2,
-        "fund": "7879万",
-        "amount": "6.23亿",
-        "fbt": "13:19",
+        "fund": "6552万",
+        "amount": "16.17亿",
+        "fbt": "10:48",
         "zf": null,
         "label": "首板",
-        "cycle": ""
+        "cycle": "3天2板"
       },
       {
-        "code": "002916",
-        "name": "深南电路",
-        "price": 201.19,
+        "code": "605178",
+        "name": "时空科技",
+        "price": 53.25,
         "chg": 10.0,
-        "hs": 2.07,
-        "hybk": "元件",
+        "hs": 3.17,
+        "hybk": "专业工程",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.85亿",
-        "amount": "26.67亿",
-        "fbt": "13:19",
+        "fund": "5785万",
+        "amount": "1.63亿",
+        "fbt": "10:56",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "603985",
-        "name": "恒润股份",
-        "price": 14.73,
-        "chg": 10.01,
-        "hs": 3.26,
-        "hybk": "风电设备",
+        "code": "603078",
+        "name": "江化微",
+        "price": 26.86,
+        "chg": 9.99,
+        "hs": 12.79,
+        "hybk": "电子化学",
         "lbc": 1,
-        "ct": 1,
+        "ct": 2,
         "zbc": 0,
-        "fund": "2533万",
-        "amount": "2.03亿",
-        "fbt": "13:21",
+        "fund": "8431万",
+        "amount": "12.75亿",
+        "fbt": "13:06",
         "zf": null,
         "label": "首板",
-        "cycle": ""
+        "cycle": "3天2板"
       },
       {
-        "code": "600186",
-        "name": "莲花控股",
-        "price": 8.98,
-        "chg": 10.05,
-        "hs": 10.96,
-        "hybk": "调味发酵",
+        "code": "001358",
+        "name": "兴欣新材",
+        "price": 28.55,
+        "chg": 10.02,
+        "hs": 30.61,
+        "hybk": "化学制品",
         "lbc": 1,
-        "ct": 1,
+        "ct": 3,
         "zbc": 1,
-        "fund": "1.04亿",
-        "amount": "16.96亿",
-        "fbt": "13:27",
+        "fund": "1938万",
+        "amount": "4.28亿",
+        "fbt": "13:07",
         "zf": null,
         "label": "首板",
-        "cycle": ""
+        "cycle": "6天3板"
       },
       {
-        "code": "301396",
-        "name": "宏景科技",
-        "price": 114.6,
-        "chg": 20.0,
-        "hs": 13.67,
-        "hybk": "IT服务Ⅱ",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "1.17亿",
-        "amount": "20.21亿",
-        "fbt": "13:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "002463",
-        "name": "沪电股份",
-        "price": 80.19,
-        "chg": 10.0,
-        "hs": 5.42,
-        "hybk": "元件",
+        "code": "603928",
+        "name": "兴业股份",
+        "price": 12.38,
+        "chg": 10.04,
+        "hs": 15.5,
+        "hybk": "塑料",
         "lbc": 1,
         "ct": 1,
         "zbc": 3,
-        "fund": "6260万",
-        "amount": "81.86亿",
-        "fbt": "13:30",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "002272",
-        "name": "川润股份",
-        "price": 12.58,
-        "chg": 9.97,
-        "hs": 12.49,
-        "hybk": "通用设备",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "6960万",
-        "amount": "6.33亿",
-        "fbt": "13:31",
+        "fund": "2861万",
+        "amount": "6.27亿",
+        "fbt": "13:25",
         "zf": null,
         "label": "首板",
         "cycle": ""
@@ -42412,518 +42100,494 @@
     ],
     "zhaban": [
       {
-        "code": "000521",
-        "name": "长虹美菱",
-        "price": 4.71,
-        "chg": -0.63,
-        "hs": 16.31,
-        "hybk": "白色家电",
-        "lbc": 0,
-        "ct": 2,
-        "zbc": 2,
-        "fund": "—",
-        "amount": "7.24亿",
-        "fbt": "09:25",
-        "zf": 12.66,
-        "label": "首板",
-        "cycle": "3天2板"
-      },
-      {
-        "code": "002451",
-        "name": "摩恩电气",
-        "price": 6.89,
-        "chg": -3.37,
-        "hs": 12.33,
-        "hybk": "电网设备",
+        "code": "000889",
+        "name": "中嘉博创",
+        "price": 3.58,
+        "chg": 5.92,
+        "hs": 26.15,
+        "hybk": "通信服务",
         "lbc": 0,
         "ct": 1,
-        "zbc": 1,
+        "zbc": 12,
         "fund": "—",
-        "amount": "4.03亿",
+        "amount": "8.38亿",
         "fbt": "09:25",
-        "zf": 14.31,
+        "zf": 6.51,
         "label": "首板",
         "cycle": "2天1板"
       },
       {
-        "code": "002584",
-        "name": "西陇科学",
-        "price": 7.83,
-        "chg": -1.01,
-        "hs": 36.25,
-        "hybk": "电子化学",
-        "lbc": 0,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "—",
-        "amount": "14.40亿",
-        "fbt": "09:25",
-        "zf": 11.76,
-        "label": "首板",
-        "cycle": "2天1板"
-      },
-      {
-        "code": "603389",
-        "name": "亚振家居",
-        "price": 51.8,
-        "chg": -7.83,
-        "hs": 3.29,
-        "hybk": "家居用品",
+        "code": "002575",
+        "name": "群兴玩具",
+        "price": 4.98,
+        "chg": 1.22,
+        "hs": 16.52,
+        "hybk": "综合Ⅱ",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "4.77亿",
+        "amount": "4.93亿",
         "fbt": "09:25",
-        "zf": 19.95,
+        "zf": 12.2,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "301209",
-        "name": "联合化学",
-        "price": 60.01,
-        "chg": 13.31,
-        "hs": 18.64,
-        "hybk": "化学制品",
+        "code": "002685",
+        "name": "华东重机",
+        "price": 7.67,
+        "chg": 4.07,
+        "hs": 51.33,
+        "hybk": "工程机械",
+        "lbc": 0,
+        "ct": 4,
+        "zbc": 3,
+        "fund": "—",
+        "amount": "40.67亿",
+        "fbt": "09:25",
+        "zf": 13.16,
+        "label": "首板",
+        "cycle": "5天4板"
+      },
+      {
+        "code": "002197",
+        "name": "证通电子",
+        "price": 6.15,
+        "chg": 0.65,
+        "hs": 22.96,
+        "hybk": "计算机设",
         "lbc": 0,
         "ct": 1,
-        "zbc": 4,
+        "zbc": 2,
         "fund": "—",
-        "amount": "15.60亿",
+        "amount": "7.77亿",
         "fbt": "09:30",
-        "zf": 6.89,
+        "zf": 13.26,
         "label": "首板",
         "cycle": "2天1板"
       },
       {
-        "code": "002526",
-        "name": "山东矿机",
-        "price": 2.99,
-        "chg": 6.03,
-        "hs": 11.61,
-        "hybk": "专用设备",
+        "code": "603629",
+        "name": "利通电子",
+        "price": 63.42,
+        "chg": 4.09,
+        "hs": 17.68,
+        "hybk": "消费电子",
         "lbc": 0,
-        "ct": 0,
-        "zbc": 2,
+        "ct": 1,
+        "zbc": 3,
         "fund": "—",
-        "amount": "6.27亿",
-        "fbt": "09:31",
-        "zf": 10.28,
+        "amount": "41.62亿",
+        "fbt": "09:30",
+        "zf": 6.6,
         "label": "首板",
-        "cycle": ""
+        "cycle": "2天1板"
       },
       {
-        "code": "002095",
-        "name": "生 意 宝",
-        "price": 16.44,
-        "chg": 5.05,
-        "hs": 10.53,
-        "hybk": "数字媒体",
-        "lbc": 0,
-        "ct": 0,
-        "zbc": 2,
-        "fund": "—",
-        "amount": "4.47亿",
-        "fbt": "09:33",
-        "zf": 10.35,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "001282",
-        "name": "三联锻造",
-        "price": 17.27,
-        "chg": 5.3,
-        "hs": 10.31,
-        "hybk": "汽车零部",
+        "code": "605588",
+        "name": "冠石科技",
+        "price": 37.33,
+        "chg": 4.57,
+        "hs": 6.17,
+        "hybk": "光学光电",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "2.73亿",
-        "fbt": "09:34",
-        "zf": 8.41,
+        "amount": "1.69亿",
+        "fbt": "09:31",
+        "zf": 10.98,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "601188",
-        "name": "龙江交通",
-        "price": 5.08,
-        "chg": 7.17,
-        "hs": 31.39,
-        "hybk": "铁路公路",
+        "code": "001219",
+        "name": "青岛食品",
+        "price": 18.07,
+        "chg": 7.37,
+        "hs": 25.04,
+        "hybk": "休闲食品",
         "lbc": 0,
-        "ct": 6,
+        "ct": 0,
         "zbc": 4,
         "fund": "—",
-        "amount": "20.88亿",
+        "amount": "8.59亿",
         "fbt": "09:35",
-        "zf": 8.65,
+        "zf": 11.71,
         "label": "首板",
-        "cycle": "12天6板"
+        "cycle": ""
       },
       {
-        "code": "002093",
-        "name": "国脉科技",
-        "price": 7.19,
-        "chg": 5.74,
-        "hs": 6.56,
-        "hybk": "教育",
+        "code": "603559",
+        "name": "中通国脉",
+        "price": 7.26,
+        "chg": 5.07,
+        "hs": 4.8,
+        "hybk": "通信服务",
         "lbc": 0,
         "ct": 0,
-        "zbc": 1,
+        "zbc": 2,
         "fund": "—",
-        "amount": "4.79亿",
+        "amount": "1.41亿",
         "fbt": "09:37",
-        "zf": 10.0,
+        "zf": 11.14,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "002959",
-        "name": "小熊电器",
-        "price": 41.52,
-        "chg": 4.06,
-        "hs": 14.12,
-        "hybk": "小家电",
+        "code": "600863",
+        "name": "华能蒙电",
+        "price": 5.66,
+        "chg": 4.81,
+        "hs": 4.73,
+        "hybk": "电力",
         "lbc": 0,
-        "ct": 2,
+        "ct": 0,
+        "zbc": 1,
+        "fund": "—",
+        "amount": "19.31亿",
+        "fbt": "09:40",
+        "zf": 9.81,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "001258",
+        "name": "立新能源",
+        "price": 8.71,
+        "chg": 5.07,
+        "hs": 11.79,
+        "hybk": "电力",
+        "lbc": 0,
+        "ct": 0,
         "zbc": 2,
         "fund": "—",
-        "amount": "8.40亿",
-        "fbt": "09:39",
-        "zf": 10.25,
-        "label": "首板",
-        "cycle": "3天2板"
-      },
-      {
-        "code": "002677",
-        "name": "浙江美大",
-        "price": 5.85,
-        "chg": 4.46,
-        "hs": 3.88,
-        "hybk": "厨卫电器",
-        "lbc": 0,
-        "ct": 0,
-        "zbc": 1,
-        "fund": "—",
-        "amount": "1.24亿",
-        "fbt": "09:39",
-        "zf": 10.18,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600408",
-        "name": "安泰集团",
-        "price": 3.71,
-        "chg": 6.3,
-        "hs": 23.23,
-        "hybk": "焦炭Ⅱ",
-        "lbc": 0,
-        "ct": 0,
-        "zbc": 5,
-        "fund": "—",
-        "amount": "8.78亿",
-        "fbt": "09:43",
-        "zf": 11.17,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600202",
-        "name": "哈空调",
-        "price": 5.7,
-        "chg": 1.97,
-        "hs": 28.35,
-        "hybk": "通用设备",
-        "lbc": 0,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "—",
-        "amount": "6.31亿",
+        "amount": "9.72亿",
         "fbt": "09:48",
-        "zf": 14.13,
+        "zf": 12.3,
         "label": "首板",
-        "cycle": "2天1板"
+        "cycle": ""
       },
       {
-        "code": "002242",
-        "name": "九阳股份",
-        "price": 28.37,
-        "chg": -9.99,
-        "hs": 23.14,
-        "hybk": "小家电",
+        "code": "605577",
+        "name": "龙版传媒",
+        "price": 14.72,
+        "chg": 3.81,
+        "hs": 10.58,
+        "hybk": "出版",
         "lbc": 0,
-        "ct": 1,
+        "ct": 0,
         "zbc": 2,
         "fund": "—",
-        "amount": "56.92亿",
+        "amount": "7.07亿",
         "fbt": "09:49",
-        "zf": 19.99,
+        "zf": 11.28,
         "label": "首板",
-        "cycle": "2天1板"
+        "cycle": ""
       },
       {
-        "code": "002005",
-        "name": "德豪润达",
-        "price": 2.23,
-        "chg": 5.69,
-        "hs": 4.39,
-        "hybk": "小家电",
+        "code": "000819",
+        "name": "岳阳兴长",
+        "price": 13.23,
+        "chg": 5.5,
+        "hs": 11.71,
+        "hybk": "炼化及贸",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 4,
+        "fund": "—",
+        "amount": "5.66亿",
+        "fbt": "09:53",
+        "zf": 15.07,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "002656",
+        "name": "摩登大道",
+        "price": 2.48,
+        "chg": 3.77,
+        "hs": 7.21,
+        "hybk": "服装家纺",
         "lbc": 0,
         "ct": 0,
         "zbc": 3,
         "fund": "—",
-        "amount": "1.73亿",
-        "fbt": "09:52",
-        "zf": 10.9,
+        "amount": "1.27亿",
+        "fbt": "09:54",
+        "zf": 10.88,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "000988",
-        "name": "华工科技",
-        "price": 66.62,
-        "chg": 8.93,
-        "hs": 7.18,
-        "hybk": "自动化设",
+        "code": "002845",
+        "name": "同兴达",
+        "price": 11.75,
+        "chg": 4.26,
+        "hs": 7.06,
+        "hybk": "光学光电",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "47.39亿",
-        "fbt": "09:58",
-        "zf": 9.48,
+        "amount": "2.09亿",
+        "fbt": "10:11",
+        "zf": 11.09,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "301288",
-        "name": "清研环境",
-        "price": 22.83,
-        "chg": 13.36,
-        "hs": 24.36,
-        "hybk": "环保设备",
-        "lbc": 0,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "—",
-        "amount": "4.35亿",
-        "fbt": "10:09",
-        "zf": 16.98,
-        "label": "首板",
-        "cycle": "2天1板"
-      },
-      {
-        "code": "002492",
-        "name": "恒基达鑫",
-        "price": 5.05,
-        "chg": 5.21,
-        "hs": 6.68,
-        "hybk": "物流",
-        "lbc": 0,
-        "ct": 0,
-        "zbc": 1,
-        "fund": "—",
-        "amount": "1.33亿",
-        "fbt": "10:29",
-        "zf": 11.04,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600228",
-        "name": "返利科技",
-        "price": 9.18,
-        "chg": 3.38,
-        "hs": 14.36,
-        "hybk": "数字媒体",
+        "code": "603215",
+        "name": "比依股份",
+        "price": 16.09,
+        "chg": 4.01,
+        "hs": 12.34,
+        "hybk": "小家电",
         "lbc": 0,
         "ct": 0,
         "zbc": 2,
         "fund": "—",
-        "amount": "5.61亿",
-        "fbt": "11:08",
-        "zf": 13.51,
+        "amount": "4.33亿",
+        "fbt": "10:27",
+        "zf": 12.99,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "301259",
-        "name": "艾布鲁",
-        "price": 16.95,
-        "chg": 14.45,
-        "hs": 15.58,
-        "hybk": "环境治理",
+        "code": "601133",
+        "name": "柏诚股份",
+        "price": 17.33,
+        "chg": 6.06,
+        "hs": 5.74,
+        "hybk": "专业工程",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "3.73亿",
-        "fbt": "13:15",
-        "zf": 22.35,
+        "amount": "5.19亿",
+        "fbt": "11:20",
+        "zf": 10.4,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "688183",
-        "name": "生益电子",
-        "price": 70.95,
-        "chg": 18.53,
-        "hs": 4.0,
-        "hybk": "元件",
+        "code": "688691",
+        "name": "灿芯股份",
+        "price": 61.27,
+        "chg": 15.3,
+        "hs": 28.65,
+        "hybk": "半导体",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "22.61亿",
+        "amount": "12.58亿",
+        "fbt": "11:22",
+        "zf": 15.73,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "301391",
+        "name": "卡莱特",
+        "price": 55.98,
+        "chg": 19.97,
+        "hs": 16.57,
+        "hybk": "计算机设",
+        "lbc": 0,
+        "ct": 2,
+        "zbc": 2,
+        "fund": "—",
+        "amount": "8.18亿",
+        "fbt": "13:00",
+        "zf": 12.52,
+        "label": "首板",
+        "cycle": "3天2板"
+      },
+      {
+        "code": "688172",
+        "name": "燕东微",
+        "price": 37.51,
+        "chg": 11.37,
+        "hs": 3.69,
+        "hybk": "半导体",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 1,
+        "fund": "—",
+        "amount": "16.86亿",
+        "fbt": "13:07",
+        "zf": 14.01,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "688419",
+        "name": "耐科装备",
+        "price": 37.71,
+        "chg": 10.75,
+        "hs": 5.59,
+        "hybk": "半导体",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 1,
+        "fund": "—",
+        "amount": "2.38亿",
+        "fbt": "13:08",
+        "zf": 20.88,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "603486",
+        "name": "科沃斯",
+        "price": 50.33,
+        "chg": 7.66,
+        "hs": 2.81,
+        "hybk": "小家电",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 1,
+        "fund": "—",
+        "amount": "8.10亿",
         "fbt": "13:19",
-        "zf": 19.88,
+        "zf": 10.76,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "603358",
-        "name": "华达科技",
-        "price": 30.6,
-        "chg": 8.28,
-        "hs": 7.45,
-        "hybk": "汽车零部",
+        "code": "600103",
+        "name": "青山纸业",
+        "price": 3.36,
+        "chg": 7.01,
+        "hs": 22.86,
+        "hybk": "造纸",
         "lbc": 0,
         "ct": 0,
-        "zbc": 1,
+        "zbc": 4,
         "fund": "—",
-        "amount": "10.13亿",
-        "fbt": "13:20",
-        "zf": 16.6,
+        "amount": "16.66亿",
+        "fbt": "13:28",
+        "zf": 15.61,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "603228",
-        "name": "景旺电子",
-        "price": 54.93,
-        "chg": 7.2,
-        "hs": 5.89,
-        "hybk": "元件",
+        "code": "000839",
+        "name": "国安股份",
+        "price": 2.56,
+        "chg": 6.22,
+        "hs": 3.87,
+        "hybk": "通信服务",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 2,
+        "fund": "—",
+        "amount": "3.87亿",
+        "fbt": "14:04",
+        "zf": 11.62,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "002146",
+        "name": "荣盛发展",
+        "price": 1.02,
+        "chg": 9.68,
+        "hs": 9.52,
+        "hybk": "房地产开",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "31.40亿",
-        "fbt": "13:47",
-        "zf": 7.73,
+        "amount": "3.61亿",
+        "fbt": "14:37",
+        "zf": 13.98,
         "label": "首板",
         "cycle": ""
       }
     ],
     "catchup": [
       {
-        "theme": "通信服务",
-        "code": "300571",
-        "name": "平治信息",
-        "chg": 13.95,
-        "hs": 14.4
+        "theme": "半导体",
+        "code": "688691",
+        "name": "灿芯股份",
+        "chg": 15.3,
+        "hs": 28.65
       },
       {
-        "theme": "通信服务",
-        "code": "300442",
-        "name": "润泽科技",
-        "chg": 7.63,
-        "hs": 2.12
+        "theme": "半导体",
+        "code": "688172",
+        "name": "燕东微",
+        "chg": 11.37,
+        "hs": 3.69
       },
       {
-        "theme": "通信服务",
-        "code": "300025",
-        "name": "华星创业",
-        "chg": 6.31,
-        "hs": 5.37
+        "theme": "半导体",
+        "code": "688419",
+        "name": "耐科装备",
+        "chg": 10.75,
+        "hs": 5.59
       },
       {
-        "theme": "通信服务",
-        "code": "300738",
-        "name": "奥飞数据",
-        "chg": 4.95,
-        "hs": 3.65
+        "theme": "半导体",
+        "code": "688249",
+        "name": "晶合集成",
+        "chg": 10.26,
+        "hs": 3.45
       },
       {
-        "theme": "通用设备",
-        "code": "301377",
-        "name": "鼎泰高科",
-        "chg": 4.88,
-        "hs": 4.29
+        "theme": "化学制品",
+        "code": "300721",
+        "name": "怡达股份",
+        "chg": 4.6,
+        "hs": 23.28
       },
       {
-        "theme": "通用设备",
-        "code": "000530",
-        "name": "冰山冷热",
-        "chg": 4.73,
-        "hs": 47.25
+        "theme": "化学制品",
+        "code": "300200",
+        "name": "高盟新材",
+        "chg": 4.37,
+        "hs": 4.9
       },
       {
-        "theme": "通用设备",
-        "code": "002514",
-        "name": "*ST宝馨",
-        "chg": 4.4,
-        "hs": 2.15
+        "theme": "化学制品",
+        "code": "688065",
+        "name": "凯赛生物",
+        "chg": 2.25,
+        "hs": 0.5
       },
       {
-        "theme": "通用设备",
-        "code": "603912",
-        "name": "佳力图",
-        "chg": 4.01,
-        "hs": 3.24
+        "theme": "化学制品",
+        "code": "001381",
+        "name": "皇冠新材",
+        "chg": 2.18,
+        "hs": 24.1
       }
     ],
     "picks": [
       {
-        "theme": "IT服务Ⅱ",
-        "count": 7,
-        "leader": {
-          "name": "华胜天成",
-          "code": "600410",
-          "label": "2连板",
-          "lbc": 2,
-          "chg": 10.01,
-          "hs": 19.03,
-          "fund": "2.84亿",
-          "tier": "中军",
-          "conf": "中",
-          "buyable": true,
-          "reason": "2板换手板，可等分歧转一致时介入"
-        },
-        "catchup": null
-      },
-      {
-        "theme": "通信服务",
-        "count": 5,
+        "theme": "半导体",
+        "count": 3,
         "leader": null,
         "catchup": null
       },
       {
-        "theme": "通用设备",
-        "count": 3,
-        "leader": {
-          "name": "泰嘉股份",
-          "code": "002843",
-          "label": "2连板",
-          "lbc": 2,
-          "chg": 10.03,
-          "hs": 27.57,
-          "fund": "5311万",
-          "tier": "中军",
-          "conf": "低",
-          "buyable": false,
-          "reason": "2板炸板1次后回封，弱转强可关注"
-        },
+        "theme": "电子化学",
+        "count": 2,
+        "leader": null,
+        "catchup": null
+      },
+      {
+        "theme": "化学制品",
+        "count": 2,
+        "leader": null,
         "catchup": {
-          "name": "冰山冷热",
-          "code": "000530",
-          "chg": 4.73,
-          "hs": 47.25,
+          "name": "皇冠新材",
+          "code": "001381",
+          "chg": 2.18,
+          "hs": 24.1,
           "tier": "补涨",
           "conf": "中",
           "buyable": true,
@@ -42931,22 +42595,34 @@
         }
       },
       {
-        "theme": "计算机设",
-        "count": 3,
+        "theme": "家电零部",
+        "count": 2,
         "leader": null,
         "catchup": null
       },
       {
-        "theme": "纺织制造",
-        "count": 2,
-        "leader": null,
+        "theme": "IT服务Ⅱ",
+        "count": 1,
+        "leader": {
+          "name": "真视通",
+          "code": "002771",
+          "label": "3连板",
+          "lbc": 3,
+          "chg": 10.02,
+          "hs": 2.36,
+          "fund": "2.08亿",
+          "tier": "龙头",
+          "conf": "中",
+          "buyable": false,
+          "reason": "3板一字板，封单锁死买不进"
+        },
         "catchup": null
       }
     ],
     "notes": []
   },
   "mood": {
-    "score": 26.2,
+    "score": 26.5,
     "rating": "fear",
     "label": "恐惧",
     "color": "#c2703c",
@@ -42986,61 +42662,57 @@
         "#2f7d54"
       ]
     ],
-    "date": "2026-11-18",
-    "ts": "2026-11-18T15:31:17+00:00",
-    "prev_close": 25.2,
-    "prev_week": 35.9,
-    "prev_month": 18.2,
-    "prev_year": 8.9,
+    "date": "2026-11-19",
+    "ts": "2026-11-19T08:34:46+00:00",
+    "prev_close": 24.6,
+    "prev_week": 40.3,
+    "prev_month": 19.5,
+    "prev_year": 7.9,
     "parts": [
       {
         "name": "股价动能",
         "why": "标普500 相对 125 日均线的偏离",
-        "score": 5.4,
+        "score": 4.8,
         "rating": "extreme fear"
       },
       {
         "name": "股价强度",
         "why": "纽交所创新高与创新低的股票数对比",
-        "score": 35.2,
+        "score": 31.8,
         "rating": "fear"
       },
       {
         "name": "市场宽度",
         "why": "上涨股与下跌股的成交量对比",
-        "score": 40.8,
+        "score": 35.0,
         "rating": "fear"
       },
       {
         "name": "看跌/看涨",
         "why": "期权市场 5 日看跌看涨比率",
-        "score": 13.6,
+        "score": 10.2,
         "rating": "extreme fear"
       },
       {
         "name": "波动率",
         "why": "VIX 相对其 50 日均线的位置",
-        "score": 29.1,
-        "rating": "fear"
+        "score": 50.0,
+        "rating": "neutral"
       },
       {
         "name": "垃圾债需求",
         "why": "高收益债与国债的利差",
-        "score": 45.2,
-        "rating": "neutral"
+        "score": 41.2,
+        "rating": "fear"
       },
       {
         "name": "避险需求",
         "why": "股票与国债近 20 日回报之差",
-        "score": 13.0,
+        "score": 12.6,
         "rating": "extreme fear"
       }
     ],
     "history": [
-      [
-        1763424000000,
-        8.9
-      ],
       [
         1763510400000,
         7.86
@@ -44039,11 +43711,15 @@
       ],
       [
         1794960000000,
-        26.04
+        26.51
       ],
       [
-        1795015877000,
-        26.15
+        1795046400000,
+        26.51
+      ],
+      [
+        1795077286000,
+        26.51
       ]
     ],
     "source": "CNN Business Fear & Greed（production.dataviz.cnn.io）"
