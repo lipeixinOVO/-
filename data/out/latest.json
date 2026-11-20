@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-20 11:49:41",
-  "generated_at_ts": 1795146581,
+  "generated_at": "2026-11-20 14:44:47",
+  "generated_at_ts": 1795157087,
   "generated_tz": "Asia/Shanghai",
   "trade_date": "2026-11-19",
   "base_amount": 1000,
@@ -178,7 +178,7 @@
               "score": 87.72,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
@@ -190,7 +190,7 @@
               "score": 47.84,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "蛋卷口径；交叉校验 PE 分位=0.1216"
             }
@@ -211,7 +211,7 @@
               "score": 87.84,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -223,7 +223,7 @@
               "score": 85.83,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -244,7 +244,7 @@
               "score": 88.52,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -256,7 +256,7 @@
               "score": 90.12,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -277,7 +277,7 @@
               "score": 0.5,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -289,7 +289,7 @@
               "score": 1.82,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -443,7 +443,7 @@
               "score": 87.72,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
@@ -455,7 +455,7 @@
               "score": 47.84,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "蛋卷口径；交叉校验 PE 分位=0.1216"
             }
@@ -476,7 +476,7 @@
               "score": 89.6,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -488,7 +488,7 @@
               "score": 87.72,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -509,7 +509,7 @@
               "score": 92.52,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -521,7 +521,7 @@
               "score": 92.56,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-20 03:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -542,7 +542,7 @@
               "score": 0.5,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -554,7 +554,7 @@
               "score": 1.82,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -629,13 +629,13 @@
       "name": "黄金（COMEX 主力连续）",
       "kind": "commodity",
       "advisory_only": false,
-      "price": 3545.2,
+      "price": 3556.4,
       "price_date": "2026-11-20",
       "month": {
         "base_date": "2026-10-21",
         "base": 4159.3,
         "end_date": "2026-11-20",
-        "end": 3545.2,
+        "end": 3556.4,
         "n": 23,
         "pts": [
           [
@@ -728,38 +728,38 @@
           ],
           [
             "2026-11-20",
-            -14.76
+            -14.5
           ]
         ],
-        "chg_month": -14.76,
-        "chg_week": -8.81,
+        "chg_month": -14.5,
+        "chg_week": -8.52,
         "week_from": "2026-11-13",
         "week_n": 5,
         "hi": 0.0,
-        "lo": -14.76
+        "lo": -14.5
       },
-      "score": 57.81,
+      "score": 57.76,
       "multiplier": 1.0,
       "label": "温和加码",
-      "band_pos": 15.1,
+      "band_pos": 14.7,
       "completeness": 1.0,
       "suggest_amount": 1000.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 15,
-          "score": 21.79,
+          "score": 21.76,
           "anchor": "黄金无 PE，用 10 年价格分位 + 金/股比价",
           "metrics": [
             {
               "name": "金价 10 年名义分位",
-              "raw": 3545.2,
+              "raw": 3556.4,
               "unit": "",
-              "pct": 87.35,
-              "score": 12.65,
+              "pct": 87.39,
+              "score": 12.61,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-20 03:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "未做通胀调整，属近似口径"
             },
@@ -771,7 +771,7 @@
               "score": 35.49,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-20 03:48 取）",
+              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "金/股比价越高说明黄金相对股票越贵"
             }
@@ -786,25 +786,25 @@
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.2,
+              "raw": -0.1975,
               "unit": "%",
               "pct": 0.0,
               "score": 100.0,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-20 03:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.3491,
+              "raw": -0.347,
               "unit": "%",
               "pct": 0.0,
               "score": 100.0,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-20 03:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -814,30 +814,30 @@
         {
           "key": "sentiment",
           "weight": 25,
-          "score": 97.1,
+          "score": 96.91,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.2983,
+              "raw": 0.2962,
               "unit": "%",
-              "pct": 95.2,
-              "score": 95.2,
+              "pct": 94.88,
+              "score": 94.88,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪外盘期货 GC 日线（2026-11-20 03:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.2128,
+              "raw": -0.2104,
               "unit": "%",
               "pct": 0.04,
               "score": 99.96,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-20 03:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -858,7 +858,7 @@
               "score": 0.5,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -870,7 +870,7 @@
               "score": 1.82,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -881,7 +881,7 @@
       "trend_flag": {
         "flag": "breakdown",
         "ma200_slope_60d": -0.0258,
-        "dev": -0.2
+        "dev": -0.1975
       },
       "execution": {
         "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
@@ -1056,7 +1056,7 @@
               "score": 69.08,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-20 03:48 取）",
+              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "比价越高=医疗相对全球大盘越贵，分数越低；usIXJ 仅约 5 年历史，故为近 5 年分位"
             },
@@ -1068,7 +1068,7 @@
               "score": 30.99,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 03:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "偏离对数趋势越多=越贵；CAPE 近似思路。usIXJ 仅约 5 年历史，趋势窗口取 2 年（其余标的为 10 年）"
             }
@@ -1089,7 +1089,7 @@
               "score": 10.19,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 03:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1101,7 +1101,7 @@
               "score": 50.5,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 03:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1122,7 +1122,7 @@
               "score": 98.64,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 03:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1134,7 +1134,7 @@
               "score": 47.28,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 03:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -1155,7 +1155,7 @@
               "score": 0.5,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -1167,7 +1167,7 @@
               "score": 1.82,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-20 03:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -1333,7 +1333,7 @@
               "score": 11.46,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "真实股息率=0.0439，历史股息率序列不可得，用 PE 分位反向代理"
             },
@@ -1345,7 +1345,7 @@
               "score": 38.4,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "蛋卷口径"
             }
@@ -1366,7 +1366,7 @@
               "score": 69.03,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-20 03:48 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1378,7 +1378,7 @@
               "score": 48.42,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-20 03:48 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1399,7 +1399,7 @@
               "score": 23.53,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-20 03:48 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1411,7 +1411,7 @@
               "score": 37.62,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-20 03:48 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "放量（恐慌或狂热）给分，需结合趋势看"
             }
@@ -1432,7 +1432,7 @@
               "score": 13.61,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "东财 000922 ÷ 000300（2026-11-20 03:48 取）",
+              "source": "东财 000922 ÷ 000300（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "红利相对大盘越强，性价比越低"
             },
@@ -1444,7 +1444,7 @@
               "score": 65.83,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-20 03:48 取）",
+              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-20 06:43 取）",
               "fetched_at": "",
               "note": "大盘越贵，资金越倾向高股息防御，红利相对吸引力上升 → 方向为正"
             }
@@ -1484,9 +1484,9 @@
   "macro": {
     "ust_10y_real": 2.88,
     "ust_10y_nominal": 5.04,
-    "dxy": 103.83,
-    "usdcnh": 6.6737,
-    "gold_spot": 3554.24
+    "dxy": 103.72,
+    "usdcnh": 6.6715,
+    "gold_spot": 3553.8
   },
   "errors": [],
   "data_notes": [],
@@ -1498,13 +1498,13 @@
     "div_anchor": {
       "as_of": "2026-11-20",
       "month": "2026-11",
-      "close": 5498.14,
-      "ma40": 5418.0,
-      "ma90": 5059.19,
-      "dev40": 1.48,
-      "dev90": 8.68,
-      "dev90_pct": 6.1,
-      "dev40_pct": 34.8,
+      "close": 5506.88,
+      "ma40": 5418.21,
+      "ma90": 5059.28,
+      "dev40": 1.64,
+      "dev90": 8.85,
+      "dev90_pct": 7.6,
+      "dev40_pct": 35.9,
       "months": 220,
       "series": [
         [
@@ -2823,9 +2823,9 @@
         ],
         [
           "2026-11",
-          5498.14,
-          5418.0,
-          5059.19
+          5506.88,
+          5418.21,
+          5059.28
         ]
       ]
     },
@@ -2833,7 +2833,7 @@
       "as_of": "2026-11-19",
       "from": "2014-07-17",
       "cyb": 2293.34,
-      "div": 5498.14,
+      "div": 5506.88,
       "ratio": 0.4134,
       "ref": 0.3,
       "pct": 36.1,
@@ -26919,9 +26919,9 @@
         {
           "d": "2026-11-20",
           "o": 10402.29,
-          "c": 10365.76,
+          "c": 10299.64,
           "h": 10436.04,
-          "l": 10286.39
+          "l": 10266.9
         }
       ],
       "swing_low": {
@@ -26962,7 +26962,7 @@
           "price": 16374.02
         }
       ],
-      "cur": 10365.76,
+      "cur": 10299.64,
       "cur_date": "2026-11-20",
       "resistance": {
         "pct": 0.382,
@@ -31691,7 +31691,7 @@
         {
           "d": "2026-11-20",
           "o": 2244.06,
-          "c": 2245.61,
+          "c": 2228.98,
           "h": 2263.3,
           "l": 2222.77
         }
@@ -31734,7 +31734,7 @@
           "price": 4380.41
         }
       ],
-      "cur": 2245.61,
+      "cur": 2228.98,
       "cur_date": "2026-11-20",
       "resistance": {
         "pct": 0.382,
@@ -36463,9 +36463,9 @@
         {
           "d": "2026-11-20",
           "o": 1230.04,
-          "c": 1236.38,
+          "c": 1237.52,
           "h": 1254.6,
-          "l": 1223.79
+          "l": 1219.37
         }
       ],
       "swing_low": {
@@ -36506,7 +36506,7 @@
           "price": 2255.25
         }
       ],
-      "cur": 1236.38,
+      "cur": 1237.52,
       "cur_date": "2026-11-20",
       "resistance": {
         "pct": 0.382,
@@ -41235,7 +41235,7 @@
         {
           "d": "2026-11-20",
           "o": 2218.98,
-          "c": 2222.87,
+          "c": 2209.13,
           "h": 2240.9,
           "l": 2199.21
         }
@@ -41278,7 +41278,7 @@
           "price": 4715.43
         }
       ],
-      "cur": 2222.87,
+      "cur": 2209.13,
       "cur_date": "2026-11-20",
       "resistance": {
         "pct": 0.382,
@@ -41294,51 +41294,51 @@
     "as_of": "20261120",
     "empty": false,
     "market": {
-      "zt": 28,
-      "zb": 6,
-      "dt": 6,
+      "zt": 26,
+      "zb": 9,
+      "dt": 41,
       "max_lbc": 4
     },
     "concepts": [
       {
-        "name": "托育服务",
-        "code": "BK1074",
-        "chg": 2.43
-      },
-      {
-        "name": "盲盒经济",
-        "code": "BK0954",
-        "chg": 1.51
-      },
-      {
         "name": "昨日连板_含一字",
         "code": "BK1051",
-        "chg": 1.42
+        "chg": 1.43
       },
       {
-        "name": "鸡肉概念",
-        "code": "BK0887",
-        "chg": 1.15
+        "name": "历史新高",
+        "code": "BK1675",
+        "chg": 0.4
       },
       {
-        "name": "猪肉概念",
-        "code": "BK0882",
-        "chg": 1.14
+        "name": "昨日打二板以上表现",
+        "code": "BK1645",
+        "chg": 0.14
       },
       {
-        "name": "裸眼3D",
-        "code": "BK1142",
-        "chg": 1.13
+        "name": "证金持股",
+        "code": "BK0718",
+        "chg": -0.3
       },
       {
-        "name": "水产概念",
-        "code": "BK0967",
-        "chg": 1.12
+        "name": "近期新高",
+        "code": "BK1674",
+        "chg": -0.45
+      },
+      {
+        "name": "大盘价值",
+        "code": "BK1666",
+        "chg": -0.76
+      },
+      {
+        "name": "趋势股",
+        "code": "BK1715",
+        "chg": -0.82
       },
       {
         "name": "转基因",
         "code": "BK0907",
-        "chg": 0.97
+        "chg": -0.87
       }
     ],
     "themes": [
@@ -41373,10 +41373,10 @@
         "leader": "风语筑"
       },
       {
-        "name": "半导体",
+        "name": "环保设备",
         "count": 1,
-        "max_lbc": 1,
-        "leader": "华微电子"
+        "max_lbc": 4,
+        "leader": "盛剑科技"
       },
       {
         "name": "电子化学",
@@ -41403,6 +41403,12 @@
         "leader": "龙版传媒"
       },
       {
+        "name": "通用设备",
+        "count": 1,
+        "max_lbc": 1,
+        "leader": "冰山冷热"
+      },
+      {
         "name": "农化制品",
         "count": 1,
         "max_lbc": 1,
@@ -41421,55 +41427,54 @@
         "leader": "金新农"
       },
       {
-        "name": "一般零售",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "大东方"
-      },
-      {
         "name": "广告营销",
         "count": 1,
         "max_lbc": 1,
         "leader": "华媒控股"
       },
       {
-        "name": "通信服务",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "北纬科技"
-      },
-      {
-        "name": "文娱用品",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "高乐股份"
-      },
-      {
-        "name": "专用设备",
-        "count": 1,
-        "max_lbc": 1,
-        "leader": "大丰实业"
-      },
-      {
         "name": "渔业",
         "count": 1,
         "max_lbc": 1,
         "leader": "好当家"
+      },
+      {
+        "name": "燃气Ⅱ",
+        "count": 1,
+        "max_lbc": 1,
+        "leader": "德龙汇能"
       }
     ],
     "dragon": [
+      {
+        "code": "603324",
+        "name": "盛剑科技",
+        "price": 27.71,
+        "chg": 10.0,
+        "hs": 17.09,
+        "hybk": "环保设备",
+        "lbc": 4,
+        "ct": 4,
+        "zbc": 4,
+        "fund": "5499万",
+        "amount": "6.71亿",
+        "fbt": "09:25",
+        "zf": null,
+        "label": "4连板",
+        "cycle": ""
+      },
       {
         "code": "002771",
         "name": "真视通",
         "price": 15.82,
         "chg": 10.01,
-        "hs": 16.22,
+        "hs": 17.01,
         "hybk": "IT服务Ⅱ",
         "lbc": 4,
         "ct": 4,
         "zbc": 0,
-        "fund": "2.56亿",
-        "amount": "4.50亿",
+        "fund": "2.01亿",
+        "amount": "4.73亿",
         "fbt": "09:30",
         "zf": null,
         "label": "4连板",
@@ -41480,13 +41485,13 @@
         "name": "中京电子",
         "price": 13.39,
         "chg": 10.02,
-        "hs": 12.41,
+        "hs": 12.81,
         "hybk": "元件",
         "lbc": 2,
         "ct": 2,
         "zbc": 0,
-        "fund": "3.83亿",
-        "amount": "9.46亿",
+        "fund": "3.00亿",
+        "amount": "9.78亿",
         "fbt": "09:36",
         "zf": null,
         "label": "2连板",
@@ -41499,31 +41504,14 @@
         "name": "荣联科技",
         "price": 7.26,
         "chg": 10.0,
-        "hs": 2.98,
+        "hs": 3.19,
         "hybk": "IT服务Ⅱ",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.97亿",
-        "amount": "1.41亿",
+        "fund": "1.77亿",
+        "amount": "1.51亿",
         "fbt": "09:31",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "600360",
-        "name": "华微电子",
-        "price": 9.01,
-        "chg": 10.01,
-        "hs": 9.68,
-        "hybk": "半导体",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 1,
-        "fund": "3.83亿",
-        "amount": "8.28亿",
-        "fbt": "09:32",
         "zf": null,
         "label": "首板",
         "cycle": ""
@@ -41533,13 +41521,13 @@
         "name": "光华科技",
         "price": 18.76,
         "chg": 10.03,
-        "hs": 7.23,
+        "hs": 8.94,
         "hybk": "电子化学",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "2.49亿",
-        "amount": "5.75亿",
+        "fund": "1.23亿",
+        "amount": "7.13亿",
         "fbt": "09:36",
         "zf": null,
         "label": "首板",
@@ -41550,13 +41538,13 @@
         "name": "建业股份",
         "price": 19.56,
         "chg": 10.01,
-        "hs": 5.36,
+        "hs": 5.69,
         "hybk": "化学制品",
         "lbc": 1,
         "ct": 1,
         "zbc": 4,
-        "fund": "3636万",
-        "amount": "1.68亿",
+        "fund": "1412万",
+        "amount": "1.79亿",
         "fbt": "09:37",
         "zf": null,
         "label": "首板",
@@ -41567,13 +41555,13 @@
         "name": "东晶电子",
         "price": 9.45,
         "chg": 10.01,
-        "hs": 1.51,
+        "hs": 1.68,
         "hybk": "元件",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "7201万",
-        "amount": "3173万",
+        "fund": "6798万",
+        "amount": "3560万",
         "fbt": "09:40",
         "zf": null,
         "label": "首板",
@@ -41584,13 +41572,13 @@
         "name": "东方海洋",
         "price": 3.75,
         "chg": 9.97,
-        "hs": 23.05,
+        "hs": 23.54,
         "hybk": "农产品加",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "5.88亿",
-        "amount": "13.25亿",
+        "fund": "4.16亿",
+        "amount": "13.54亿",
         "fbt": "09:42",
         "zf": null,
         "label": "首板",
@@ -41601,13 +41589,13 @@
         "name": "易天股份",
         "price": 18.0,
         "chg": 20.0,
-        "hs": 14.1,
+        "hs": 15.95,
         "hybk": "消费电子",
         "lbc": 1,
         "ct": 1,
-        "zbc": 2,
-        "fund": "1.26亿",
-        "amount": "4.35亿",
+        "zbc": 3,
+        "fund": "3876万",
+        "amount": "4.94亿",
         "fbt": "09:42",
         "zf": null,
         "label": "首板",
@@ -41618,14 +41606,31 @@
         "name": "龙版传媒",
         "price": 16.19,
         "chg": 9.99,
-        "hs": 7.28,
+        "hs": 7.37,
         "hybk": "出版",
         "lbc": 1,
         "ct": 1,
         "zbc": 1,
-        "fund": "1.01亿",
-        "amount": "5.06亿",
+        "fund": "7919万",
+        "amount": "5.13亿",
         "fbt": "09:47",
+        "zf": null,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "000530",
+        "name": "冰山冷热",
+        "price": 12.29,
+        "chg": 10.03,
+        "hs": 42.13,
+        "hybk": "通用设备",
+        "lbc": 1,
+        "ct": 1,
+        "zbc": 2,
+        "fund": "1.97亿",
+        "amount": "30.24亿",
+        "fbt": "10:00",
         "zf": null,
         "label": "首板",
         "cycle": ""
@@ -41635,13 +41640,13 @@
         "name": "超声电子",
         "price": 18.51,
         "chg": 9.98,
-        "hs": 18.17,
+        "hs": 19.25,
         "hybk": "元件",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "9.41亿",
-        "amount": "19.39亿",
+        "fund": "4.85亿",
+        "amount": "20.58亿",
         "fbt": "10:00",
         "zf": null,
         "label": "首板",
@@ -41652,13 +41657,13 @@
         "name": "澳弘电子",
         "price": 42.92,
         "chg": 9.99,
-        "hs": 8.31,
+        "hs": 8.58,
         "hybk": "元件",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.93亿",
-        "amount": "4.89亿",
+        "fund": "1.54亿",
+        "amount": "5.05亿",
         "fbt": "10:04",
         "zf": null,
         "label": "首板",
@@ -41669,13 +41674,13 @@
         "name": "国光股份",
         "price": 8.69,
         "chg": 10.0,
-        "hs": 3.19,
+        "hs": 3.45,
         "hybk": "农化制品",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "7081万",
-        "amount": "1.48亿",
+        "fund": "5820万",
+        "amount": "1.60亿",
         "fbt": "10:09",
         "zf": null,
         "label": "首板",
@@ -41686,13 +41691,13 @@
         "name": "长华集团",
         "price": 10.26,
         "chg": 9.97,
-        "hs": 2.28,
+        "hs": 2.41,
         "hybk": "汽车零部",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "6947万",
-        "amount": "1.05亿",
+        "fund": "5438万",
+        "amount": "1.11亿",
         "fbt": "10:14",
         "zf": null,
         "label": "首板",
@@ -41703,13 +41708,13 @@
         "name": "万向德农",
         "price": 10.69,
         "chg": 9.98,
-        "hs": 9.61,
+        "hs": 9.93,
         "hybk": "种植业",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.10亿",
-        "amount": "2.85亿",
+        "fund": "9000万",
+        "amount": "2.95亿",
         "fbt": "10:17",
         "zf": null,
         "label": "首板",
@@ -41720,13 +41725,13 @@
         "name": "鼎龙科技",
         "price": 18.22,
         "chg": 10.02,
-        "hs": 12.1,
+        "hs": 13.0,
         "hybk": "化学制品",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "5819万",
-        "amount": "1.24亿",
+        "fund": "3294万",
+        "amount": "1.34亿",
         "fbt": "10:30",
         "zf": null,
         "label": "首板",
@@ -41737,13 +41742,13 @@
         "name": "克来机电",
         "price": 13.97,
         "chg": 10.0,
-        "hs": 2.17,
+        "hs": 2.65,
         "hybk": "汽车零部",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.30亿",
-        "amount": "7434万",
+        "fund": "7617万",
+        "amount": "9162万",
         "fbt": "10:34",
         "zf": null,
         "label": "首板",
@@ -41754,13 +41759,13 @@
         "name": "凡拓数创",
         "price": 59.16,
         "chg": 20.0,
-        "hs": 32.93,
+        "hs": 34.58,
         "hybk": "数字媒体",
         "lbc": 1,
         "ct": 1,
-        "zbc": 2,
-        "fund": "1.36亿",
-        "amount": "13.98亿",
+        "zbc": 3,
+        "fund": "1.33亿",
+        "amount": "14.75亿",
         "fbt": "10:44",
         "zf": null,
         "label": "首板",
@@ -41771,13 +41776,13 @@
         "name": "风语筑",
         "price": 14.3,
         "chg": 10.0,
-        "hs": 13.68,
+        "hs": 14.91,
         "hybk": "数字媒体",
         "lbc": 1,
         "ct": 1,
         "zbc": 1,
-        "fund": "2.60亿",
-        "amount": "10.90亿",
+        "fund": "7152万",
+        "amount": "11.94亿",
         "fbt": "10:44",
         "zf": null,
         "label": "首板",
@@ -41788,13 +41793,13 @@
         "name": "金新农",
         "price": 3.76,
         "chg": 9.94,
-        "hs": 7.08,
+        "hs": 8.0,
         "hybk": "饲料",
         "lbc": 1,
         "ct": 3,
         "zbc": 0,
-        "fund": "7190万",
-        "amount": "1.98亿",
+        "fund": "1271万",
+        "amount": "2.26亿",
         "fbt": "10:47",
         "zf": null,
         "label": "首板",
@@ -41805,99 +41810,48 @@
         "name": "骏亚科技",
         "price": 14.59,
         "chg": 10.03,
-        "hs": 7.74,
+        "hs": 8.53,
         "hybk": "元件",
         "lbc": 1,
         "ct": 1,
         "zbc": 1,
-        "fund": "2.31亿",
-        "amount": "3.51亿",
+        "fund": "7150万",
+        "amount": "3.89亿",
         "fbt": "10:51",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "600327",
-        "name": "大东方",
-        "price": 4.83,
-        "chg": 10.02,
-        "hs": 21.82,
-        "hybk": "一般零售",
-        "lbc": 1,
-        "ct": 7,
-        "zbc": 0,
-        "fund": "7402万",
-        "amount": "8.90亿",
-        "fbt": "11:12",
-        "zf": null,
-        "label": "首板",
-        "cycle": "14天7板"
-      },
-      {
         "code": "000607",
         "name": "华媒控股",
         "price": 3.73,
         "chg": 10.03,
-        "hs": 4.53,
+        "hs": 5.3,
         "hybk": "广告营销",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "1.12亿",
-        "amount": "1.34亿",
+        "fund": "5178万",
+        "amount": "1.59亿",
         "fbt": "11:17",
         "zf": null,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "002148",
-        "name": "北纬科技",
-        "price": 10.23,
-        "chg": 10.0,
-        "hs": 37.36,
-        "hybk": "通信服务",
-        "lbc": 1,
-        "ct": 6,
-        "zbc": 0,
-        "fund": "2.39亿",
-        "amount": "16.22亿",
-        "fbt": "11:18",
-        "zf": null,
-        "label": "首板",
-        "cycle": "8天6板"
-      },
-      {
         "code": "301132",
         "name": "满坤科技",
         "price": 51.07,
         "chg": 20.0,
-        "hs": 17.32,
+        "hs": 18.36,
         "hybk": "元件",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "7.85亿",
-        "amount": "7.81亿",
+        "fund": "2.25亿",
+        "amount": "8.31亿",
         "fbt": "11:20",
-        "zf": null,
-        "label": "首板",
-        "cycle": ""
-      },
-      {
-        "code": "002348",
-        "name": "高乐股份",
-        "price": 7.92,
-        "chg": 10.0,
-        "hs": 6.22,
-        "hybk": "文娱用品",
-        "lbc": 1,
-        "ct": 1,
-        "zbc": 0,
-        "fund": "1.85亿",
-        "amount": "4.22亿",
-        "fbt": "11:21",
         "zf": null,
         "label": "首板",
         "cycle": ""
@@ -41907,31 +41861,31 @@
         "name": "好当家",
         "price": 2.86,
         "chg": 10.0,
-        "hs": 16.53,
+        "hs": 21.3,
         "hybk": "渔业",
         "lbc": 1,
         "ct": 4,
-        "zbc": 0,
-        "fund": "2.38亿",
-        "amount": "6.22亿",
+        "zbc": 1,
+        "fund": "586万",
+        "amount": "8.21亿",
         "fbt": "11:26",
         "zf": null,
         "label": "首板",
         "cycle": "7天4板"
       },
       {
-        "code": "603081",
-        "name": "大丰实业",
-        "price": 10.26,
-        "chg": 9.97,
-        "hs": 3.34,
-        "hybk": "专用设备",
+        "code": "000593",
+        "name": "德龙汇能",
+        "price": 17.51,
+        "chg": 9.99,
+        "hs": 2.89,
+        "hybk": "燃气Ⅱ",
         "lbc": 1,
         "ct": 1,
         "zbc": 0,
-        "fund": "7284万",
-        "amount": "1.36亿",
-        "fbt": "11:26",
+        "fund": "1.03亿",
+        "amount": "1.70亿",
+        "fbt": "13:00",
         "zf": null,
         "label": "首板",
         "cycle": ""
@@ -41939,34 +41893,34 @@
     ],
     "zhaban": [
       {
-        "code": "603324",
-        "name": "盛剑科技",
-        "price": 26.6,
-        "chg": 5.6,
-        "hs": 14.8,
-        "hybk": "环保设备",
+        "code": "600360",
+        "name": "华微电子",
+        "price": 8.92,
+        "chg": 8.91,
+        "hs": 13.56,
+        "hybk": "半导体",
         "lbc": 0,
-        "ct": 3,
-        "zbc": 4,
+        "ct": 0,
+        "zbc": 3,
         "fund": "—",
-        "amount": "5.82亿",
-        "fbt": "09:25",
-        "zf": 13.62,
+        "amount": "11.62亿",
+        "fbt": "09:32",
+        "zf": 11.84,
         "label": "首板",
-        "cycle": "4天3板"
+        "cycle": ""
       },
       {
         "code": "003007",
         "name": "直真科技",
-        "price": 33.87,
-        "chg": 3.9,
-        "hs": 7.73,
+        "price": 32.21,
+        "chg": -1.2,
+        "hs": 9.29,
         "hybk": "软件开发",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "2.41亿",
+        "amount": "2.87亿",
         "fbt": "09:34",
         "zf": 13.87,
         "label": "首板",
@@ -41975,15 +41929,15 @@
       {
         "code": "600408",
         "name": "安泰集团",
-        "price": 3.59,
-        "chg": 5.28,
-        "hs": 20.95,
+        "price": 3.56,
+        "chg": 4.4,
+        "hs": 23.44,
         "hybk": "焦炭Ⅱ",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "7.69亿",
+        "amount": "8.58亿",
         "fbt": "09:45",
         "zf": 11.73,
         "label": "首板",
@@ -41992,51 +41946,102 @@
       {
         "code": "002453",
         "name": "华软科技",
-        "price": 4.43,
-        "chg": 2.55,
-        "hs": 8.69,
+        "price": 4.31,
+        "chg": -0.23,
+        "hs": 10.22,
         "hybk": "化学制品",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "2.43亿",
+        "amount": "2.86亿",
         "fbt": "09:53",
         "zf": 17.13,
         "label": "首板",
         "cycle": ""
       },
       {
-        "code": "000530",
-        "name": "冰山冷热",
-        "price": 12.0,
-        "chg": 7.43,
-        "hs": 35.29,
-        "hybk": "通用设备",
+        "code": "600327",
+        "name": "大东方",
+        "price": 4.81,
+        "chg": 9.57,
+        "hs": 27.15,
+        "hybk": "一般零售",
         "lbc": 0,
         "ct": 0,
         "zbc": 2,
         "fund": "—",
-        "amount": "25.29亿",
-        "fbt": "10:00",
-        "zf": 14.15,
+        "amount": "11.17亿",
+        "fbt": "11:12",
+        "zf": 12.07,
         "label": "首板",
         "cycle": ""
       },
       {
+        "code": "002148",
+        "name": "北纬科技",
+        "price": 9.94,
+        "chg": 6.88,
+        "hs": 48.76,
+        "hybk": "通信服务",
+        "lbc": 0,
+        "ct": 5,
+        "zbc": 3,
+        "fund": "—",
+        "amount": "21.44亿",
+        "fbt": "11:18",
+        "zf": 14.73,
+        "label": "首板",
+        "cycle": "8天5板"
+      },
+      {
         "code": "002520",
         "name": "日发精机",
-        "price": 6.46,
-        "chg": 8.94,
-        "hs": 14.19,
+        "price": 6.16,
+        "chg": 3.88,
+        "hs": 17.17,
         "hybk": "通用设备",
         "lbc": 0,
         "ct": 0,
         "zbc": 1,
         "fund": "—",
-        "amount": "6.13亿",
+        "amount": "7.45亿",
         "fbt": "11:20",
         "zf": 14.33,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "002348",
+        "name": "高乐股份",
+        "price": 7.72,
+        "chg": 7.22,
+        "hs": 8.66,
+        "hybk": "文娱用品",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 2,
+        "fund": "—",
+        "amount": "5.95亿",
+        "fbt": "11:21",
+        "zf": 13.61,
+        "label": "首板",
+        "cycle": ""
+      },
+      {
+        "code": "603081",
+        "name": "大丰实业",
+        "price": 9.83,
+        "chg": 5.36,
+        "hs": 4.98,
+        "hybk": "专用设备",
+        "lbc": 0,
+        "ct": 0,
+        "zbc": 1,
+        "fund": "—",
+        "amount": "2.06亿",
+        "fbt": "11:26",
+        "zf": 13.5,
         "label": "首板",
         "cycle": ""
       }
@@ -42044,59 +42049,45 @@
     "catchup": [
       {
         "theme": "元件",
-        "code": "920981",
-        "name": "晶赛科技",
-        "chg": 18.13,
-        "hs": 15.62
-      },
-      {
-        "theme": "元件",
         "code": "301282",
         "name": "金禄电子",
-        "chg": 13.26,
-        "hs": 10.17
+        "chg": 9.54,
+        "hs": 12.78
       },
       {
         "theme": "元件",
-        "code": "300903",
-        "name": "科翔股份",
-        "chg": 9.28,
-        "hs": 5.83
+        "code": "920981",
+        "name": "晶赛科技",
+        "chg": 8.98,
+        "hs": 17.98
       },
       {
         "theme": "元件",
         "code": "300852",
         "name": "四会富仕",
-        "chg": 9.28,
-        "hs": 8.25
+        "chg": 7.5,
+        "hs": 10.28
+      },
+      {
+        "theme": "元件",
+        "code": "300903",
+        "name": "科翔股份",
+        "chg": 5.0,
+        "hs": 7.61
       },
       {
         "theme": "化学制品",
         "code": "301618",
         "name": "长联科技",
-        "chg": 7.96,
-        "hs": 8.76
-      },
-      {
-        "theme": "化学制品",
-        "code": "603110",
-        "name": "东方材料",
-        "chg": 2.89,
-        "hs": 5.08
+        "chg": 3.87,
+        "hs": 10.94
       },
       {
         "theme": "化学制品",
         "code": "002211",
         "name": "ST宏达",
-        "chg": 2.56,
-        "hs": 0.74
-      },
-      {
-        "theme": "化学制品",
-        "code": "002453",
-        "name": "华软科技",
-        "chg": 2.55,
-        "hs": 8.69
+        "chg": 0.32,
+        "hs": 0.95
       }
     ],
     "picks": [
@@ -42109,8 +42100,8 @@
           "label": "2连板",
           "lbc": 2,
           "chg": 10.02,
-          "hs": 12.41,
-          "fund": "3.83亿",
+          "hs": 12.81,
+          "fund": "3.00亿",
           "tier": "中军",
           "conf": "中",
           "buyable": true,
@@ -42127,8 +42118,8 @@
           "label": "4连板",
           "lbc": 4,
           "chg": 10.01,
-          "hs": 16.22,
-          "fund": "2.56亿",
+          "hs": 17.01,
+          "fund": "2.01亿",
           "tier": "龙头",
           "conf": "中",
           "buyable": false,
@@ -42141,10 +42132,10 @@
         "count": 2,
         "leader": null,
         "catchup": {
-          "name": "东方材料",
-          "code": "603110",
-          "chg": 2.89,
-          "hs": 5.08,
+          "name": "ST宏达",
+          "code": "002211",
+          "chg": 0.32,
+          "hs": 0.95,
           "tier": "补涨",
           "conf": "中",
           "buyable": true,
@@ -42167,7 +42158,7 @@
     "notes": []
   },
   "mood": {
-    "score": 18.7,
+    "score": 18.6,
     "rating": "extreme fear",
     "label": "极度恐惧",
     "color": "#a8321f",
@@ -42208,11 +42199,11 @@
       ]
     ],
     "date": "2026-11-20",
-    "ts": "2026-11-19T23:59:41+00:00",
-    "prev_close": 24.6,
-    "prev_week": 40.3,
-    "prev_month": 19.5,
-    "prev_year": 7.9,
+    "ts": "2026-11-20T01:00:00+00:00",
+    "prev_close": 18.7,
+    "prev_week": 37.4,
+    "prev_month": 28.7,
+    "prev_year": 5.2,
     "parts": [
       {
         "name": "股价动能",
@@ -42247,7 +42238,7 @@
       {
         "name": "垃圾债需求",
         "why": "高收益债与国债的利差",
-        "score": 38.6,
+        "score": 38.0,
         "rating": "fear"
       },
       {
@@ -43256,11 +43247,15 @@
       ],
       [
         1795046400000,
-        18.68
+        18.59
       ],
       [
-        1795132781000,
-        18.68
+        1795132800000,
+        18.59
+      ],
+      [
+        1795136400000,
+        18.59
       ]
     ],
     "source": "CNN Business Fear & Greed（production.dataviz.cnn.io）"
