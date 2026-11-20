@@ -382,6 +382,11 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .lab .big{font-size:32px;font-weight:400;letter-spacing:-.02em;color:#14161b;
   margin:13px 0 0;line-height:1.1;font-variant-numeric:tabular-nums}
 .lab .big small{font-size:11px;color:var(--dim3);margin-left:6px;letter-spacing:.04em}
+/* 实时/收盘标记：中性蓝，避免和红涨绿跌混淆 */
+.lab .lv{display:inline-block;font-size:9px;font-weight:600;letter-spacing:.06em;
+  padding:1px 5px;border-radius:3px;background:rgba(20,22,27,.07);color:var(--dim2);
+  vertical-align:2px;margin-left:6px}
+.lab .lv.on{background:rgba(47,111,176,.12);color:#2f6fb0}
 .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:13px 0 10px}
 .kv .c{border-top:1px solid var(--line);padding-top:8px}
 .kv .k{font-size:9.5px;color:var(--dim2);letter-spacing:.06em;text-transform:uppercase}
@@ -1656,8 +1661,8 @@ function renderLive(){
     '<div class="stamp">'+
     '<span>行情时间 <b>'+(stamp?esc(stamp):'—')+
     '</b> · 腾讯行情每 60 秒刷新（本次 <i class="now">'+at+'</i>）</span>'+
-    '<span><b>实时价不参与打分</b>；分数、卡片收盘价、各类曲线每交易日 '+
-    perDay+' 次整体重算</span></div>';
+    '<span><b>实时价不参与打分</b>；分数、各类曲线每交易日 '+
+    perDay+' 次整体重算，创红比与实时行情条每分钟同步</span></div>';
 }
 
 /* 指数技术位：当前价 + 涨跌幅 + 压力/支撑距离，跟着实时行情一起每分钟刷新。
@@ -1704,6 +1709,41 @@ function renderSzK(){
     }
   });
 }
+
+/* 创业板指 ÷ 中证红利 —— 跟着实时行情每分钟重算（原来是跑批算的静态值，一整天不动）。
+   口径与服务端一致：两个指数**实时点位直接相除**（服务端用的是同日收盘点位）。
+   历史分位 pct 依赖近 3000 个交易日序列，前端算不了，保留服务端收盘口径值，
+   所以分位旁边标了「收盘口径」，避免和实时比值看起来对不上。
+   参考点 ref 从卡片的 data-ref 读，不在这里写死，服务端改参数这里自动跟随。 */
+function renderCyRatio(){
+  const elVal = document.getElementById('cyr-val');
+  if(!elVal) return;                                  // 没有这张卡（labs 缺失）就跳过
+  const a = window['v_sz399006'], b = window['v_sh000922'];
+  if(!a || !b) return;                                // 两个指数缺一个就算不了
+  const cyb = parseFloat(String(a).split('~')[3]);
+  const div = parseFloat(String(b).split('~')[3]);
+  if(!cyb || !div || isNaN(cyb) || isNaN(div)) return;
+
+  const ratio = cyb / div;
+  elVal.textContent = ratio.toFixed(4);
+
+  const card = elVal.closest('.lab');
+  const ref = card ? parseFloat(card.getAttribute('data-ref')) : NaN;
+  const g = document.getElementById('cyr-gap');
+  if(g && ref && !isNaN(ref)){
+    const gap = (ratio / ref - 1) * 100;
+    g.textContent = (gap > 0 ? '+' : '') + gap.toFixed(1) + '%';
+    g.className = gap > 0 ? 'up' : 'dn';
+  }
+
+  const nw = new Date();
+  const hm = ('0'+nw.getHours()).slice(-2)+':'+('0'+nw.getMinutes()).slice(-2);
+  const asof = document.getElementById('cyr-asof');
+  if(asof) asof.textContent = '实时 ' + hm;
+  const tag = document.getElementById('cyr-tag');
+  if(tag){ tag.textContent = '实时'; tag.className = 'lv on'; }
+}
+
 let _liveSig = '';
 let _liveCellHTML = [];   // 上一轮每格的 HTML，用于逐格 diff，避免整条 innerHTML 重建
 let _liveKill = null, _liveFail = 0, _liveNext = 0;
@@ -1720,7 +1760,7 @@ function loadLive(){
     if(_liveKill){ clearTimeout(_liveKill); _liveKill=null; }
     if(s.parentNode) s.parentNode.removeChild(s);
   };
-  s.onload=function(){ drop(); _liveFail=0; _liveNext=0; renderLive(); renderSzK(); };
+  s.onload=function(){ drop(); _liveFail=0; _liveNext=0; renderLive(); renderSzK(); renderCyRatio(); };
   s.onerror=function(){ drop(); _liveFail+=1;
     // 弱网退避：连败 1→1 分钟、2→5 分钟、≥3→15 分钟。
     // 原来每 60 秒硬拉、挂着不摘的 <script> 会占满手机连接池 —— 卡死主因之一。
@@ -2915,12 +2955,12 @@ def _labs_html(labs):
         refs = [(f"参考 {cy['ref']}", cy["ref"], "#b4512f")]
         xl = [(0, s[0][0]), (n // 2, s[n // 2][0]), (n - 1, s[-1][0])]
         gap = (cy["ratio"] / cy["ref"] - 1) * 100 if cy["ref"] else None
-        gap_html = (f'<i class="{"up" if gap > 0 else "dn"}">{gap:+.1f}%</i>'
+        gap_html = (f'<i id="cyr-gap" class="{"up" if gap > 0 else "dn"}">{gap:+.1f}%</i>'
                     if gap is not None else "—")
-        a += f"""<div class="lab">
-  <div class="t">创业板指 ÷ 中证红利</div>
+        a += f"""<div class="lab" data-ref="{cy['ref']}">
+  <div class="t">创业板指 ÷ 中证红利 <span class="lv" id="cyr-tag">收盘</span></div>
   <div class="sub">「直接指数相除」。比值越低，创业板相对红利越便宜；{cy['ref']} 是截图里提到的观察点</div>
-  <div class="big">{cy['ratio']:.4f}<small>{cy['as_of']} · 历史分位 {_num(cy['pct'], 1)}%</small></div>
+  <div class="big"><span id="cyr-val">{cy['ratio']:.4f}</span><small><span id="cyr-asof">{cy['as_of']} 收盘</span> · 历史分位 {_num(cy['pct'], 1)}%（收盘口径）</small></div>
   <div class="kv">
     <div class="c"><div class="k">距 {cy['ref']} 参考点</div><div class="v">{gap_html}</div></div>
     <div class="c"><div class="k">区间（{cy['from']} 起，{cy['n']} 个交易日）</div><div class="v">{cy['min']:.4f} – {cy['max']:.4f}</div></div>
