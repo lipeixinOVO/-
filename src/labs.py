@@ -163,12 +163,15 @@ VIX_WINDOWS = [("1w", "近 1 周", 5), ("1m", "近 1 月", 21), ("3m", "近 3 �
                ("5y", "近 5 年", 1250)]
 
 
-def vix_lab(rows, max_days=1250):
-    """VIX 恐慌指数：当前值 + 分档 + 多窗口序列 + 分档占比统计。
+def vix_lab(rows, quote=None, max_days=1250):
+    """VIX 恐慌指数：收盘历史 + 分档 + 多窗口序列 + 实时报价。
 
-    口径：CBOE 官方日频收盘（EOD）。VIX 本体**没有可用的免费实时源**
-    （腾讯 usVIX 是僵尸数据，详见 S.vix_daily 的说明），所以这张卡跟运行批刷新。
-    统计窗口固定近 5 年，与最长按钮一致 —— 避免"分位按 10 年算、图上只有 5 年"的错配。
+    两条数据线分工严格，混用会出错：
+      - **收盘历史**（CBOE 官方 CSV）→ 分位、分档占比、7 个窗口走势。每天只多一行。
+      - **实时报价**（CNBC，`quote` 参数）→ 右上角现价与涨跌，前端每分钟自己再拉一次。
+    所以返回里带 `hist`：近 5 年收盘序列（升到 2 位小数的紧凑数组），
+    前端拿到实时价后**自己重算分位与档位**，不然后果是「现价在跳、分位停在昨天」——
+    那个错配 2026-11-20 已经出过一次。
     """
     ser = [(str(r[0]), float(r[1])) for r in rows if float(r[1]) > 0]
     if len(ser) < 260:
@@ -212,6 +215,30 @@ def vix_lab(rows, max_days=1250):
     if not wins:
         raise RuntimeError("VIX 窗口序列为空")
 
+    # 实时值如果拿到了，档位/分位/标签都按实时值先算一遍，
+    # 保证首屏的「现价」和「分档高亮」是自洽的（前端每分钟再自己重算）。
+    live = None
+    if quote and quote.get("last"):
+        lv = float(quote["last"])
+        lz = None
+        for lo, hi, cn, _d in VIX_ZONES:
+            if lo <= lv < hi:
+                lz = (lo, None if hi >= 999 else hi, cn)
+                break
+        if lz is None:
+            lz = (VIX_ZONES[-1][0], None, VIX_ZONES[-1][2])
+        live = {
+            "last": round(lv, 2),
+            "chg": quote.get("chg"),
+            "chg_pct": quote.get("chg_pct"),
+            "prev_close": quote.get("prev_close"),
+            "at": quote.get("at_short") or quote.get("at") or "",
+            "label": lz[2],
+            "zone": [lz[0], lz[1]],
+            "pct": _pct_rank(vals, lv),
+            "source": quote.get("source") or "",
+        }
+
     return {
         "last": round(cur_v, 2),
         "date": cur_d,
@@ -227,6 +254,9 @@ def vix_lab(rows, max_days=1250):
         "to": base[-1][0],
         "days": len(base),
         "win": wins,
+        # 近 5 年收盘序列（紧凑数组）：前端按实时价重算分位与档位用，约 7KB
+        "hist": [round(v, 2) for v in vals],
+        "live": live,
         "source": "CBOE 官方 VIX_History.csv（日频收盘，1990 起）",
     }
 
@@ -359,7 +389,19 @@ def run():
     # 看不出波动率本身的绝对水位，也不能切窗口看历史形态）
     vix_rows = _try(lambda: S.vix_daily(), errors, "VIX日线(CBOE)")
     if vix_rows:
-        v = _try(vix_lab, errors, "VIX恐慌指数", vix_rows)
+        # 实时报价是加分项：拿不到不算错误（前端还会自己再试），只记一条 note，
+        # 免得跑批报告里出现一条看着吓人的红字。
+        vq = None
+        try:
+            vq = S.vix_quote()
+            _p = vq.get("chg_pct")
+            print(f"    · VIX 实时报价 {vq['last']}"
+                  + (f"（{_p:+.2f}%）" if _p is not None else ""), flush=True)
+        except Exception as e:  # noqa: BLE001
+            print(f"    ✗ VIX 实时报价(CNBC): {e}", flush=True)
+            out["notes"].append("VIX 实时报价（CNBC）本期取不到，页面首屏显示最近收盘；"
+                                "浏览器每分钟会自己再试一次")
+        v = _try(vix_lab, errors, "VIX恐慌指数", vix_rows, vq)
         if v:
             out["vix"] = v
 

@@ -131,69 +131,6 @@ body{
 .sigrule{font-size:10.5px;color:var(--dim2);letter-spacing:.02em;line-height:1.95;margin:10px 2px 0}
 @media(max-width:640px){.sig{flex-wrap:wrap}.sig .num{margin-left:0}}
 
-/* ---------- 美股市场情绪（CNN 恐惧与贪婪）----------
-   配色沿用 CNN 原版：红=恐惧、绿=贪婪。这跟 A 股"涨红跌绿"是两套语义，
-   所以色条只表示"情绪温度"，不代表涨跌方向 —— 页面上靠「不参与打分」和区间文字说明。 */
-.mood{display:grid;grid-template-columns:198px 1fr;margin:14px 0 0;
-  background:linear-gradient(180deg,var(--card-a),var(--card-b));
-  border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.mood .ml{padding:15px 17px 16px;border-right:1px solid var(--line)}
-.mood .k{font-size:9.5px;letter-spacing:.16em;color:#6b6e78;text-transform:uppercase}
-.mood .src{font-size:9.5px;color:var(--dim3);margin-top:4px;letter-spacing:.02em}
-.mood .sc{font-size:38px;line-height:1;margin-top:13px;
-  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.mood .sc b{font-weight:500}
-.mood .sc small{font-size:11px;color:var(--dim3);margin-left:2px;font-weight:400;letter-spacing:0}
-.mood .lb{font-size:13.5px;font-weight:600;margin-top:7px;letter-spacing:.08em}
-.mood .delta{font-size:10px;color:var(--dim3);margin-top:11px;line-height:1.75;
-  font-variant-numeric:tabular-nums}
-.mood .mr{padding:15px 17px 14px}
-.mood .gauge{position:relative;margin:6px 0 4px}
-.mood .gb{display:flex;height:9px;border-radius:5px;overflow:hidden}
-.mood .gb i{display:block;height:100%}
-.mood .gp{position:absolute;top:-5px;width:2px;height:19px;background:#14161b;
-  border-radius:2px;transform:translateX(-1px)}
-.mood .gp span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);
-  font-size:10px;font-weight:600;color:#14161b;background:var(--card-a);padding:0 3px;
-  font-variant-numeric:tabular-nums}
-.mood .gt{position:relative;height:13px;margin-top:6px;font-size:9px;color:var(--dim3);
-  font-variant-numeric:tabular-nums}
-.mood .gt span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
-.mood .gt span:first-child{transform:none}
-.mood .gt span:last-child{transform:translateX(-100%)}
-.mood .zl{list-style:none;margin:11px 0 0;padding:0;display:grid;gap:5px;
-  font-size:11.5px;line-height:1.6}
-.mood .zl li{display:flex;gap:9px;color:var(--dim2);padding-left:11px;position:relative}
-.mood .zl li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;
-  border-radius:50%;background:currentColor;opacity:.3}
-.mood .zl li.on{color:#14161b}
-.mood .zl li.on::before{width:6px;height:6px;top:6px;opacity:1;background:var(--mc)}
-.mood .zl b{flex:0 0 auto;font-weight:500;min-width:8.2em}
-.mood .zl li.on b{font-weight:700}
-.mood .zl em{font-style:normal;color:var(--dim3)}
-.mood .zl li.on em{color:#3f434c}
-.mood .drive{font-size:10px;color:var(--dim3);margin-top:10px;padding-top:9px;
-  border-top:1px solid var(--line);letter-spacing:.02em;line-height:1.7}
-.mood .drive b{color:#3f434c;font-weight:500;font-variant-numeric:tabular-nums}
-/* 直连状态：刷新成功会变成"直连 CNN 刷新 20:03:12"，失败就停在初始文案，
-   用户能看出"是在直连"还是"用的跑批快照" */
-.mood .at{font-size:9.5px;color:#2f7d54;margin-top:8px;letter-spacing:.03em;
-  display:flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
-.mood .at::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;
-  opacity:.85;flex:0 0 4px}
-.mood .at.idle{color:var(--dim3)}
-.mood .note{font-size:9.5px;color:var(--dim3);margin-top:9px;line-height:1.75;letter-spacing:.02em}
-.mood .note b{color:#6b6e78;font-weight:500}
-@media(max-width:720px){
-  .mood{grid-template-columns:1fr}
-  .mood .ml{border-right:0;border-bottom:1px solid var(--line);padding-bottom:13px}
-  .mood .sc{font-size:32px;margin-top:9px;display:inline-block;margin-right:12px}
-  .mood .lb{display:inline-block}
-  .mood .zl{font-size:11px}
-  .mood .zl b{min-width:0}
-  .mood .zl li{flex-wrap:wrap;gap:1px 9px}
-}
-
 /* ---------- 宏观条 ---------- */
 .macro{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:var(--r);
@@ -387,6 +324,11 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   padding:1px 5px;border-radius:3px;background:rgba(20,22,27,.07);color:var(--dim2);
   vertical-align:2px;margin-left:6px}
 .lab .lv.on{background:rgba(47,111,176,.12);color:#2f6fb0}
+/* VIX 卡片不在 .lab 里，标签样式单独给一份（结构和 .lab .lv 保持一致，改一边记得改另一边） */
+#vix .lv{display:inline-block;font-size:9px;font-weight:600;letter-spacing:.06em;
+  padding:1px 5px;border-radius:3px;background:rgba(20,22,27,.07);color:var(--dim2);
+  vertical-align:2px;margin-right:6px}
+#vix .lv.on{background:rgba(47,111,176,.12);color:#2f6fb0}
 .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:13px 0 10px}
 .kv .c{border-top:1px solid var(--line);padding-top:8px}
 .kv .k{font-size:9.5px;color:var(--dim2);letter-spacing:.06em;text-transform:uppercase}
@@ -812,73 +754,98 @@ function dayLabel(d, now){
   return ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()] + ' ';
 }
 
-/* ---------- 美股市场情绪：每分钟直连 CNN 检查 ----------
-   CNN 的接口带 Access-Control-Allow-Origin: *，浏览器能直接 fetch（实测 19ms，gzip 后 29KB）。
-   但这个指数本身是**日频**（美东收盘后更新一次），所以多数时候数字不会变 ——
-   每分钟轮询的意义是「它一更新页面就反映」，而不是「数字每分钟在跳」。
-   失败一律静默降级：继续显示服务端渲染的跑批快照，不弹错、不影响别的区块。 */
-function applyMood(score){
-  const m = P.latest && P.latest.mood;
-  if(!m || !m.zones || m.zones.length < 5) return false;
-  let zone = null;
-  for(let i = 0; i < m.zones.length; i++){
-    if(m.zones[i][0] <= score && score <= m.zones[i][1]){ zone = m.zones[i]; break; }
-  }
-  if(!zone) return false;
-
-  const sc = document.getElementById('mood-sc');
-  const lb = document.getElementById('mood-lb');
-  const pin = document.getElementById('mood-pin');
-  if(!sc || !lb || !pin) return false;
-
-  sc.textContent = score.toFixed(1);
-  sc.style.color = zone[3];
-  lb.textContent = zone[2];
-  lb.style.color = zone[3];
-  pin.style.left = (Math.max(0, Math.min(100, score)) / 101 * 100).toFixed(2) + '%';
-  const pinTxt = pin.querySelector('span');
-  if(pinTxt) pinTxt.textContent = Math.round(score);
-
-  const lis = document.querySelectorAll('#mood-zl li');
-  for(let j = 0; j < lis.length; j++){
-    if(+lis[j].getAttribute('data-lo') === zone[0]) lis[j].classList.add('on');
-    else lis[j].classList.remove('on');
-  }
-  return true;
+/* ---------- VIX 实时报价（CNBC，每分钟） ----------
+   数据源选择过程（别再走回头路）：
+   · 腾讯 usVIX / .VIX —— 僵尸数据（时间戳卡 2026-09-14、K 线整段 21.67），不能用
+   · CBOE cdn.cboe.com delayed_quotes —— 有数据，但要求 Referer 来自 cboe.com，
+     浏览器发不出，而且没有 CORS 头 → 前端用不了（服务端能用，见 sources.vix_quote）
+   · Yahoo / stooq / 新浪 / 东财 / westock —— 全无 VIX 本体
+   · **CNBC restQuote** —— 不需要 Referer、回 Access-Control-Allow-Origin: *、
+     realTime=true，实测同一分钟内 29.80→29.85 在动 → 就是它
+   失败退避与实时条一致：1 次→1 分钟、2 次→5 分钟、3 次以上→15 分钟，断网不折腾。 */
+let _vixHist = null, _vixFail = 0, _vixNext = 0, _vixBusy = false;
+function vixHistory(){
+  if(_vixHist) return _vixHist;
+  const el = document.getElementById('vix-hist');
+  if(!el) return null;
+  try{ _vixHist = JSON.parse(el.textContent || '[]'); }catch(e){ _vixHist = []; }
+  return _vixHist;
 }
-
-/* CNN 这个口国内经常连不上。原来每分钟无超时地拉一次，请求会一直挂着占住连接，
-   手机上表现为「页面一直在转、很卡」。现在：8 秒硬超时 + 连续失败退避
-   （1 次→1 分钟，2 次→5 分钟，3 次以上→15 分钟），断了就不折腾。 */
-let _moodFail = 0, _moodNext = 0, _moodBusy = false;
-function refreshMood(){
+function vixZoneOf(v){
+  const zs = document.querySelectorAll('#vix .vz');
+  for(let i = 0; i < zs.length; i++){
+    const lo = parseFloat(zs[i].getAttribute('data-lo'));
+    const hi = parseFloat(zs[i].getAttribute('data-hi'));
+    if(v >= lo && v < hi) return zs[i];
+  }
+  return null;
+}
+function renderVixQuote(v, chg, pct){
+  const val = document.getElementById('vix-live');
+  if(!val) return;
+  val.textContent = v.toFixed(2);
+  const sp = document.getElementById('vix-live-chg');
+  if(sp){
+    const pp = (pct == null || isNaN(pct)) ? '' : '（' + (pct > 0 ? '+' : '') + pct.toFixed(1) + '%）';
+    sp.textContent = (chg > 0 ? '+' : '') + chg.toFixed(2) + pp;
+    sp.style.color = chg > 0 ? '#b4452e' : (chg < 0 ? '#2f7d54' : '#6b6e78');
+  }
+  // 分位用近 5 年收盘序列现算 —— 不这么做就会出现「现价在跳、分位停在昨天」
+  const hist = vixHistory();
+  if(hist && hist.length){
+    let n = 0;
+    for(let i = 0; i < hist.length; i++){ if(hist[i] < v) n++; }
+    const pe = document.getElementById('vix-live-pct');
+    if(pe) pe.textContent = (n / hist.length * 100).toFixed(1) + '%';
+  }
+  const z = vixZoneOf(v);
+  if(z){
+    const col = z.getAttribute('data-col');
+    val.style.color = col;
+    const tag = document.getElementById('vix-tag');
+    if(tag){ tag.textContent = z.getAttribute('data-cn'); tag.style.color = col; }
+    const zs = document.querySelectorAll('#vix .vz');
+    for(let i = 0; i < zs.length; i++){ zs[i].classList.toggle('on', zs[i] === z); }
+  }
+  const at = document.getElementById('vix-live-at');
+  if(at) at.textContent = '实时 ' + hhmm(new Date());
+  const lt = document.getElementById('vix-live-tag');
+  if(lt){ lt.textContent = '实时'; lt.className = 'lv on'; }
+}
+function refreshVix(){
   if(document.hidden) return;
-  if(_moodBusy) return;                                // 上一发还在路上，别并发
-  if(!document.getElementById('mood-sc')) return;      // 本期没这块，不白拉
-  if(Date.now() < _moodNext) return;                   // 还在退避窗口里
-  const at = document.getElementById('mood-at');
+  if(_vixBusy) return;                                 // 上一发还在路上，别并发
+  if(!document.getElementById('vix-live')) return;     // 本期没这张卡，不白拉
+  if(Date.now() < _vixNext) return;                    // 还在退避窗口里
   const ctl = ('AbortController' in window) ? new AbortController() : null;
   const killer = ctl ? setTimeout(function(){ ctl.abort(); }, 8000) : null;
-  const done = function(){ _moodBusy = false; if(killer) clearTimeout(killer); };
-  _moodBusy = true;
-  fetch('https://production.dataviz.cnn.io/index/fearandgreed/graphdata',
+  const done = function(){ _vixBusy = false; if(killer) clearTimeout(killer); };
+  _vixBusy = true;
+  fetch('https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol'
+        + '?symbols=.VIX&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1'
+        + '&output=json&events=1',
         {mode:'cors', cache:'no-store', signal: ctl ? ctl.signal : undefined})
     .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
     .then(function(j){
-      const fg = (j && j.fear_and_greed) || {};
-      if(fg.score == null || !applyMood(+fg.score)) return;
-      _moodFail = 0; _moodNext = 0;
-      if(at){
-        const d = new Date();
-        at.textContent = '直连 CNN 刷新 ' + hhmm(d) + ':' + ('0' + d.getSeconds()).slice(-2);
-        at.className = 'at';
-      }
+      const box = j && j.FormattedQuoteResult && j.FormattedQuoteResult.FormattedQuote;
+      const q = (box && box[0]) || {};
+      const last = parseFloat(q.last);
+      if(!last || isNaN(last)) throw new Error('no last');
+      const prev = parseFloat(q.previous_day_closing);
+      let chg = parseFloat(q.change);
+      if(isNaN(chg)) chg = last - prev;
+      let pc = parseFloat(String(q.change_pct == null ? '' : q.change_pct).replace('%', ''));
+      if(isNaN(pc)) pc = prev ? (chg / prev * 100) : null;
+      renderVixQuote(last, chg, pc);
+      _vixFail = 0; _vixNext = 0;
     })
     .catch(function(){
-      // 跨域被拦 / 超时 / CNN 改接口 → 静默，页面上继续用跑批快照
-      _moodFail += 1;
-      _moodNext = Date.now() + (_moodFail >= 3 ? 900000 : (_moodFail === 2 ? 300000 : 60000));
-      if(at){ at.textContent = '直连 CNN 暂不可用，显示跑批快照'; at.className = 'at idle'; }
+      _vixFail += 1;
+      _vixNext = Date.now() + (_vixFail >= 3 ? 900000 : (_vixFail === 2 ? 300000 : 60000));
+      if(_vixFail >= 2){
+        const at = document.getElementById('vix-live-at');
+        if(at) at.textContent = '直连 CNBC 暂不可用，显示最近收盘';
+      }
     })
     .then(done, done);
 }
@@ -1853,8 +1820,8 @@ render();
 bindEqw();
 bindSzK();
 loadLive();
-// 市场情绪直连 CNN。首次延迟 12 秒，别和首屏的几个请求抢带宽（后台时它自己会跳过）。
-setTimeout(function(){ refreshMood(); }, 12000);
+// VIX 实时报价直连 CNBC。首次延迟 12 秒，别和首屏的几个请求抢带宽（后台时它自己会跳过）。
+setTimeout(function(){ refreshVix(); }, 12000);
 // 超短线擒龙：盘中每分钟直连东财。首次延迟 8 秒（非交易时段会自己跳过）。
 setTimeout(function(){ refreshZhulong(); }, 8000);
 
@@ -1864,9 +1831,9 @@ const _narrow = (window.innerWidth || 1200) < 640;
    原来三个 setInterval 各跑各的：移动端回前台瞬间所有定时器一起补触发，
    叠加页面恢复本身的渲染，就是「一切回来先卡一下」；后台时定时器仍会被
    浏览器周期性唤醒。现在只留一个 60 秒心跳，各任务按自己的周期节流：
-   实时条 60s · CNN 情绪 60s（各自另带失败退避）· 新版本探测 窄屏 10min / 宽屏 3min。
+   实时条 60s · VIX 报价 60s（各自另带失败退避）· 新版本探测 窄屏 10min / 宽屏 3min。
    后台全停；回前台延迟 3 秒补一轮（避开恢复渲染高峰），30 秒内不重复补。 */
-let _hbLive = 0, _hbMood = 0, _hbVer = 0, _hbZl = 0, _hbResume = 0;
+let _hbLive = 0, _hbVix = 0, _hbVer = 0, _hbZl = 0, _hbResume = 0;
 const _VER_EVERY = _narrow ? 600000 : 180000;
 function heartbeat(force){
   if(document.hidden) return;
@@ -1876,7 +1843,7 @@ function heartbeat(force){
     _hbResume = now;
   }
   if(now - _hbLive >= 60000){ _hbLive = now; loadLive(); }
-  if(now - _hbMood >= 60000){ _hbMood = now; refreshMood(); }
+  if(now - _hbVix >= 60000){ _hbVix = now; refreshVix(); }
   if(now - _hbZl >= 60000){ _hbZl = now; refreshZhulong(); }
   if(now - _hbVer >= _VER_EVERY){ _hbVer = now; checkNewer(); }
 }
@@ -2870,87 +2837,6 @@ def _zhulong_html(zl):
         stats, picks_html, tags, themes_html, dragon_html, zb_html, cu_html, method, cap)
 
 
-# 每个区间对应什么情况，一句话。措辞只描述"情绪处在什么状态、历史上多出现在哪"，
-# 不写买卖建议 —— 情绪指数只能说明"大家怎么想"，不能说明"接下来怎么走"。
-MOOD_ZONE_TEXT = {
-    0: "恐慌性抛售、避险情绪拉满。长期看常是布局区，但短期可能继续跌 —— 便宜还能更便宜。",
-    25: "多数人观望，情绪偏谨慎。通常还没到最悲观的时点。",
-    45: "多空接近平衡，情绪本身不构成信号。",
-    56: "追高的人变多，最容易在「再涨一点就加仓」的预期里买在高位。",
-    76: "几乎没人相信会跌，历史上多出现在阶段性顶部附近。",
-}
-
-
-def _mood_html(mood):
-    """美股市场情绪（CNN 恐惧与贪婪）。纯展示，不参与任何标的的打分。"""
-    if not mood:
-        return ""
-    zones = mood.get("zones") or []
-    if not zones:
-        return ""
-
-    sc = float(mood.get("score") or 0)
-    col = mood.get("color") or "#8a8d96"
-    cur_lo = (mood.get("zone") or [0, 0])[0]
-
-    # 色条：每段宽度 = 该区间包含的整数分数个数（0-24 是 25 个，45-55 是 11 个…），
-    # 这样指针位置 score/101 与分段边界严丝合缝，不会出现"指针在恐惧、标签却写极度恐惧"。
-    # 段之间不留 gap：刻度是按容器宽度百分比绝对定位的，留 gap 会让标签和实际边界错开几像素。
-    segs = "".join(f'<i style="flex:{hi - lo + 1};background:{c}"></i>'
-                   for lo, hi, _cn, c in zones)
-    pos = max(0.0, min(100.0, sc)) / 101.0 * 100.0
-
-    # 刻度必须按累计宽度定位，不能用 space-between 均分：
-    # 均分会让 "25" 落在 20% 处，而它真实的边界在 24.75%，读图会以为 25 分还在极度恐惧区。
-    acc, marks = 0, [(0.0, "0")]
-    for lo, hi, _cn, _c in zones:
-        acc += hi - lo + 1
-        marks.append((acc / 101.0 * 100.0, str(hi + 1)))
-    marks[-1] = (100.0, "100")      # 最后一段的右边界是 101 格，标签仍写 100
-    ticks = "".join(f'<span style="left:{p:.2f}%">{t}</span>' for p, t in marks)
-
-    rows = []
-    for lo, hi, cn, c in zones:
-        cls = ' class="on"' if lo == cur_lo else ""
-        rows.append(f'<li{cls} data-lo="{lo}" style="--mc:{c}"><b>{lo}-{hi} {cn}</b>'
-                    f'<em>{_esc(MOOD_ZONE_TEXT.get(lo, ""))}</em></li>')
-
-    def _v(k):
-        v = mood.get(k)
-        return "—" if v is None else f"{v:.1f}"
-
-    parts = mood.get("parts") or []
-    drive = ""
-    if parts:
-        weak = min(parts, key=lambda p: p["score"])
-        strong = max(parts, key=lambda p: p["score"])
-        drive = (f'<div class="drive">往下拉最多：<b>{_esc(weak["name"])} {weak["score"]:.1f}</b>'
-                 f'　·　最不悲观：<b>{_esc(strong["name"])} {strong["score"]:.1f}</b></div>')
-
-    return f"""<div class="mood">
-  <div class="ml">
-    <div class="k">美股市场情绪<i class="fqmini">不参与打分</i></div>
-    <div class="src">CNN Fear &amp; Greed · {_esc(mood.get('date') or '')} 数据</div>
-    <div class="sc"><b id="mood-sc" style="color:{col}">{sc:.1f}</b><small>/100</small></div>
-    <div class="lb" id="mood-lb" style="color:{col}">{_esc(mood.get('label') or '')}</div>
-    <div class="delta" id="mood-delta">昨收 {_v('prev_close')} · 一周前 {_v('prev_week')}<br>
-      一月前 {_v('prev_month')} · 一年前 {_v('prev_year')}</div>
-    <div class="at" id="mood-at">每 60 秒直连 CNN 检查</div>
-  </div>
-  <div class="mr">
-    <div class="gauge">
-      <div class="gb">{segs}</div>
-      <div class="gp" id="mood-pin" style="left:{pos:.2f}%"><span>{sc:.0f}</span></div>
-      <div class="gt">{ticks}</div>
-    </div>
-    <ul class="zl" id="mood-zl">{''.join(rows)}</ul>
-    {drive}
-    <div class="note"><b>CNN 这个指数每天只更新一次</b>（美东收盘后）。这里每分钟检查一次，
-      是为了它一更新页面就能反映，而不是干等下一批跑批。</div>
-  </div>
-</div>"""
-
-
 # VIX 分档配色：低到高 = 绿 → 黄 → 红（业界惯例，表达"恐慌程度"而不是涨跌）
 VIX_COL = {0: "#2f7d54", 12: "#5f8a3a", 20: "#a8752a", 30: "#b4512f", 40: "#8c2f1f"}
 # 图上画的水平参考线：20 是"警惕"起点、30 是"恐慌"起点
@@ -2960,16 +2846,24 @@ VIX_REFS = ((20.0, "20 警惕", "#a8752a"), (30.0, "30 恐慌", "#b4512f"))
 def _vix_html(vix):
     """VIX 恐慌指数卡片（替代原 CNN 恐惧与贪婪）。
 
-    完全复用 .chart.eqw 那套：服务端把 7 个窗口的 SVG 一次性画好，
-    前端 bindEqw() 只切显隐 —— 所以这块**不需要任何新增 JS**。
+    图表部分完全复用 .chart.eqw 那套：服务端把 7 个窗口的 SVG 一次性画好，
+    前端 bindEqw() 只切显隐。
 
-    诚实边界：VIX 本体没有可用的免费实时源，这张卡是日频收盘口径。
+    **实时部分**（右上角现价/涨跌/分位/档位高亮）走 CNBC 报价，前端每分钟重算：
+    CBOE 那张历史 CSV 是日频的，只负责走势与分档占比；两条线分工不能混。
     """
     if not vix or not vix.get("win"):
         return ""
-    col = VIX_COL.get((vix.get("zone") or [0])[0], "#8a8d96")
-    label = _esc(vix.get("label") or "")
-    pct = vix.get("pct")
+    live = vix.get("live") or {}
+    has_live = bool(live.get("last"))
+    # 有实时值就先用实时值渲染首屏，保证「现价 / 分档高亮 / 分位」三者同源自洽
+    shown = live.get("last") if has_live else vix["last"]
+    col = VIX_COL.get(((live.get("zone") if has_live else vix.get("zone")) or [0])[0], "#8a8d96")
+    label = _esc((live.get("label") if has_live else vix.get("label")) or "")
+    pct = live.get("pct") if has_live else vix.get("pct")
+    cur_chg = live.get("chg") if has_live else vix.get("chg")
+    cur_chg_pct = live.get("chg_pct") if has_live else vix.get("chg_pct")
+    cur_zone_lo = ((live.get("zone") if has_live else vix.get("zone")) or [None])[0]
 
     def _ch(v, p):
         if v is None:
@@ -3008,40 +2902,52 @@ def _vix_html(vix):
     zones = []
     for z in vix.get("zones") or []:
         zc = VIX_COL.get(z["lo"], "#8a8d96")
-        ison = (vix.get("zone") or [None])[0] == z["lo"]
+        ison = cur_zone_lo == z["lo"]
         rng = f'{z["lo"]}–{z["hi"]}' if z["hi"] is not None else f'{z["lo"]}+'
         zones.append(
-            f'<div class="vz{" on" if ison else ""}" style="--vc:{zc}">'
+            f'<div class="vz{" on" if ison else ""}" data-lo="{z["lo"]}"'
+            f' data-hi="{z["hi"] if z["hi"] is not None else 999}"'
+            f' data-cn="{_esc(z["cn"])}" data-col="{zc}" style="--vc:{zc}">'
             f'<div class="vzh"><b>{rng} {_esc(z["cn"])}</b>'
             f'<i>近 5 年占 {z["share"]:.1f}% · {z["n"]} 天</i></div>'
             f'<div class="vzd">{_esc(z["desc"])}</div></div>')
 
-    chg_s = _ch(vix.get("chg"), vix.get("chg_pct"))
+    chg_s = _ch(cur_chg, cur_chg_pct)
     pct_txt = f"{pct:.1f}%" if pct is not None else "—"
+    tag_txt = "实时" if has_live else "收盘"
+    tag_cls = "lv on" if has_live else "lv"
+    at_txt = _esc(live.get("at") or "") if has_live else f"{_esc(vix.get('date') or '')} 收盘"
+
+    # 前端按实时价重算分位用的近 5 年收盘序列（约 7KB）。json.dumps 放 f-string 里
+    # 容易和花括号打架，先算好再插。
+    hist_js = json.dumps(vix.get("hist") or [], separators=(",", ":"))
 
     return f"""<div class="chart eqw" id="vix">
   <div class="eqhead">
     <div>
-      <div class="t">VIX 恐慌指数<span class="vixlab" style="background:rgba(20,22,27,.06);color:{col}">{label}</span></div>
-      <div class="sub">CBOE 波动率指数 · 标普500未来 30 天<b>隐含波动率</b> · 数字越高＝市场越怕 · <b>日频收盘</b> · 不参与打分
+      <div class="t">VIX 恐慌指数<span class="vixlab" id="vix-tag" style="background:rgba(20,22,27,.06);color:{col}">{label}</span></div>
+      <div class="sub">CBOE 波动率指数 · 标普500未来 30 天<b>隐含波动率</b> · 数字越高＝市场越怕 · <b>盘中每分钟刷新</b> · 不参与打分
         <div style="margin-top:3px">换掉了原来的 CNN 恐惧与贪婪：那个只有 0–100 综合分，看不出波动率本身的绝对水位，也没法切窗口看形态</div>
       </div>
     </div>
     <div class="eqnums">
-      <div class="r">最新收盘</div>
-      <div class="vixnow" style="color:{col}">{vix['last']:.2f}{chg_s}</div>
-      <div>{_esc(vix.get('date') or '')} · 近 5 年分位 <b>{pct_txt}</b></div>
+      <div class="r"><span class="{tag_cls}" id="vix-live-tag">{tag_txt}</span>现价</div>
+      <div class="vixnow" style="color:{col}"><span id="vix-live">{shown:.2f}</span><span id="vix-live-chg">{chg_s}</span></div>
+      <div><span id="vix-live-at">{at_txt}</span> · 近 5 年分位 <b id="vix-live-pct">{pct_txt}</b></div>
     </div>
   </div>
   <div class="chartbar"><div class="btns">{''.join(btns)}</div>
-    <div class="delta"><span class="lb">日频收盘</span>区间涨跌按首尾收盘价算</div></div>
+    <div class="delta"><span class="lb">走势＝收盘</span>区间统计按首尾收盘价算</div></div>
   {''.join(panes)}
   <div class="vixzones">{''.join(zones)}</div>
   <div class="cap">近 5 年（{vix['from']} → {vix['to']}，{vix['days']} 个交易日）中位数 <b>{vix['median']:.2f}</b>、
     均值 <b>{vix['mean']:.2f}</b>。分档占比是把每个交易日的收盘值归入一档数出来的，是<b>已经发生过的分布</b>，
-    不是对未来概率的预测。数据源：{_esc(vix.get('source') or '')}。
-    <b>VIX 本体没有可用的免费实时源</b>（腾讯 .VIX 是僵尸数据、Yahoo 与 CBOE 延迟接口均被拒），
-    所以这张卡跟运行批刷新，不随上面的行情条每分钟跳动 —— 也不拿 VIXY 期货 ETF 冒充。</div>
+    不是对未来概率的预测。
+    <br><b>口径分工</b>：右上角现价与分位走 CNBC 报价（{_esc(live.get('source') or 'CNBC')}），
+    浏览器每分钟直连重算一次；曲线与分档占比走 {_esc(vix.get('source') or '')}（<b>日频</b>，跑批更新）。
+    两条线不同频，所以曲线末端停在最近收盘、现价可能已经走开 —— 这不是 bug。
+    不拿 VIXY / VXX 期货 ETF 冒充 VIX（那是带溢价的另一只标的）。
+    <script type="application/json" id="vix-hist">{hist_js}</script></div>
 </div>"""
 
 
@@ -3196,22 +3102,19 @@ def _js_payload(payload):
     p = dict(payload)
     latest = dict(p.get("latest") or {})
     labs = dict(latest.get("labs") or {})
-    for k in ("div_anchor", "cyb_ratio", "equity_long"):
+    for k in ("div_anchor", "cyb_ratio", "equity_long", "vix"):
         if isinstance(labs.get(k), dict):
             blk = dict(labs[k])
             blk.pop("series", None)
+            # VIX 的近 5 年收盘序列（1250 个数）已经单独内联进 #vix-hist 那个
+            # <script type="application/json">，再塞进下面这份 JSON 就是白下载一遍
+            blk.pop("hist", None)
             if isinstance(blk.get("win"), dict):
                 blk["win"] = {kk: {x: y for x, y in vv.items() if not x.startswith("pts")}
                               for kk, vv in blk["win"].items()}
             labs[k] = blk
     if labs:
         latest["labs"] = labs
-    # 情绪指数的 251 个历史点只给服务端判断用，前端一行都不读（图是服务端画的），
-    # 内联进去等于每次打开白下载 5KB
-    if isinstance(latest.get("mood"), dict):
-        m = dict(latest["mood"])
-        m.pop("history", None)
-        latest["mood"] = m
     # 指数技术位：K 线 600+ 根只给服务端画 SVG 用，前端一行都不读
     # （图是服务端画好的）。前端只读各指数 fib 7 条线 + 收盘价，用来每分钟重算压力/支撑距离。
     if isinstance(latest.get("sz_kline"), list):

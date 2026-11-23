@@ -299,10 +299,17 @@ def tx_kline(secid):
 def cn_ohlc(symbol):
     """A 股指数日 K（OHLC）：[(date, open, close, high, low)]。symbol 例：sz399001。
 
-    腾讯 fqkline 接口的 day 行 = [date, open, close, high, low, volume, ...]，
-    字段顺序与 qt.gtimg.cn 实时快照的今开/收盘/最高/最低逐一核对过。
+    两个源按顺序试（2026-11-23 补的新浪兜底）：
+      1. 腾讯 fqkline（首选，字段顺序与 qt.gtimg.cn 实时快照的今开/收盘/最高/最低逐一核对过）。
+         它的 day 行 = [date, open, close, high, low, volume, ...]。
+      2. **新浪** CN_MarketData.getKLineData（`scale=240` 即日线）。
+         加它是因为 2026-11-23 实测腾讯 web.ifzq.gtimg.cn 对所有 param 组合都回
+         HTTP **501 + JS 反爬挑战页**（`window.btoa(...)` 跳转），四个指数的技术位图
+         因此整块变空、而且 szkline.run() 是"单个失败就跳过"，页面上看不出来 ——
+         属于静默降级，必须有兜底。
+    新浪返回 day/open/high/low/close 是**字符串**，且字段顺序与我们的元组不同，注意别弄反。
     """
-    def _go():
+    def _tx():
         url = ("https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
                f"?param={symbol},day,,,2000,qfq")
         js = fetch_json(url, timeout=25, retries=3)
@@ -314,9 +321,32 @@ def cn_ohlc(symbol):
                 out.append([r[0], float(r[1]), float(r[2]), float(r[3]), float(r[4])])
             except (IndexError, TypeError, ValueError):
                 continue
+        return out
+
+    def _sina():
+        url = ("https://money.finance.sina.com.cn/quotes_service/api/json_v2.php/"
+               f"CN_MarketData.getKLineData?symbol={symbol}&scale=240&ma=no&datalen=2000")
+        rows = json.loads(fetch(url, timeout=25, headers=SINA_H))
+        out = []
+        for r in rows or []:
+            try:
+                out.append([r["day"], float(r["open"]),
+                            float(r["close"]), float(r["high"]), float(r["low"])])
+            except (KeyError, TypeError, ValueError):
+                continue
+        return out
+
+    def _go():
+        out = []
+        try:
+            out = _tx()
+        except Exception:  # noqa: BLE001
+            out = []
+        if not out:
+            out = _sina()
         out.sort(key=lambda x: x[0])
         if not out:
-            raise RuntimeError(f"cn_ohlc 无数据: {symbol}")
+            raise RuntimeError(f"cn_ohlc 无数据: {symbol}（腾讯/新浪均失败）")
         return out
     return [tuple(x) for x in _cached(f"ohlc_{symbol}", _go)]
 
@@ -624,14 +654,62 @@ def cnn_fear_greed():
     return _cached("cnn_fng", _go)
 
 
+def vix_quote():
+    """VIX 本体报价（CNBC quote API）。返回 dict，**不缓存** —— 实时数据必须每次现拉。
+
+    2026-11-23 实测可用的那条路（此前"VIX 没有免费实时源"的结论要修正）：
+      https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols=.VIX&...
+
+    三条关键属性，缺一不可：
+      1. **不需要 Referer**。CBOE 的 cdn.cboe.com/api/global/delayed_quotes/quotes/_VIX.json
+         确实能返回数据（current_price 等字段很全），但它要求 Referer 必须来自 cboe.com，
+         否则 403 —— 浏览器发不出这种 Referer，前端用不了。CNBC 不带 Referer 就是 200。
+      2. **回 Access-Control-Allow-Origin: ***，浏览器 fetch 可以直连轮询。
+      3. `realTime` 为 true，且 `last`/`last_time` 每次请求都在前进
+         （实测同一分钟内 29.80 → 29.85，时间戳 06:13:01 → 06:15:01）。
+
+    仍然拿不到的东西：腾讯 usVIX（僵尸数据，时间戳卡 2026-09-14、K 线整段 21.67）、
+    Yahoo ^VIX（403）、stooq（JS 验证页）、新浪/东财/westock（无 VIX 本体）。
+    **绝不拿 VIXY / VXX 期货 ETF 冒充 VIX** —— 那是带溢价的另一只标的。
+
+    返回值：{"last", "chg", "chg_pct", "prev_close", "at", "real_time", "source"}
+    """
+    url = ("https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol"
+           "?symbols=.VIX&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1"
+           "&output=json&events=1")
+    j = json.loads(fetch(url, timeout=12))
+    q = j["FormattedQuoteResult"]["FormattedQuote"][0]
+    last = float(q["last"])
+    prev = float(q["previous_day_closing"])
+    chg = q.get("change")
+    chg = (last - prev) if chg in (None, "") else float(chg)
+    pct = q.get("change_pct")
+    if pct in (None, ""):
+        pct = (chg / prev * 100.0) if prev else None
+    else:
+        pct = float(str(pct).replace("%", ""))
+    return {
+        "last": round(last, 2),
+        "chg": round(chg, 2),
+        "chg_pct": None if pct is None else round(pct, 2),
+        "prev_close": round(prev, 2),
+        "at": q.get("last_time") or "",
+        "at_short": q.get("last_timedate") or "",
+        "mkt": q.get("curmktstatus") or "",
+        "real_time": bool(q.get("realTime")),
+        "source": "CNBC 报价（quote.cnbc.com，CORS 开放，前端每分钟直连）",
+    }
+
+
 def vix_daily():
     """CBOE 官方 VIX 历史日线（1990 起，EOD 收盘价）。返回 [[YYYY-MM-DD, close], ...] 升序。
 
-    为什么不用腾讯 usVIX：那条接口是**僵尸数据** —— 时间戳长期停在 2026-09-14、
+    这条只负责**历史**（分位、分档占比、7 个窗口的走势）—— 它每天只多一行，
+    拿来做实时是错的。实时报价走上面的 vix_quote()。
+
+    为什么不用腾讯 usVIX 做历史：那条接口是**僵尸数据** —— 时间戳长期停在 2026-09-14、
     涨跌幅恒为 0、K 线是整段 21.67 的占位值。拿它当 VIX 会直接错 40%（实测同期 CBOE
-    收盘 35.89）。CBOE 延迟报价 JSON 返回 403，Yahoo 403，stooq 404，新浪/东财/westock
-    全无 VIX 本体。结论：**VIX 本体没有可用的免费实时源**，本站只做日频收盘口径，
-    并在页面上如实标注，不拿 VIXY（期货 ETF，价格带溢价）冒充。
+    收盘 35.89）。CBOE 官方 CSV 是唯一拿到 1990 起完整历史的免费渠道。
     """
     def _go():
         url = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"

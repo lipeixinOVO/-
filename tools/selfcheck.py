@@ -174,9 +174,21 @@ else:
     win = vix.get("win") or {}
     for k in ("1w", "1m", "3m", "6m", "1y", "3y", "5y"):
         if k not in win:
-            warn(f"VIX 缺「{k}»窗口，对应按钮会少一个")
-        elif len(win[k].get("pts") or []) < 2:
-            bad(f"VIX 窗口 {k} 数据点不足 2 个，画不出线")
+            warn(f"VIX 缺「{k}」窗口，对应按钮会少一个")
+        # 注意：这里读的是页面内联的 __DATA__，窗口里的点序列（pts）已经被
+        # _js_payload 刻意剥掉了（图是服务端画好的 SVG，前端不读点）。
+        # 所以只能校验「窗口存在 + 天数够」，不能校验 pts —— 校验 pts 会永远报假失败。
+        elif (win[k].get("days") or 0) < 2:
+            bad(f"VIX 窗口 {k} 只有 {win[k].get('days')} 个交易日，画不出线")
+    # 实时报价是加分项：有就必须自洽（现价落在它自己声明的档内）
+    lv = vix.get("live")
+    if lv:
+        llast = lv.get("last")
+        if not isinstance(llast, (int, float)) or not (5 <= llast <= 200):
+            bad(f"VIX 实时报价异常 {llast}")
+        lz = lv.get("zone")
+        if lz and not (lz[0] <= (llast or -1) and (lz[1] is None or llast < lz[1])):
+            bad(f"VIX 实时 {llast} 不在声明的分档 {lz[0]}-{lz[1]} 内")
 
 # ---------- 5. 曲线与当天一致性 ----------
 # payload.history 每项只有 trade_date（画 x 轴用），分数末点在 series 里
