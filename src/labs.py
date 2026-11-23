@@ -147,6 +147,90 @@ def cyb_ratio(cyb_rows, div_rows, cap=620):
     }
 
 
+# VIX 分档：12/20/30/40 是市场约定俗成的边界（不是拟合结果）；
+# 各档占比由真实数据算出，页面上不写死任何百分比。
+VIX_ZONES = [
+    (0, 12, "极度平静", "低迷到反常：几乎没人为下跌买保险，风险往往在悄悄积累"),
+    (12, 20, "平静", "长期常态区间（VIX 长期中位数就在这附近），情绪本身不构成信号"),
+    (20, 30, "警惕", "波动开始放大，资金在买保护，通常伴随指数回调"),
+    (30, 40, "恐慌", "恐慌性抛售，避险需求集中释放；历史上多是分批布局区域"),
+    (40, 999, "极度恐慌", "极端事件级别（2008 危机、2020-03 疫情、2024-08 日元套息平仓）"),
+]
+
+# 按钮窗口按交易日算：5≈1周、21≈1月、63≈1季、126≈半年、245≈1年、735≈3年、1250≈5年
+VIX_WINDOWS = [("1w", "近 1 周", 5), ("1m", "近 1 月", 21), ("3m", "近 3 月", 63),
+               ("6m", "近 6 月", 126), ("1y", "近 1 年", 245), ("3y", "近 3 年", 735),
+               ("5y", "近 5 年", 1250)]
+
+
+def vix_lab(rows, max_days=1250):
+    """VIX 恐慌指数：当前值 + 分档 + 多窗口序列 + 分档占比统计。
+
+    口径：CBOE 官方日频收盘（EOD）。VIX 本体**没有可用的免费实时源**
+    （腾讯 usVIX 是僵尸数据，详见 S.vix_daily 的说明），所以这张卡跟运行批刷新。
+    统计窗口固定近 5 年，与最长按钮一致 —— 避免"分位按 10 年算、图上只有 5 年"的错配。
+    """
+    ser = [(str(r[0]), float(r[1])) for r in rows if float(r[1]) > 0]
+    if len(ser) < 260:
+        raise RuntimeError(f"VIX 可用交易日不足（{len(ser)}）")
+    ser.sort()
+    cur_d, cur_v = ser[-1]
+    prev_v = ser[-2][1]
+    chg = cur_v - prev_v
+    chg_pct = (chg / prev_v * 100.0) if prev_v else None
+
+    base = ser[-max_days:]
+    vals = [v for _d, v in base]
+
+    shares, cur_zone = [], None
+    for lo, hi, cn, desc in VIX_ZONES:
+        n = sum(1 for v in vals if lo <= v < hi)
+        item = {"lo": lo, "hi": (None if hi >= 999 else hi), "cn": cn, "desc": desc,
+                "share": round(100.0 * n / len(vals), 1), "n": n}
+        shares.append(item)
+        if cur_zone is None and lo <= cur_v < hi:
+            cur_zone = item
+
+    wins = {}
+    for k, nm, nd in VIX_WINDOWS:
+        seg = ser[-nd:] if len(ser) > nd else ser[:]
+        if len(seg) < 2:
+            continue
+        first_v = seg[0][1]
+        wins[k] = {
+            "name": nm,
+            "days": len(seg),
+            "from": seg[0][0],
+            "to": seg[-1][0],
+            "lo": round(min(v for _d, v in seg), 2),
+            "hi": round(max(v for _d, v in seg), 2),
+            "avg": round(sum(v for _d, v in seg) / len(seg), 2),
+            "chg": round(cur_v - first_v, 2),
+            "chg_pct": round((cur_v / first_v - 1) * 100.0, 1) if first_v else None,
+            "pts": _downsample(seg, 150),
+        }
+    if not wins:
+        raise RuntimeError("VIX 窗口序列为空")
+
+    return {
+        "last": round(cur_v, 2),
+        "date": cur_d,
+        "chg": round(chg, 2),
+        "chg_pct": None if chg_pct is None else round(chg_pct, 1),
+        "label": cur_zone["cn"] if cur_zone else shares[-1]["cn"],
+        "zone": [cur_zone["lo"], cur_zone["hi"]] if cur_zone else None,
+        "pct": _pct_rank(vals, cur_v),
+        "median": round(sorted(vals)[len(vals) // 2], 2),
+        "mean": round(sum(vals) / len(vals), 2),
+        "zones": shares,
+        "from": base[0][0],
+        "to": base[-1][0],
+        "days": len(base),
+        "win": wins,
+        "source": "CBOE 官方 VIX_History.csv（日频收盘，1990 起）",
+    }
+
+
 def equity_long(h300_rows, market_rows, mkt_tr_rows=None, start="2004-12-31"):
     """沪深300全收益 vs 全市场，**日频**（对齐到共同交易日），按窗口分别抽稀。
 
@@ -270,6 +354,14 @@ def run():
         v = _try(equity_long, errors, "长期双线", h300, market, mkt_tr)
         if v:
             out["equity_long"] = v
+
+    # VIX 恐慌指数（替代原来的 CNN 恐惧与贪婪：后者只有 0-100 综合分，
+    # 看不出波动率本身的绝对水位，也不能切窗口看历史形态）
+    vix_rows = _try(lambda: S.vix_daily(), errors, "VIX日线(CBOE)")
+    if vix_rows:
+        v = _try(vix_lab, errors, "VIX恐慌指数", vix_rows)
+        if v:
+            out["vix"] = v
 
     out["notes"].append("万得全A(800707.WI) 是 Wind 商业数据，公开接口取不到（东财/雪球/同花顺/腾讯/新浪全试过），"
                         "黑线改用中证全指 000985 价格指数近似")

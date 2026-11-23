@@ -147,23 +147,36 @@ else:
         if t.endswith(":00") or t.endswith(":30"):
             warn(f"cron 时刻 {t} 踩在整点/半点上，GitHub 高峰期容易丢触发")
 
-# ---------- 4d. 美股市场情绪（纯展示，缺了不影响分数） ----------
-mood = latest.get("mood")
-if not mood:
-    warn("没有 CNN 恐惧与贪婪数据（仅展示项；该区块会自动隐藏，其它内容不受影响）")
+# ---------- 4d. VIX 恐慌指数（纯展示，缺了不影响分数） ----------
+vix = (latest.get("labs") or {}).get("vix")
+if not vix:
+    warn("没有 VIX 恐慌指数数据（仅展示项；该区块会自动隐藏，其它内容不受影响）")
 else:
-    s = mood.get("score")
-    if not isinstance(s, (int, float)) or not (0 <= s <= 100):
-        bad(f"情绪指数分数异常 {s}")
-    if not mood.get("label") or not mood.get("zones"):
-        bad("情绪指数缺 label / zones，页面上的区间条画不出来")
+    last = vix.get("last")
+    if not isinstance(last, (int, float)) or not (5 <= last <= 120):
+        bad(f"VIX 最新值异常 {last}")
+    if not vix.get("label") or not vix.get("zones"):
+        bad("VIX 缺 label / zones，页面上的分档说明画不出来")
     else:
-        lo, hi = mood.get("zone") or [-1, -1]
-        # 分数必须落在它自己声明的区间里：否则指针停在"恐惧"、文字却写"极度恐惧"，自相矛盾
-        if not (lo <= (s or -1) <= hi):
-            bad(f"情绪指数 {s} 不在声明的区间 {lo}-{hi} 内")
-        if len(mood.get("zones") or []) != 5:
-            bad(f"情绪指数区间应为 5 档，实际 {len(mood.get('zones') or [])}")
+        zs = vix.get("zones") or []
+        if len(zs) != 5:
+            bad(f"VIX 分档应为 5 档，实际 {len(zs)}")
+        # 当前值必须落在它自己声明的那一档里，否则标签和数值自相矛盾
+        z = vix.get("zone")
+        if not z:
+            bad("VIX 当前值没有落在任何分档内")
+        elif not (z[0] <= (last or -1) and (z[1] is None or last < z[1])):
+            bad(f"VIX {last} 不在声明的分档 {z[0]}-{z[1]} 内")
+        # 各档占比之和必须约等于 100%
+        tot = sum(x.get("share") or 0 for x in zs)
+        if abs(tot - 100) > 0.6:
+            bad(f"VIX 分档占比合计 {tot:.2f}%，偏离 100% 过多（分档边界有重叠或漏档）")
+    win = vix.get("win") or {}
+    for k in ("1w", "1m", "3m", "6m", "1y", "3y", "5y"):
+        if k not in win:
+            warn(f"VIX 缺「{k}»窗口，对应按钮会少一个")
+        elif len(win[k].get("pts") or []) < 2:
+            bad(f"VIX 窗口 {k} 数据点不足 2 个，画不出线")
 
 # ---------- 5. 曲线与当天一致性 ----------
 # payload.history 每项只有 trade_date（画 x 轴用），分数末点在 series 里

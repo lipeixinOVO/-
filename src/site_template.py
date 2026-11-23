@@ -338,7 +338,7 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .chart svg{width:100%;height:auto;display:block}
 /* 图表工具条：窗口切换 + 「较上一期」差值（让每天的变化看得出来） */
 .chartbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 2px 11px}
-.chartbar .btns{display:flex;gap:6px}
+.chartbar .btns{display:flex;gap:6px;flex-wrap:wrap}
 .chartbar button{font-family:inherit;font-size:11.5px;letter-spacing:.05em;padding:5px 14px;
   border-radius:20px;border:1px solid var(--line-2);background:transparent;color:#3d4048;
   cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease;
@@ -471,6 +471,33 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .eqnums .r{color:var(--dim3);font-size:9.5px;letter-spacing:.1em;margin-bottom:2px}
 /* 服务端画两份画布：宽屏用 1060 单位画布、窄屏用 430 —— 手机上字号不会被缩成 3px */
 .eqw .v-w{display:block} .eqw .v-n{display:none}
+
+/* ---------- VIX 恐慌指数 ---------- */
+.vixlab{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.05em;
+  padding:1px 8px;border-radius:3px;margin-left:8px;vertical-align:2px}
+.vixnow{font-size:26px;font-weight:600;line-height:1.15;letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;margin:1px 0 2px}
+.vixnow span{font-size:12px;font-weight:600;margin-left:8px;letter-spacing:0}
+.vixmeta{font-size:10px;color:var(--dim2);letter-spacing:.02em;margin:0 2px 6px;
+  font-variant-numeric:tabular-nums}
+.vixzones{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin-top:14px;
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--line)}
+.vz{background:var(--card-a);padding:9px 11px 10px;position:relative}
+.vz::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--vc);opacity:.5}
+.vz.on{background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(248,245,238,.9))}
+.vz.on::before{opacity:1;width:4px}
+.vzh{display:flex;flex-direction:column;gap:2px}
+.vzh b{font-size:11px;font-weight:600;color:#14161b;letter-spacing:.01em}
+.vz.on .vzh b{color:var(--vc)}
+.vzh i{font-style:normal;font-size:9px;color:var(--dim3);letter-spacing:.02em;
+  font-variant-numeric:tabular-nums}
+.vzd{font-size:9.5px;color:var(--dim2);line-height:1.6;margin-top:5px;letter-spacing:.01em}
+@media (max-width:760px){
+  .vixzones{grid-template-columns:1fr 1fr}
+  .vz:last-child{grid-column:1 / -1}
+  .vixnow{font-size:22px}
+}
 @media (max-width:760px){
   .eqw .v-w{display:none} .eqw .v-n{display:block}
   .eqhead{align-items:flex-start}
@@ -2047,7 +2074,11 @@ def _xlabels(pts, maxn=6):
         for j, r in enumerate(pts):
             idx.setdefault(r[0][:7], j)
         keys = sorted(idx)
-        step = max(1, (len(keys) - 1) // 4)
+        # 密度必须跟着 maxn 走：原来这里写死 ÷4，窄屏 430px 画布上照样吐 6 个
+        # 「26-02」这种 5 字符标签，挤成一片（2026-11-22 VIX 卡片报障）。
+        # maxn≥5 时仍走 ÷4，保持其它图原有的密度不变。
+        div = 4 if maxn >= 5 else max(1, maxn)
+        step = max(1, (len(keys) - 1) // div)
         pick = keys[::step]
         if pick[-1] != keys[-1]:
             pick.append(keys[-1])
@@ -2920,6 +2951,100 @@ def _mood_html(mood):
 </div>"""
 
 
+# VIX 分档配色：低到高 = 绿 → 黄 → 红（业界惯例，表达"恐慌程度"而不是涨跌）
+VIX_COL = {0: "#2f7d54", 12: "#5f8a3a", 20: "#a8752a", 30: "#b4512f", 40: "#8c2f1f"}
+# 图上画的水平参考线：20 是"警惕"起点、30 是"恐慌"起点
+VIX_REFS = ((20.0, "20 警惕", "#a8752a"), (30.0, "30 恐慌", "#b4512f"))
+
+
+def _vix_html(vix):
+    """VIX 恐慌指数卡片（替代原 CNN 恐惧与贪婪）。
+
+    完全复用 .chart.eqw 那套：服务端把 7 个窗口的 SVG 一次性画好，
+    前端 bindEqw() 只切显隐 —— 所以这块**不需要任何新增 JS**。
+
+    诚实边界：VIX 本体没有可用的免费实时源，这张卡是日频收盘口径。
+    """
+    if not vix or not vix.get("win"):
+        return ""
+    col = VIX_COL.get((vix.get("zone") or [0])[0], "#8a8d96")
+    label = _esc(vix.get("label") or "")
+    pct = vix.get("pct")
+
+    def _ch(v, p):
+        if v is None:
+            return "—"
+        c = "#b4452e" if v > 0 else ("#2f7d54" if v < 0 else "#6b6e78")
+        pt = f"（{p:+.1f}%）" if p is not None else ""
+        return f'<span style="color:{c};font-weight:600">{v:+.2f}{pt}</span>'
+
+    order = ["1w", "1m", "3m", "6m", "1y", "3y", "5y"]
+    wins = vix["win"]
+    default_k = "1y" if "1y" in wins else order[0]
+    btns, panes = [], []
+    for k in order:
+        w = wins.get(k)
+        pts = (w or {}).get("pts") or []
+        if len(pts) < 2:
+            continue
+        layers = [{"pts": [(i, r[1]) for i, r in enumerate(pts)], "color": col, "width": 2.1}]
+        refs = [(lab, y, c) for y, lab, c in VIX_REFS if w["lo"] <= y <= w["hi"]]
+        wide = _svg(layers, w=1060, h=306, refs=refs, xlabels=_xlabels(pts, maxn=10),
+                    pad=(48, 60, 18, 26), fs=10, ends=True)
+        narrow = _svg(layers, w=430, h=296, refs=refs, xlabels=_xlabels(pts, maxn=3),
+                      pad=(46, 14, 16, 24), fs=11)
+        on = (k == default_k)
+        bcls = ' class="on"' if on else ""
+        btns.append(f'<button type="button" data-k="{k}"{bcls}>{w["name"]}</button>')
+        panes.append(
+            f'<div class="sw" data-k="{k}"{"" if on else " hidden"}>'
+            f'<div class="vixmeta">{w["from"]} → {w["to"]} · {w["days"]} 个交易日 · '
+            f'区间 {w["lo"]:.2f}–{w["hi"]:.2f} · 均值 {w["avg"]:.2f} · 区间涨跌 {_ch(w["chg"], w["chg_pct"])}</div>'
+            f'<div class="v-w">{wide}</div><div class="v-n">{narrow}</div></div>')
+
+    if not panes:
+        return ""
+
+    zones = []
+    for z in vix.get("zones") or []:
+        zc = VIX_COL.get(z["lo"], "#8a8d96")
+        ison = (vix.get("zone") or [None])[0] == z["lo"]
+        rng = f'{z["lo"]}–{z["hi"]}' if z["hi"] is not None else f'{z["lo"]}+'
+        zones.append(
+            f'<div class="vz{" on" if ison else ""}" style="--vc:{zc}">'
+            f'<div class="vzh"><b>{rng} {_esc(z["cn"])}</b>'
+            f'<i>近 5 年占 {z["share"]:.1f}% · {z["n"]} 天</i></div>'
+            f'<div class="vzd">{_esc(z["desc"])}</div></div>')
+
+    chg_s = _ch(vix.get("chg"), vix.get("chg_pct"))
+    pct_txt = f"{pct:.1f}%" if pct is not None else "—"
+
+    return f"""<div class="chart eqw" id="vix">
+  <div class="eqhead">
+    <div>
+      <div class="t">VIX 恐慌指数<span class="vixlab" style="background:rgba(20,22,27,.06);color:{col}">{label}</span></div>
+      <div class="sub">CBOE 波动率指数 · 标普500未来 30 天<b>隐含波动率</b> · 数字越高＝市场越怕 · <b>日频收盘</b> · 不参与打分
+        <div style="margin-top:3px">换掉了原来的 CNN 恐惧与贪婪：那个只有 0–100 综合分，看不出波动率本身的绝对水位，也没法切窗口看形态</div>
+      </div>
+    </div>
+    <div class="eqnums">
+      <div class="r">最新收盘</div>
+      <div class="vixnow" style="color:{col}">{vix['last']:.2f}{chg_s}</div>
+      <div>{_esc(vix.get('date') or '')} · 近 5 年分位 <b>{pct_txt}</b></div>
+    </div>
+  </div>
+  <div class="chartbar"><div class="btns">{''.join(btns)}</div>
+    <div class="delta"><span class="lb">日频收盘</span>区间涨跌按首尾收盘价算</div></div>
+  {''.join(panes)}
+  <div class="vixzones">{''.join(zones)}</div>
+  <div class="cap">近 5 年（{vix['from']} → {vix['to']}，{vix['days']} 个交易日）中位数 <b>{vix['median']:.2f}</b>、
+    均值 <b>{vix['mean']:.2f}</b>。分档占比是把每个交易日的收盘值归入一档数出来的，是<b>已经发生过的分布</b>，
+    不是对未来概率的预测。数据源：{_esc(vix.get('source') or '')}。
+    <b>VIX 本体没有可用的免费实时源</b>（腾讯 .VIX 是僵尸数据、Yahoo 与 CBOE 延迟接口均被拒），
+    所以这张卡跟运行批刷新，不随上面的行情条每分钟跳动 —— 也不拿 VIXY 期货 ETF 冒充。</div>
+</div>"""
+
+
 def _labs_html(labs):
     """两张「长期锚」卡片 + 一张二十二年双线图。数据缺失时整块不渲染。"""
     if not labs:
@@ -3144,8 +3269,9 @@ def render(payload):
 
     # 观察型模块（不参与打分）：数据缺失时整段不输出，不留空壳
     month_sec = _month_html(latest)
-    mood_sec = _mood_html(latest.get("mood") or {})
-    labs_a, labs_b, _ = _labs_html(latest.get("labs") or {})
+    labs_obj = latest.get("labs") or {}
+    vix_sec = _vix_html(labs_obj.get("vix"))
+    labs_a, labs_b, _ = _labs_html(labs_obj)
     sig_sec = _signals_html(payload.get("signals") or {})
     szk_sec = _sz_kline_sections(latest.get("sz_kline"))
     zl_sec = _zhulong_html(latest.get("zhulong"))
@@ -3205,7 +3331,7 @@ def render(payload):
 </div>
 
 <div class="live" id="live"></div>
-{mood_sec}
+{vix_sec}
 {sig_sec}
 <div class="macro" id="macro"></div>
 

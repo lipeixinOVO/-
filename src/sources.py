@@ -622,3 +622,37 @@ def cnn_fear_greed():
         }
 
     return _cached("cnn_fng", _go)
+
+
+def vix_daily():
+    """CBOE 官方 VIX 历史日线（1990 起，EOD 收盘价）。返回 [[YYYY-MM-DD, close], ...] 升序。
+
+    为什么不用腾讯 usVIX：那条接口是**僵尸数据** —— 时间戳长期停在 2026-09-14、
+    涨跌幅恒为 0、K 线是整段 21.67 的占位值。拿它当 VIX 会直接错 40%（实测同期 CBOE
+    收盘 35.89）。CBOE 延迟报价 JSON 返回 403，Yahoo 403，stooq 404，新浪/东财/westock
+    全无 VIX 本体。结论：**VIX 本体没有可用的免费实时源**，本站只做日频收盘口径，
+    并在页面上如实标注，不拿 VIXY（期货 ETF，价格带溢价）冒充。
+    """
+    def _go():
+        url = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+        txt = fetch(url, timeout=30)
+        out = []
+        for i, line in enumerate(txt.strip().split("\n")):
+            if i == 0:                      # 表头 DATE,OPEN,HIGH,LOW,CLOSE
+                continue
+            p = line.split(",")
+            if len(p) < 5:
+                continue
+            try:
+                d = dt.datetime.strptime(p[0].strip(), "%m/%d/%Y").date().isoformat()
+                c = float(p[4])
+            except (ValueError, IndexError):
+                continue
+            if c > 0:
+                out.append([d, round(c, 2)])
+        if len(out) < 2500:
+            raise RuntimeError(f"VIX 历史条数异常（{len(out)}）")
+        out.sort(key=lambda x: x[0])
+        return out
+
+    return _cached("vix_daily", _go)

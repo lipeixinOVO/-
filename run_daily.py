@@ -77,16 +77,8 @@ def load_ctx():
     except Exception:  # noqa: BLE001
         ctx["gold_spot"] = {}
 
-    # 美股市场情绪（CNN 恐惧与贪婪）。**纯展示项**：失败只记 note，不进 errors，
-    # 更不影响任何标的的分数 —— 它是美股情绪，不是本站标的的估值输入。
-    print("· 拉取 CNN 恐惧与贪婪指数…", flush=True)
-    try:
-        ctx["fng"] = S.cnn_fear_greed()
-        print(f"  → {ctx['fng']['score']}（{ctx['fng']['label']}，{ctx['fng']['date']}）", flush=True)
-    except Exception as e:  # noqa: BLE001
-        ctx["fng"] = None
-        ctx.setdefault("notes", []).append(
-            f"CNN 恐惧与贪婪指数本期取不到（仅展示项，不影响分数）：{str(e)[:90]}")
+    # 美股市场情绪：原 CNN 恐惧与贪婪已换成 VIX 恐慌指数，
+    # 数据在 labs.run() 里统一拉（走 CBOE 官方历史，日频收盘），这里不再单独请求 CNN。
 
     print("· 拉取指数估值（蛋卷）…", flush=True)
     C.load_valuation_anchors(ctx)
@@ -294,8 +286,9 @@ def run(dry=False):
         "sz_kline": szk,
         # 超短线擒龙（涨停板池 → 热点题材/龙头/异动/补涨），纯展示
         "zhulong": zl,
-        # 美股市场情绪（CNN 恐惧与贪婪），纯展示
-        "mood": ctx.get("fng"),
+        # 注意：原 CNN 恐惧与贪婪（mood）已被 VIX 恐慌指数替代，
+        # VIX 走 labs["vix"]（同为观察型模块，不参与打分）。
+        # S.cnn_fear_greed() 函数保留不删，将来想恢复随时可用。
     }
 
     if not dry:
