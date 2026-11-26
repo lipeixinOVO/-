@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-27 00:52:12",
-  "generated_at_ts": 1795711932,
+  "generated_at": "2026-11-27 01:22:06",
+  "generated_at_ts": 1795713726,
   "generated_tz": "Asia/Shanghai",
   "trade_date": "2026-11-26",
   "base_amount": 1000,
@@ -178,7 +178,7 @@
               "score": 89.49,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-26 16:48 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
@@ -190,7 +190,7 @@
               "score": 49.52,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-26 16:48 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "蛋卷口径；交叉校验 PE 分位=0.1"
             }
@@ -211,7 +211,7 @@
               "score": 89.36,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -223,7 +223,7 @@
               "score": 86.79,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -244,7 +244,7 @@
               "score": 97.16,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -256,7 +256,7 @@
               "score": 91.64,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -277,7 +277,7 @@
               "score": 1.17,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -289,7 +289,7 @@
               "score": 3.44,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -448,7 +448,7 @@
               "score": 89.49,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-26 16:48 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
@@ -460,7 +460,7 @@
               "score": 49.52,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-26 16:48 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "蛋卷口径；交叉校验 PE 分位=0.1"
             }
@@ -481,7 +481,7 @@
               "score": 91.56,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -493,7 +493,7 @@
               "score": 88.88,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -514,7 +514,7 @@
               "score": 97.84,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -526,7 +526,7 @@
               "score": 93.88,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-26 16:48 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -547,7 +547,7 @@
               "score": 1.17,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -559,7 +559,7 @@
               "score": 3.44,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-26 17:16 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -634,13 +634,13 @@
       "name": "黄金（COMEX 主力连续）",
       "kind": "commodity",
       "advisory_only": false,
-      "price": 3598.7,
+      "price": 3598.2,
       "price_date": "2026-11-26",
       "month": {
         "base_date": "2026-10-27",
         "base": 4073.1,
         "end_date": "2026-11-26",
-        "end": 3598.7,
+        "end": 3598.2,
         "n": 23,
         "pts": [
           [
@@ -733,11 +733,11 @@
           ],
           [
             "2026-11-26",
-            -11.65
+            -11.66
           ]
         ],
-        "chg_month": -11.65,
-        "chg_week": -0.8,
+        "chg_month": -11.66,
+        "chg_week": -0.82,
         "week_from": "2026-11-19",
         "week_n": 5,
         "hi": 1.88,
@@ -758,13 +758,13 @@
           "metrics": [
             {
               "name": "金价 10 年名义分位",
-              "raw": 3598.7,
+              "raw": 3598.2,
               "unit": "",
               "pct": 87.31,
               "score": 12.69,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-26 16:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "未做通胀调整，属近似口径"
             },
@@ -776,7 +776,7 @@
               "score": 36.05,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-26 16:48 取）",
+              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "金/股比价越高说明黄金相对股票越贵"
             }
@@ -791,25 +791,25 @@
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.1829,
+              "raw": -0.183,
               "unit": "%",
               "pct": 0.08,
               "score": 99.92,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-26 16:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.3393,
+              "raw": -0.3394,
               "unit": "%",
               "pct": 0.08,
               "score": 99.92,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-26 16:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -830,19 +830,19 @@
               "score": 98.16,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪外盘期货 GC 日线（2026-11-26 16:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.2038,
+              "raw": -0.2039,
               "unit": "%",
               "pct": 0.08,
               "score": 99.92,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-26 16:48 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -863,7 +863,7 @@
               "score": 1.17,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -875,7 +875,7 @@
               "score": 3.44,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -886,7 +886,7 @@
       "trend_flag": {
         "flag": "breakdown",
         "ma200_slope_60d": -0.0334,
-        "dev": -0.1829
+        "dev": -0.183
       },
       "execution": {
         "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
@@ -1045,7 +1045,7 @@
               "score": 64.08,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-26 16:48 取）",
+              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "比价越高=医疗相对全球大盘越贵，分数越低；usIXJ 仅约 5 年历史，故为近 5 年分位"
             },
@@ -1057,7 +1057,7 @@
               "score": 11.27,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 16:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "偏离对数趋势越多=越贵；CAPE 近似思路。usIXJ 仅约 5 年历史，趋势窗口取 2 年（其余标的为 10 年）"
             }
@@ -1078,7 +1078,7 @@
               "score": 1.2,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 16:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1090,7 +1090,7 @@
               "score": 28.0,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 16:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1111,7 +1111,7 @@
               "score": 90.76,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 16:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1123,7 +1123,7 @@
               "score": 27.81,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 16:48 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -1144,7 +1144,7 @@
               "score": 1.17,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
@@ -1156,7 +1156,7 @@
               "score": 3.44,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-26 16:48 取）",
+              "source": "美国财政部 yield_curve（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -1322,7 +1322,7 @@
               "score": 9.71,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-26 16:50 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "真实股息率=0.0432，历史股息率序列不可得，用 PE 分位反向代理"
             },
@@ -1334,7 +1334,7 @@
               "score": 35.76,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-26 16:50 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "蛋卷口径"
             }
@@ -1355,7 +1355,7 @@
               "score": 75.31,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-26 16:50 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1367,7 +1367,7 @@
               "score": 55.02,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-26 16:50 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1388,7 +1388,7 @@
               "score": 24.85,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-26 16:50 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1400,7 +1400,7 @@
               "score": 53.58,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-26 16:50 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "放量（恐慌或狂热）给分，需结合趋势看"
             }
@@ -1421,7 +1421,7 @@
               "score": 11.12,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "东财 000922 ÷ 000300（2026-11-26 16:50 取）",
+              "source": "东财 000922 ÷ 000300（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "红利相对大盘越强，性价比越低"
             },
@@ -1433,7 +1433,7 @@
               "score": 63.5,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-26 16:50 取）",
+              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-26 17:17 取）",
               "fetched_at": "",
               "note": "大盘越贵，资金越倾向高股息防御，红利相对吸引力上升 → 方向为正"
             }
@@ -1475,7 +1475,7 @@
     "ust_10y_nominal": 4.85,
     "dxy": null,
     "usdcnh": null,
-    "gold_spot": 3571.36
+    "gold_spot": 3570.45
   },
   "errors": [],
   "data_notes": [
@@ -1484,7 +1484,8 @@
   ],
   "labs": {
     "errors": [
-      "中证红利日线(东财): em_kline 无数据: 1.000922（RemoteDisconnected: Remote end closed connection without response）"
+      "中证红利日线(东财): em_kline 无数据: 1.000922（RemoteDisconnected: Remote end closed connection without response）",
+      "中证全指全收益: The read operation timed out"
     ],
     "notes": [
       "中证红利用中证官网兜底（T+1 延迟，当日数据可能缺失）",
@@ -22460,9 +22461,7 @@
             ]
           ]
         }
-      },
-      "cagr_market_tr": 8.84,
-      "market_tr": 6396.1
+      }
     },
     "vix": {
       "last": 28.29,
@@ -45755,48 +45754,7 @@
       "dt": 5,
       "max_lbc": 5
     },
-    "concepts": [
-      {
-        "name": "昨日连板",
-        "code": "BK0816",
-        "chg": 6.58
-      },
-      {
-        "name": "昨日连板_含一字",
-        "code": "BK1051",
-        "chg": 6.44
-      },
-      {
-        "name": "历史新高",
-        "code": "BK1675",
-        "chg": 3.42
-      },
-      {
-        "name": "昨日涨停_含一字",
-        "code": "BK1050",
-        "chg": 2.66
-      },
-      {
-        "name": "题材股",
-        "code": "BK1717",
-        "chg": 2.5
-      },
-      {
-        "name": "昨日打二板以上表现",
-        "code": "BK1645",
-        "chg": 2.5
-      },
-      {
-        "name": "东方财富热股",
-        "code": "BK1637",
-        "chg": 2.41
-      },
-      {
-        "name": "水产概念",
-        "code": "BK0967",
-        "chg": 2.38
-      }
-    ],
+    "concepts": [],
     "themes": [
       {
         "name": "元件",
@@ -47601,137 +47559,25 @@
         "cycle": "6天5板"
       }
     ],
-    "catchup": [
-      {
-        "theme": "元件",
-        "code": "301282",
-        "name": "金禄电子",
-        "chg": 19.39,
-        "hs": 21.83
-      },
-      {
-        "theme": "元件",
-        "code": "301041",
-        "name": "金百泽",
-        "chg": 16.88,
-        "hs": 26.2
-      },
-      {
-        "theme": "元件",
-        "code": "002913",
-        "name": "奥士康",
-        "chg": 9.91,
-        "hs": 5.87
-      },
-      {
-        "theme": "元件",
-        "code": "301251",
-        "name": "威尔高",
-        "chg": 8.68,
-        "hs": 8.0
-      },
-      {
-        "theme": "化学制品",
-        "code": "300829",
-        "name": "金丹科技",
-        "chg": 11.19,
-        "hs": 24.37
-      },
-      {
-        "theme": "化学制品",
-        "code": "002597",
-        "name": "金禾实业",
-        "chg": 6.42,
-        "hs": 1.62
-      },
-      {
-        "theme": "化学制品",
-        "code": "301618",
-        "name": "长联科技",
-        "chg": 6.06,
-        "hs": 10.53
-      },
-      {
-        "theme": "化学制品",
-        "code": "002827",
-        "name": "高争民爆",
-        "chg": 5.96,
-        "hs": 5.44
-      },
-      {
-        "theme": "通用设备",
-        "code": "301107",
-        "name": "瑜欣电子",
-        "chg": 14.91,
-        "hs": 6.62
-      },
-      {
-        "theme": "通用设备",
-        "code": "600243",
-        "name": "*ST海华",
-        "chg": 6.72,
-        "hs": 2.89
-      },
-      {
-        "theme": "通用设备",
-        "code": "920943",
-        "name": "优机股份",
-        "chg": 6.46,
-        "hs": 5.43
-      },
-      {
-        "theme": "通用设备",
-        "code": "688059",
-        "name": "华锐精密",
-        "chg": 6.14,
-        "hs": 4.84
-      }
-    ],
+    "catchup": [],
     "picks": [
       {
         "theme": "元件",
         "count": 5,
         "leader": null,
-        "catchup": {
-          "name": "奥士康",
-          "code": "002913",
-          "chg": 9.91,
-          "hs": 5.87,
-          "tier": "补涨",
-          "conf": "低",
-          "buyable": false,
-          "reason": "同题材强势补涨，涨幅已拉开，等回踩不追高"
-        }
+        "catchup": null
       },
       {
         "theme": "化学制品",
         "count": 5,
         "leader": null,
-        "catchup": {
-          "name": "金禾实业",
-          "code": "002597",
-          "chg": 6.42,
-          "hs": 1.62,
-          "tier": "补涨",
-          "conf": "中",
-          "buyable": true,
-          "reason": "同题材龙头已连板，低位补涨，可现价买入"
-        }
+        "catchup": null
       },
       {
         "theme": "通用设备",
         "count": 5,
         "leader": null,
-        "catchup": {
-          "name": "*ST海华",
-          "code": "600243",
-          "chg": 6.72,
-          "hs": 2.89,
-          "tier": "补涨",
-          "conf": "中",
-          "buyable": true,
-          "reason": "同题材龙头已连板，低位补涨，可现价买入"
-        }
+        "catchup": null
       },
       {
         "theme": "汽车零部",
@@ -47770,6 +47616,9 @@
         "catchup": null
       }
     ],
-    "notes": []
+    "notes": [
+      "概念板块涨幅榜取不到：HTTP Error 502: Bad Gateway",
+      "补涨候选取不到（行业成分接口）：HTTP Error 502: Bad Gateway"
+    ]
   }
 }
