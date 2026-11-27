@@ -1671,11 +1671,11 @@ function renderChart(){
       '" r="2.8" fill="'+colorOf(id, ci)+'"/>';
   });
   // 末值标签：指数名 + 当前分数，贴在各自曲线右端。
-  // 四条线经常收在 35–52 这十几分里（本期 45.8 / 44.6 只差 1.2 分），末端几乎重合，
+  // 几条线经常收在 35–52 这十几分里（本期 45.8 / 44.6 只差 1.2 分），末端几乎重合，
   // 所以按 y 排序后逐个压开最小间距；被压开的画一小段引线连回真实端点，
   // 否则标签看着像标到了旁边那条线上 —— 这比不标更糟。
-  // 计划外（观察/参考）的线只在图例里给数值，末端不再标字：
-  // 6 条线常挤在 32–64 这三十几分里，全标必然叠成一坨，而图例就在下方。
+  // ★ 2026-11-27 改：6 条线全部标末端。之前只标计划内那 3 条，观察线在图里没有身份，
+  //   读者只能靠颜色猜哪根是黄金；层级改由透明度表达（观察线标签淡一档）。
   const planIds = {};
   ((P.latest && P.latest.assets) || []).forEach(function(a){ if(a.in_plan) planIds[a.id] = 1; });
   const hasPlan = Object.keys(planIds).length > 0;
@@ -1683,14 +1683,14 @@ function renderChart(){
   ids.forEach(function(id,ci){
     const pts = tail(id); if(!pts.length) return;
     const last = pts[pts.length-1]; if(last.s==null) return;
-    if(hasPlan && !planIds[id]) return;
-    labs.push({y0: y(last.s), y: y(last.s), v: last.s,
+    labs.push({y0: y(last.s), y: y(last.s), v: last.s, dim: hasPlan && !planIds[id],
                c: colorOf(id, ci), nm: labName[ci]});
   });
   labs.sort(function(a,b){ return a.y0 - b.y0; });
   const bh = stack ? (nfs*1.16 + pfs*1.16) : pfs*1.25;   // 单个标签块的高度
   // 两行模式下块间距放大到 1.5 倍块高：名字和自己的分数贴紧、跟邻居拉开
-  const lgap = bh * (stack ? 1.5 : 1.32);
+  // 全标的都标末端后块数变多，一行模式也放宽到 1.5 倍，避免相邻标签只差 3 个单位
+  const lgap = bh * (stack ? 1.5 : (labs.length >= 6 ? 1.5 : 1.32));
   let pre = null;
   labs.forEach(function(L){
     if(pre != null && L.y - pre < lgap) L.y = pre + lgap;
@@ -1710,19 +1710,22 @@ function renderChart(){
     }
     if(stack){
       svg += '<text x="'+(xEnd+7).toFixed(1)+'" y="'+(L.y-bh/2+nfs*0.95).toFixed(1)+'" '+
-        'fill="'+L.c+'" fill-opacity=".78" font-size="'+nfs+'" paint-order="stroke fill" '+
+        'fill="'+L.c+'" fill-opacity="'+(L.dim?'.6':'.78')+'" font-size="'+nfs+
+        '" paint-order="stroke fill" '+
         'stroke="#fff" stroke-width="2.6" stroke-linejoin="round">'+esc(L.nm)+'</text>';
       svg += '<text x="'+(xEnd+7).toFixed(1)+'" y="'+(L.y+bh/2-pfs*0.22).toFixed(1)+'" '+
-        'fill="'+L.c+'" font-size="'+pfs+'" font-weight="600" paint-order="stroke fill" '+
+        'fill="'+L.c+'" fill-opacity="'+(L.dim?'.82':'1')+'" font-size="'+pfs+
+        '" font-weight="600" paint-order="stroke fill" '+
         'stroke="#fff" stroke-width="3" stroke-linejoin="round">'+L.v.toFixed(1)+'</text>';
     }else{
       // 名称与分数放同一个 <text> 的两个 <tspan>：位置交给排版引擎算，
       // 自己估字宽去摆第二个 <text> 一旦估错两个就叠住了（dx 而不是空格，SVG 会吃首尾空白）
       svg += '<text x="'+(xEnd+7).toFixed(1)+'" y="'+(L.y+pfs*0.35).toFixed(1)+'" '+
         'paint-order="stroke fill" stroke="#fff" stroke-width="3" stroke-linejoin="round">'+
-        '<tspan fill="'+L.c+'" fill-opacity=".78" font-size="'+nfs+'">'+esc(L.nm)+'</tspan>'+
-        '<tspan dx="4" fill="'+L.c+'" font-size="'+pfs+'" font-weight="600">'+
-        L.v.toFixed(1)+'</tspan></text>';
+        '<tspan fill="'+L.c+'" fill-opacity="'+(L.dim?'.6':'.78')+'" font-size="'+nfs+'">'+
+        esc(L.nm)+'</tspan>'+
+        '<tspan dx="4" fill="'+L.c+'" fill-opacity="'+(L.dim?'.82':'1')+'" font-size="'+pfs+
+        '" font-weight="600">'+L.v.toFixed(1)+'</tspan></text>';
     }
   });
   const hist = P.history;
@@ -2457,16 +2460,19 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6, dim_names=()):
     # 末值标签单独一轮画：两条线末端靠得近时会糊成一坨（本期纳指综合 -4.10% 与
     # 纳指100 -5.00% 只差 0.9 个点 ≈ 13px），先按 y 排序再逐个压开最小间距。
     # 标签带指数名（原来是光秃秃的 +6.02%，读者对不上是哪条线）。
-    # 计划外的线不在末端标字：4 个观察标的的末值挤在 -6% ~ -11% 那一段，
-    # 标签必然叠成一坨；它们的数值图例里已经写了，端点上不再重复一遍。
+    # ★ 2026-11-27 改：7 条线全部标末端 —— 只标计划内那 3 条时，观察线在图里
+    #   完全没有身份，读者只能靠颜色去猜哪根是黄金。层级改由「线宽 + 透明度」表达：
+    #   计划内 2.4 实色，计划外 1.4 半透明，标签也跟着淡一档。
     ends = sorted((Y(pts[-1][1]), pts[-1][1], col, X(pts[-1][0]), nm)
-                  for (_n, _m, col, pts), nm in zip(ser, names)
-                  if not _isdim(nm))
+                  for (_n, _m, col, pts), nm in zip(ser, names))
     bh = (nfs * 1.16 + pfs * 1.16) if stack else pfs * 1.25   # 单个标签块的高度
     # 两行模式下块与块之间要多留一截：名字和它自己的百分比贴紧、跟邻居拉开，
     # 否则「上一块的数字」看着像「下一块的名字」——正是这次要修的那个毛病。
     # 一行模式给 1.32 倍：相邻两块的数字常只差 1 分多（45.8 / 44.6），1.16 倍贴得太死。
-    gap = bh * (1.5 if stack else 1.32)
+    # 7 条线全标末端后块数变多，一行模式再放大到 1.55 倍，否则 18 单位的行距配 15 单位的
+    # 字高只剩 3 单位空隙，白描边一叠看着像糊成一团。
+    lgap_mult = 1.5 if stack else (1.55 if len(ser) >= 6 else 1.32)
+    gap = bh * lgap_mult
     fixed, prev = [], None
     for y, lv, col, xx, nm in ends:
         if prev is not None and y - prev < gap:
@@ -2487,14 +2493,17 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6, dim_names=()):
             o.append(f'<path d="M{xx + 2:.1f} {y0:.1f}L{xx + 6:.1f} {y:.1f}" fill="none" '
                      f'stroke="{col}" stroke-width="1" stroke-opacity=".45"/>')
     for y, lv, col, xx, nm in fixed:
-        dop = ".52" if _isdim(nm) else ".78"   # .78 是原有口径，selfcheck 会按这个值断言
+        # .78 是计划内的原有口径，selfcheck 会按这个值断言；观察线淡一档但不再隐藏
+        dim = _isdim(nm)
+        dop = ".6" if dim else ".78"
+        pop = ".82" if dim else "1"
         if stack:
             o.append(f'<text x="{xx + 7:.1f}" y="{y - bh / 2 + nfs * 0.95:.1f}" '
                      f'fill="{col}" fill-opacity="{dop}" font-size="{nfs}" '
                      'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
                      f'stroke-width="2.6" stroke-linejoin="round">{_esc(nm)}</text>')
             o.append(f'<text x="{xx + 7:.1f}" y="{y + bh / 2 - pfs * 0.22:.1f}" '
-                     f'fill="{col}" font-size="{pfs}" font-weight="600" '
+                     f'fill="{col}" fill-opacity="{pop}" font-size="{pfs}" font-weight="600" '
                      'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
                      f'stroke-width="3" stroke-linejoin="round">{lv:+.2f}%</text>')
         else:
@@ -2504,7 +2513,7 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6, dim_names=()):
                      'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
                      f'stroke-width="3" stroke-linejoin="round">'
                      f'<tspan fill="{col}" fill-opacity="{dop}" font-size="{nfs}">{_esc(nm)}</tspan>'
-                     f'<tspan dx="4" fill="{col}" font-size="{pfs}" '
+                     f'<tspan dx="4" fill="{col}" fill-opacity="{pop}" font-size="{pfs}" '
                      f'font-weight="600">{lv:+.2f}%</tspan></text>')
 
     # 横轴：首尾必标，中间按自然日等分（不按数据点等分）
