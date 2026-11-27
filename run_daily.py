@@ -116,6 +116,11 @@ def run(dry=False):
     print("=" * 72)
     ctx = load_ctx()
 
+    # 定投计划的配比（2026-11-27 起：纳指 50% / 标普500等权重 30% / 标普全球1200医疗 20%）。
+    # base_amount 是**每月总预算**，按配比分给各标的，再各自乘自己的倍数。
+    # 不在 plan.weights 里的标的照常评分，但只作「观察」：不给金额、不计入计划。
+    plan_w = dict((cfg.get("plan") or {}).get("weights") or {})
+
     results = []
     for a in cfg["assets"]:
         print(f"· 计算 {a['name']} …", flush=True)
@@ -153,11 +158,17 @@ def run(dry=False):
                 time.sleep(0.8)
             ex_status["fallbacks"] = fbs
 
+        pw = float(plan_w.get(a["id"]) or 0.0)
+        in_plan = (not a.get("advisory_only")) and pw > 0
+
         item = {
             "id": a["id"],
             "name": a["name"],
             "kind": a["kind"],
             "advisory_only": a.get("advisory_only", False),
+            # 定投计划里的占比（0 表示只观察）。页面用它算金额、标注「观察」。
+            "plan_weight": pw,
+            "in_plan": in_plan,
             "price": r.get("price"),
             "price_date": r.get("price_date"),
             # 近一月涨跌轨迹（纯展示，不参与打分）。算法单独算，失败就不画，不能影响评分。
@@ -167,7 +178,7 @@ def run(dry=False):
             "label": label,
             "band_pos": E.band_position(score, cfg["multiplier_table"]),
             "completeness": comp,
-            "suggest_amount": round(cfg["base_amount"] * mult, 0) if not a.get("advisory_only") else None,
+            "suggest_amount": round(cfg["base_amount"] * pw * mult, 0) if in_plan else None,
             "dimensions": r["dims"],
             "trend_flag": trend,
             "execution": ex_status,
@@ -266,6 +277,8 @@ def run(dry=False):
         "generated_tz": "Asia/Shanghai",
         "trade_date": _tdate,
         "base_amount": cfg["base_amount"],
+        # 本期定投计划（配比 + 生效日）。页面顶部和结论表都从这里读，避免两处各写一份。
+        "plan": cfg.get("plan") or {},
         "scoring_basis": cfg.get("scoring_basis", "index"),
         "multiplier_table": cfg["multiplier_table"],
         "assets": results,

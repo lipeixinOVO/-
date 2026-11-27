@@ -50,7 +50,12 @@ def to_markdown(out):
     A = L.append
     A(f"# 定投台 · {out['trade_date']}")
     A("")
-    A(f"生成时间：{out['generated_at']}　　基准金额：{out['base_amount']} 元/月　　评分口径：指数本身（非基金净值）")
+    plan = out.get("plan") or {}
+    A(f"生成时间：{out['generated_at']}　　本月总额：{out['base_amount']} 元　　评分口径：指数本身（非基金净值）")
+    if plan.get("note"):
+        A("")
+        A(f"**本期计划**（{plan.get('as_of') or ''} 起）：{plan['note']}。"
+          "计划外的标的照常评分、只作观察，不给金额。")
     A("")
     m = out.get("macro") or {}
     A("**宏观快照**：" + "　".join([
@@ -63,14 +68,18 @@ def to_markdown(out):
     A("")
     A("## 一、本期结论")
     A("")
-    A("| 标的 | 综合分 | 档内位置 | 倍数 | 建议金额 | 落地基金 |")
-    A("|---|---|---|---|---|---|")
+    A("| 标的 | 综合分 | 配比 | 档内位置 | 倍数 | 建议金额 | 落地基金 |")
+    A("|---|---|---|---|---|---|---|")
     for a in out["assets"]:
         ex = a.get("execution") or {}
+        in_plan = bool(a.get("in_plan"))
         tip = "参考，不执行" if a["advisory_only"] else (
             f"{ex.get('fund_code') or '—'} {ex.get('fund_name') or ''}".strip())
-        amt = "—" if a["advisory_only"] else f"{a['suggest_amount']:,.0f} 元"
-        A(f"| {a['name']} | {a['score']:.1f} | {a.get('band_pos', 50):.0f}% | **{a['multiplier']:.1f}×** | "
+        if not in_plan and not a["advisory_only"]:
+            tip = "观察，本期不投 · " + tip
+        pw = f"{a.get('plan_weight', 0) * 100:.0f}%" if in_plan else "—"
+        amt = f"{a['suggest_amount']:,.0f} 元" if in_plan else "—"
+        A(f"| {a['name']} | {a['score']:.1f} | {pw} | {a.get('band_pos', 50):.0f}% | **{a['multiplier']:.1f}×** | "
           f"{amt} | {tip} |")
     A("")
     A("> 档内位置：同一倍数档内部，越靠上沿越接近上调一档。中性带宽 40–56 分，"

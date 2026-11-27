@@ -96,7 +96,7 @@ def load_valuation_anchors(ctx):
     pe_hist 保留日期，回填历史时才不会用到"未来"的 PE 数据。
     """
     ctx["dj"] = {}
-    for code in ("NDX", "SH000922", "SH000300"):
+    for code in ("NDX", "SP500", "SH000922", "SH000300"):
         try:
             ctx["dj"][code] = {
                 "detail": S.dj_detail(code),
@@ -250,6 +250,78 @@ def compute_ndx(cfg, ctx, as_of=None):
     return _out(ser, dims)
 
 
+def compute_spx(cfg, ctx, as_of=None):
+    """标普500 指数本身（.INX）。
+
+    估值用的是蛋卷 SP500 的 **PE 周频序列**（2016-11 起，约 10 年）—— 与纳指100 同一套口径，
+    所以两个市场可以直接横向比。本期不在计划内，但保留完整四维评分：
+    它是「市值加权」的基准，用来和「标普500等权重」对比看风格轮动。
+    """
+    ser = load_series(cfg, as_of, ctx)
+    dims = [
+        E.build_dimension("valuation", cfg["weights"]["valuation"],
+                          _val_from_dj(ctx, "SP500", 60, 40, "标普500", as_of=as_of),
+                          anchor="标普500(SP500) 指数自身 PE/PB，蛋卷口径（PE 为周频序列，2016-11 起）"),
+        E.build_dimension("trend", cfg["weights"]["trend"],
+                          _trend_dims(ser["closes"], 50, 50, ser["src"])),
+        E.build_dimension("sentiment", cfg["weights"]["sentiment"],
+                          _sentiment_dims(ser["closes"], None, ser["src"])),
+        E.build_dimension("macro", cfg["weights"]["macro"],
+                          _macro_us(ctx, as_of=as_of)),
+    ]
+    return _out(ser, dims)
+
+
+def compute_spx_ew(cfg, ctx, as_of=None):
+    """标普500等权重（用 RSP 作行情代理）。
+
+    等权重指数本身没有公开的 PE 序列（标普官方基本面接口需订阅，蛋卷未覆盖），
+    所以估值维度用两个**真实可得**的代理：
+      ① 等权重 ÷ 标普500 比价分位 —— 衡量「钱是不是都挤在几家大权重股里」。
+         比值低 = 等权重相对大盘便宜 = 分数高。
+      ② 距 10 年对数趋势偏离 —— CAPE 近似，衡量「涨得超前长期轨道多少」。
+    RSP 是 ETF（有 0.20% 管理费与分红再投资口径差），价格序列与指数本身有极小漂移；
+    但 2005 年至今 5500 多个交易日足够长，分位口径不受影响。
+    """
+    ser = load_series(cfg, as_of, ctx)
+    closes = ser["closes"]
+    ms = []
+
+    spx = [r for r in (ctx.get("spx") or []) if not as_of or r[0] <= as_of]
+    if spx:
+        try:
+            ratio = E.ratio_series(list(zip(ser["dates"], closes)), spx)
+            if len(ratio) > 250:
+                ms.append(E.mk_metric("等权重 / 标普500 比价分位", [x[1] for x in ratio][-E.WINDOW:],
+                                      False, 60, _src("新浪 .RSP ÷ .INX"), "", unit="",
+                                      note="比值越低=资金越往大权重股挤、等权重相对越便宜，分数越高"))
+        except Exception as e:  # noqa: BLE001
+            ctx.setdefault("errors", []).append(f"等权重/标普500 比价: {e}")
+
+    # 残差每个点只依赖它之前的 win 个交易日 → 用全量序列算一次再按 as_of 截断（防前视偏差）
+    if "_spxew_resid" not in ctx:
+        full = load_series(cfg, None, ctx)
+        ctx["_spxew_resid"] = E.log_resid_dated(full["closes"], full["dates"], 2500, 21)
+    resid = [v for d, v in ctx["_spxew_resid"] if not as_of or d <= as_of]
+    if resid:
+        ms.append(E.mk_metric("距 10 年对数趋势偏离", resid[-600:], False, 40,
+                              ser["src"], "", unit="%",
+                              note="偏离对数趋势越多=越贵；CAPE 近似思路，趋势窗口 10 年"))
+
+    dims = [
+        E.build_dimension("valuation", cfg["weights"]["valuation"], ms,
+                          anchor="标普500等权重指数官方 PE 历史不可得（需订阅），蛋卷未覆盖；"
+                                 "用「等权重/标普500 比价分位」+「距 10 年对数趋势偏离」两个真实代理"),
+        E.build_dimension("trend", cfg["weights"]["trend"],
+                          _trend_dims(closes, 50, 50, ser["src"])),
+        E.build_dimension("sentiment", cfg["weights"]["sentiment"],
+                          _sentiment_dims(closes, None, ser["src"])),
+        E.build_dimension("macro", cfg["weights"]["macro"],
+                          _macro_us(ctx, as_of=as_of)),
+    ]
+    return _out(ser, dims)
+
+
 def compute_gold(cfg, ctx, as_of=None):
     ser = load_series(cfg, as_of, ctx)
     closes = ser["closes"]
@@ -397,6 +469,8 @@ def compute_dividend(cfg, ctx, as_of=None):
 COMPUTERS = {
     "IXIC": compute_ixic,
     "NDX": compute_ndx,
+    "SPX": compute_spx,
+    "SPX_EW": compute_spx_ew,
     "GOLD": compute_gold,
     "SPG1200_HEALTH": compute_health,
     "CSI_DIVIDEND": compute_dividend,

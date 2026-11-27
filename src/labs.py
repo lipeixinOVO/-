@@ -354,11 +354,9 @@ def run():
         if div:
             out["notes"].append("中证红利用中证官网兜底（T+1 延迟，当日数据可能缺失）")
     cyb = _try(lambda: S.sina_cn_daily("sz399006"), errors, "创业板指日线")
-    h300 = _try(lambda: S.csindex_perf("H00300", start="2004-01-01"), errors, "沪深300全收益")
-    # 黑线：全市场。原图是万得全A（拿不到），用中证全指价格指数 000985 近似
-    market = _try(lambda: S.csindex_perf("000985", start="2004-01-01"), errors, "中证全指(价格)")
-    # 同口径对比用的数字（不画线）：中证全指全收益 H00985
-    mkt_tr = _try(lambda: S.csindex_perf("H00985", start="2004-01-01"), errors, "中证全指全收益")
+    # 2026-11-27 按用户要求删掉「二十二年，两条线」板块（沪深300全收益 vs 中证全指），
+    # 所以 H00300 / 000985 / H00985 三个请求一并去掉 —— 少三次网络请求，也少三处可能失败的源。
+    # equity_long() 函数本身保留在文件里，将来要恢复这块图直接重新调用即可。
 
     if div:
         v = _try(dividend_anchor, errors, "红利月线锚", div)
@@ -369,21 +367,6 @@ def run():
         v = _try(cyb_ratio, errors, "创红比", cyb, div)
         if v:
             out["cyb_ratio"] = v
-
-    # 主源缺失时退化到价格指数（会丢分红，年化会偏低，必须在页面标注）
-    if not h300:
-        h300 = _try(lambda: S.csindex_perf("000300", start="2004-01-01"), errors, "沪深300价格(备用)")
-        if h300:
-            out["notes"].append("沪深300全收益(H00300)取不到，图上用的是价格指数 000300，年化会偏低约 2 个百分点")
-    if not market:
-        market = mkt_tr
-        if market:
-            out["notes"].append("中证全指价格(000985)取不到，黑线用的其实是全收益 H00985，与蓝线同为全收益口径")
-
-    if h300 and market:
-        v = _try(equity_long, errors, "长期双线", h300, market, mkt_tr)
-        if v:
-            out["equity_long"] = v
 
     # VIX 恐慌指数（替代原来的 CNN 恐惧与贪婪：后者只有 0-100 综合分，
     # 看不出波动率本身的绝对水位，也不能切窗口看历史形态）
@@ -405,6 +388,4 @@ def run():
         if v:
             out["vix"] = v
 
-    out["notes"].append("万得全A(800707.WI) 是 Wind 商业数据，公开接口取不到（东财/雪球/同花顺/腾讯/新浪全试过），"
-                        "黑线改用中证全指 000985 价格指数近似")
     return out

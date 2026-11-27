@@ -1,28 +1,20 @@
 {
-  "_comment": "定投台配置 v3。评分一律基于指数本身，不基于基金净值（净值有分红折算、T+1 披露、费率漂移三重失真）。落地基金只作执行参考，不参与打分。",
-  "schema_version": 3,
+  "_comment": "定投台配置 v4。评分一律基于指数本身，不基于基金净值（净值有分红折算、T+1 披露、费率漂移三重失真）。落地基金只作执行参考，不参与打分。plan.weights 决定「每月基准金额怎么分」，合计应为 1.0；不在此表内的标的按「只观察」处理（照常评分，不给金额）。",
+  "schema_version": 4,
   "base_amount": 1000,
+  "plan": {
+    "as_of": "2026-11-27",
+    "note": "纳指 50% / 标普500等权重 30% / 标普全球1200医疗 20%",
+    "weights": {
+      "NDX": 0.5,
+      "SPX_EW": 0.3,
+      "SPG1200_HEALTH": 0.2
+    }
+  },
   "monthly_cap_multiple": 2.0,
   "window_years": 10,
   "scoring_basis": "index",
   "assets": [
-    {
-      "id": "IXIC",
-      "name": "纳斯达克综合指数",
-      "kind": "index_ref",
-      "advisory_only": true,
-      "data": {
-        "type": "sina_us",
-        "symbol": ".IXIC"
-      },
-      "weights": {
-        "valuation": 30,
-        "trend": 25,
-        "sentiment": 20,
-        "macro": 25
-      },
-      "note": "仅作市场温度参考，不产生买入动作"
-    },
     {
       "id": "NDX",
       "name": "纳斯达克100指数",
@@ -65,7 +57,115 @@
           }
         ]
       },
-      "note": "评分口径：纳指100 指数本身。落地基金 000055。"
+      "note": "评分口径：纳指100 指数本身。落地基金 000055。本期计划 50%。"
+    },
+    {
+      "id": "SPX_EW",
+      "name": "标普500等权重指数",
+      "kind": "index",
+      "advisory_only": false,
+      "data": {
+        "type": "sina_us",
+        "symbol": "RSP",
+        "fallback": [
+          {
+            "type": "sina_us",
+            "symbol": ".RSP"
+          }
+        ]
+      },
+      "benchmark": {
+        "type": "sina_us",
+        "symbol": ".INX"
+      },
+      "weights": {
+        "valuation": 35,
+        "trend": 25,
+        "sentiment": 20,
+        "macro": 20
+      },
+      "execution": {
+        "fund_code": "096001",
+        "fund_name": "大成标普500等权重指数(QDII)A人民币",
+        "why": "国内唯一跟踪标普500等权重的场外基金（A 类 096001 / C 类 008401，短持选 C）。注意 013404 / 015545 是美元份额，净值口径不同，勿混用",
+        "fallbacks": [
+          {
+            "code": "008401",
+            "name": "大成标普500等权重指数(QDII)C人民币"
+          }
+        ]
+      },
+      "note": "评分口径：标普500等权重指数，用 RSP（Invesco S&P 500 Equal Weight ETF）作行情代理——该 ETF 完全复制同一指数。估值用「等权重 ÷ 标普500 比价分位」+「距 10 年对数趋势偏离」两个真实代理（等权重指数本身无公开 PE 序列）。本期计划 30%。",
+      "data_note": "新浪财经 US_MinKService .RSP（2005 起）为主；标普官方等权重指数点位需订阅，公开拿不到"
+    },
+    {
+      "id": "SPG1200_HEALTH",
+      "name": "标普全球1200医疗保健指数",
+      "kind": "index",
+      "advisory_only": false,
+      "data": {
+        "type": "usixj",
+        "symbol": "usIXJ"
+      },
+      "benchmark": {
+        "type": "msci",
+        "code": "990100",
+        "variant": "NETR"
+      },
+      "weights": {
+        "valuation": 35,
+        "trend": 25,
+        "sentiment": 20,
+        "macro": 20
+      },
+      "execution": {
+        "fund_code": "000369",
+        "fund_name": "广发全球医疗保健指数人民币(QDII)A",
+        "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用"
+      },
+      "note": "评分口径：标普全球1200医疗保健指数（S&P Global 1200 Health Care Sector Capped Index），用 usIXJ（iShares 全球医疗保健 ETF）作行情代理——两者跟踪同一指数。历史约 5 年（腾讯自选股种子 + 每日增量），比价基准仍用 MSCI World。本期计划 20%。"
+    },
+    {
+      "id": "SPX",
+      "name": "标普500指数",
+      "kind": "index",
+      "advisory_only": false,
+      "data": {
+        "type": "sina_us",
+        "symbol": ".INX",
+        "fallback": [
+          {
+            "type": "sina_us",
+            "symbol": "SPY"
+          }
+        ]
+      },
+      "valuation": {
+        "type": "danjuan",
+        "code": "SP500"
+      },
+      "weights": {
+        "valuation": 30,
+        "trend": 25,
+        "sentiment": 20,
+        "macro": 25
+      },
+      "execution": {
+        "fund_code": "050025",
+        "fund_name": "博时标普500ETF联接A",
+        "why": "场外标普500 里规模最大的一只（C 类 006075）；备选 161125 易方达标普500人民币A。注意 012861/003718 是美元份额，净值口径不同",
+        "fallbacks": [
+          {
+            "code": "161125",
+            "name": "易方达标普500指数人民币A"
+          },
+          {
+            "code": "006075",
+            "name": "博时标普500ETF联接C"
+          }
+        ]
+      },
+      "note": "本期不在计划内（只观察）：做市值加权基准，用来和「标普500等权重」对比看风格。评分口径：标普500 指数本身，估值用蛋卷 SP500 的 PE 周频序列 + PB 分位。"
     },
     {
       "id": "GOLD",
@@ -104,35 +204,8 @@
           }
         ]
       },
-      "note": "评分口径：COMEX 黄金主力连续合约日线",
+      "note": "本期不在计划内（只观察）。评分口径：COMEX 黄金主力连续合约日线",
       "data_note": "新浪外盘期货 GC（COMEX 黄金连续，2016 起）为主——云端实测可访问；东财 101.GC00Y 在 GitHub Runner 上会断连，仅作备用。两者末 2500 日窗口基本重合，分数差异 <0.5 分"
-    },
-    {
-      "id": "SPG1200_HEALTH",
-      "name": "标普全球1200医疗保健指数",
-      "kind": "index",
-      "advisory_only": false,
-      "data": {
-        "type": "usixj",
-        "symbol": "usIXJ"
-      },
-      "benchmark": {
-        "type": "msci",
-        "code": "990100",
-        "variant": "NETR"
-      },
-      "weights": {
-        "valuation": 35,
-        "trend": 25,
-        "sentiment": 20,
-        "macro": 20
-      },
-      "execution": {
-        "fund_code": "000369",
-        "fund_name": "广发全球医疗保健指数人民币(QDII)A",
-        "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用"
-      },
-      "note": "评分口径：标普全球1200医疗保健指数（S&P Global 1200 Health Care Sector Capped Index），用 usIXJ（iShares 全球医疗保健 ETF）作行情代理——两者跟踪同一指数。历史约 5 年（腾讯自选股种子 + 每日增量），比价基准仍用 MSCI World。此前误配为 MSCI 全球医疗（106801），已更正。"
     },
     {
       "id": "CSI_DIVIDEND",
@@ -165,8 +238,25 @@
         "fund_name": "易方达中证红利ETF联接发起式A",
         "why": "跟踪中证红利(000922)；C类 009052。注意「中证红利价值」024564 与「中证红利低波动」020602 是不同指数，勿混"
       },
-      "note": "评分口径：中证红利指数 000922 本身",
+      "note": "本期不在计划内（只观察）。评分口径：中证红利指数 000922 本身",
       "data_note": "中证指数官网 000922 日线（2004 起、含当日收盘、带成交额）为主；官网不通时回退东财 1.000922"
+    },
+    {
+      "id": "IXIC",
+      "name": "纳斯达克综合指数",
+      "kind": "index_ref",
+      "advisory_only": true,
+      "data": {
+        "type": "sina_us",
+        "symbol": ".IXIC"
+      },
+      "weights": {
+        "valuation": 30,
+        "trend": 25,
+        "sentiment": 20,
+        "macro": 25
+      },
+      "note": "仅作市场温度参考，不产生买入动作"
     }
   ],
   "multiplier_table": [

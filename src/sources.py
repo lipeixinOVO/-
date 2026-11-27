@@ -45,8 +45,53 @@ def _cached(key, fn):
 
 # ---------------------------------------------------------------- 行情
 
+# 常见的整数拆股比例。只用来识别「价格序列里的拆股断点」，不参与任何估值计算。
+_SPLIT_RATIOS = (2, 3, 4, 5, 10, 20)
+
+
+def _split_adjust(rows, label=""):
+    """把未复权序列里的拆股断点拉平（新浪美股 ETF 日线不回溯调整拆股）。
+
+    2026-11-27 实测：RSP（标普500等权重 ETF）在 2006-04-27 做过 4:1 拆分，
+    原始序列 177.72 → 44.44（正好 −75.00%）。不处理的话「等权重 ÷ 标普500」
+    会从 0.13 一路掉到 0.03，分位彻底失真、分数被系统性抬高。
+
+    只认「单日涨跌与 1/k 相差 <0.8%」的跳变 —— 真实暴跌几乎不可能正好落在
+    这种整数比值上，所以误判概率极低；真出现了也会打印出来，便于人工复核。
+    """
+    if len(rows) < 2:
+        return rows
+    breaks = []
+    for i in range(1, len(rows)):
+        prev, cur = rows[i - 1][1], rows[i][1]
+        if prev <= 0 or cur <= 0:
+            continue
+        r = cur / prev
+        for k in _SPLIT_RATIOS:
+            if abs(r - 1.0 / k) < 0.008:
+                breaks.append((i, k))
+                print(f"    · {label} 检测到 {k}:1 拆股（{rows[i - 1][0]} {prev} → "
+                      f"{rows[i][0]} {cur}），已回溯复权", flush=True)
+                break
+    if not breaks:
+        return rows
+    out = []
+    for i, row in enumerate(rows):
+        f = 1.0
+        for bi, k in breaks:
+            if i < bi:
+                f /= k
+        out.append([row[0], row[1] * f])
+    return out
+
+
 def sina_us_daily(symbol):
-    """新浪美股日线，历史可回溯到 2004 年。symbol 例：.IXIC / .NDX / .INX"""
+    """新浪美股日线，历史可回溯到 2004 年。symbol 例：.IXIC / .NDX / .INX / .RSP
+
+    **空结果必须抛错，不能返回 []**：_cached 会把返回值原样写进 6 小时磁盘缓存，
+    一旦某次接口抽风返回空串，缓存里就留下一个 2 字节的 `[]`，接下来 6 小时所有
+    调用都拿到空数据、try_chain 的备用源也永远轮不到（2026-11-27 实测 .RSP 中过）。
+    """
     def _go():
         url = ("https://stock.finance.sina.com.cn/usstock/api/json_v2.php/"
                f"US_MinKService.getDailyK?symbol={symbol}&___qn=3")
@@ -58,7 +103,9 @@ def sina_us_daily(symbol):
             except (KeyError, TypeError, ValueError):
                 continue
         out.sort(key=lambda x: x[0])
-        return out
+        if not out:
+            raise RuntimeError(f"新浪美股 {symbol} 返回空数据（原始长度 {len(rows)}）")
+        return _split_adjust(out, f"新浪美股 {symbol}")
     return [tuple(x) for x in _cached(f"us_{symbol}", _go)]
 
 

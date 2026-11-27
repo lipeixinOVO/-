@@ -155,6 +155,13 @@ body{
 .card .px{font-size:10.5px;color:var(--dim2);margin-top:4px;letter-spacing:.03em}
 .card .tag{font-size:9px;padding:2.5px 7px;border-radius:3px;color:var(--dim2);
   border:1px solid var(--line-2);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+/* 计划内＝蓝（要执行）、观察＝金（照常打分但不投）、参考＝灰（只当温度计） */
+.card .tag.on{color:#2f6fb0;border-color:rgba(47,111,176,.38);background:rgba(47,111,176,.07)}
+.card .tag.obs{color:#8a6b25;border-color:rgba(156,120,47,.4);background:rgba(156,120,47,.08)}
+.card.obs{opacity:.88}
+.card.obs:hover{opacity:.97}
+.card .wchip{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:3px;
+  font-size:9.5px;letter-spacing:.05em;background:rgba(47,111,176,.1);color:#2f6fb0}
 
 .card .mid{display:flex;align-items:flex-end;gap:14px;margin:17px 0 15px}
 /* 分数用纯色，不用渐变裁切（-webkit-background-clip:text 在部分手机内核里
@@ -237,6 +244,27 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .dirbar b{font-weight:600;color:#0e1013}
 .dirbar .arw{color:#8a6b25;font-weight:600}
 .dirbar .q{color:var(--dim2)}
+
+/* 本期定投计划：配比 + 当月建议金额。金额随倍数变，所以整块由 JS 画 */
+.planbar{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin:12px 0 0}
+.planbar .pc{flex:1 1 190px;min-width:158px;padding:11px 14px;border-radius:10px;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.5)}
+.planbar .pc .k{font-size:10px;letter-spacing:.1em;color:var(--dim2);display:flex;
+  justify-content:space-between;gap:8px}
+.planbar .pc .k b{color:#2f6fb0;font-weight:600;letter-spacing:.02em}
+.planbar .pc .v{font-size:19px;color:#0e1013;margin-top:5px;letter-spacing:-.01em}
+.planbar .pc .v small{font-size:11px;color:var(--dim3);margin-left:4px}
+.planbar .pc .s{font-size:10.5px;color:var(--dim2);margin-top:3px}
+.planbar .pc.tot{background:linear-gradient(180deg,rgba(47,111,176,.08),rgba(47,111,176,.02));
+  border-color:rgba(47,111,176,.3)}
+.planbar .pc.tot .v{color:#2f6fb0}
+.planbar .pc .k span{min-width:0;overflow-wrap:anywhere}
+.planbar .pc .s{overflow-wrap:anywhere}
+/* 手机上一行放两张会把「标普500等权重指数 30%」挤到卡片外面，直接改成单列通栏 */
+@media (max-width:720px){
+  .planbar{gap:8px}
+  .planbar .pc{flex:1 1 100%;min-width:0;padding:10px 13px}
+}
 .dirbar .sep{color:rgba(20,22,27,.28)}
 
 /* ---------- 实时行情条 ---------- */
@@ -340,7 +368,7 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .lab svg{width:100%;height:auto;display:block;margin-top:8px}
 .lab .cap{font-size:9.5px;color:var(--dim3);margin-top:6px;letter-spacing:.04em;line-height:1.7}
 
-/* 二十二年：标题 + 两条线口径 + 年化数字 */
+/* 多窗口图头部（VIX 复用）：标题 + 口径 + 右侧数字 */
 .chart .cap{font-size:10px;color:var(--dim3);margin-top:9px;letter-spacing:.03em;line-height:1.9}
 .chart .cap b{color:#3f434c;font-weight:600}
 .chart .cap code{background:rgba(20,22,27,.06);padding:1px 4px;border-radius:3px;
@@ -501,7 +529,7 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
   .swipehint{display:block}
   .chartbar{gap:8px}
   .chartbar button{font-size:12.5px;padding:6px 15px}
-  /* 二十二年 / 深证成指的多窗口按钮要在一行里排开，手机上把内边距收紧 */
+  /* 多窗口按钮（VIX）要在一行里排开，手机上把内边距收紧 */
   .eqw .chartbar button,.szk .chartbar button{font-size:11.5px;padding:5px 9px;letter-spacing:.02em}
   .eqw .chartbar .delta,.szk .chartbar .delta{margin-left:0;font-size:10px}
   .szk-idx-tabs button{font-size:11px;padding:6px 12px}
@@ -1305,8 +1333,10 @@ function render(){
       L.base_amount.toLocaleString('zh-CN') + ' 元/月</b> · 历史 <b>' +
       P.history.length + '</b> 期</span>';
 
-  // 结论条：全部标的里分数最高的（含参考指数则标注）
-  const ex_ = L.assets.filter(a=>!a.advisory_only);
+  // 结论条：只在「本期计划内」的标的里挑 —— 观察仓分数再高也不该被写成「本期最该加仓」，
+  // 那会直接把人带偏（计划里根本没有它）。计划为空时才退回全部非参考标的。
+  let ex_ = L.assets.filter(a=>a.in_plan);
+  if(!ex_.length) ex_ = L.assets.filter(a=>!a.advisory_only);
   const sorted = ex_.slice().sort((a,b)=>b.score-a.score);
   const top = sorted[0], low = sorted[sorted.length-1];
   const upN = ex_.filter(a=>a.multiplier>1.02).length;
@@ -1320,6 +1350,32 @@ function render(){
       '</div><div class="hint">'+low.score.toFixed(1)+' 分 · '+low.multiplier.toFixed(1)+'×</div></div>'+
     '<div><div class="k">上调档位<i class="fqmini">快照</i></div><div class="v">'+upN+' / '+ex_.length+
       '</div><div class="hint">超过 1.0 倍的标的数</div></div>';
+
+  // 本期定投计划：每只标的「配比 × 自己的倍数」＝当月金额，合计就是本月要出的钱。
+  // 金额全部来自服务端快照（倍数一天最多变 6 次），不跟实时行情走，避免和分数打架。
+  const planBox = document.getElementById('planbar');
+  if(planBox){
+    const pl = L.plan||{};
+    const inPlan = L.assets.filter(function(a){ return a.in_plan; });
+    if(inPlan.length){
+      let tot = 0;
+      const cards = inPlan.map(function(a){
+        const amt = a.suggest_amount||0; tot += amt;
+        return '<div class="pc"><div class="k"><span>'+esc(a.name)+'</span><b>'+
+          (a.plan_weight*100).toFixed(0)+'%</b></div>'+
+          '<div class="v num">'+amt.toLocaleString('zh-CN')+'<small>元</small></div>'+
+          '<div class="s">'+a.score.toFixed(1)+' 分 · '+a.multiplier.toFixed(1)+'× · '+
+          esc(a.label)+'</div></div>';
+      }).join('');
+      planBox.innerHTML = cards +
+        '<div class="pc tot"><div class="k"><span>本月合计</span><b>100%</b></div>'+
+        '<div class="v num">'+tot.toLocaleString('zh-CN')+'<small>元</small></div>'+
+        '<div class="s">'+(pl.note?esc(pl.note):'')+
+        (pl.as_of?' · '+esc(pl.as_of)+' 起':'')+'</div></div>';
+    } else {
+      planBox.innerHTML = '';
+    }
+  }
 
   const m = L.macro||{};
   const cells = [
@@ -1338,7 +1394,8 @@ function render(){
   const g = document.getElementById('grid');
   g.innerHTML = L.assets.map(function(a){
     const ex = a.execution||{};
-    const dir = a.advisory_only ? 'ref' : '';
+    const inPlan = !!a.in_plan;                        // 本期计划内（有配比、有金额）
+    const dir = a.advisory_only ? 'ref' : (inPlan ? '' : 'obs');
     const mult = a.multiplier.toFixed(1);
     const bp = (a.band_pos==null?50:a.band_pos);
     const dims = (a.dimensions||[]).map(function(d){
@@ -1351,17 +1408,22 @@ function render(){
     const fund = a.advisory_only
       ? '<div class="fund"><span>仅作市场温度参考</span><span class="st">不产生动作</span></div>'
       : (ex.fund_code
-        ? '<div class="fund"><span>落地 <span class="code">'+esc(ex.fund_code)+'</span> '+
+        ? '<div class="fund"><span>'+(inPlan?'落地 ':'本期不投 · 落地 ')+
+          '<span class="code">'+esc(ex.fund_code)+'</span> '+
           (ex.nav!=null?'净值 '+ex.nav.toFixed(4):'')+'</span>'+
           '<span class="st '+stCls(ex.subscribe_status)+'">'+esc(ex.subscribe_status||'—')+'</span></div>'
         : '<div class="fund"><span>该口径无对应场外基金</span><span class="st">仅指数评分</span></div>');
+    var tagTxt = a.advisory_only ? '参考' : (inPlan ? '可执行' : '观察');
+    var tagCls = a.advisory_only ? '' : (inPlan ? ' on' : ' obs');
+    var wchip = inPlan ? '<span class="wchip">配比 '+(a.plan_weight*100).toFixed(0)+'%</span>' : '';
     return '<div class="card '+dir+'">'+
       '<div class="top"><div><div class="nm">'+esc(a.name)+'</div>'+
-      '<div class="px num">收盘 '+fmtPx(a.price)+' · '+(a.price_date||'')+'</div></div>'+
-      '<div class="tag">'+(a.advisory_only?'参考':'可执行')+'</div></div>'+
+      '<div class="px num">收盘 '+fmtPx(a.price)+' · '+(a.price_date||'')+wchip+'</div></div>'+
+      '<div class="tag'+tagCls+'">'+tagTxt+'</div></div>'+
       '<div class="mid"><div class="score num">'+a.score.toFixed(1)+'<small>分</small></div>'+
       '<div class="mult '+multCls(a.multiplier)+' num">'+(a.advisory_only?'—':mult+'×')+'</div>'+
-      '<div class="lbl">'+(a.advisory_only?'不执行':esc(a.label))+'<br>档内 '+bp.toFixed(0)+'%</div></div>'+
+      '<div class="lbl">'+(a.advisory_only?'不执行':(inPlan?esc(a.label):'仅观察，不投'))+
+      '<br>档内 '+bp.toFixed(0)+'%</div></div>'+
       '<div class="band"><div class="track"><div class="fill" style="width:'+Math.max(2,bp)+'%"></div></div>'+
       '<div class="cap"><span>本档下沿</span><span>越靠右越接近上调</span></div></div>'+
       '<div class="dims">'+dims+'</div>'+sparkBlock(a)+fund+'</div>';
@@ -1400,8 +1462,8 @@ function renderChart(){
   //   分数图里黄金却成了黑、纳指100 成了棕。读者换一张图就得重新认一遍线，比没颜色更糟。
   //   下面这张表与 Python 的 MONTH_COLORS 必须逐字一致（selfcheck 有断言比对）。
   const COLORS = {
-    IXIC:'#111827', NDX:'#2f6fb0', GOLD:'#a8752a',
-    SPG1200_HEALTH:'#2f7d5e', CSI_DIVIDEND:'#b4512f'
+    IXIC:'#111827', NDX:'#2f6fb0', SPX:'#6b4fa0', SPX_EW:'#1f7f8c',
+    GOLD:'#a8752a', SPG1200_HEALTH:'#2f7d5e', CSI_DIVIDEND:'#b4512f'
   };
   const COLORS_FB = ['#5b4b8a','#7a7f8c','#3f7f9e','#8a6b25','#9c4f4f'];
   const colorOf = function(id, i){ return COLORS[id] || COLORS_FB[i % COLORS_FB.length]; };
@@ -1476,10 +1538,16 @@ function renderChart(){
   // 四条线经常收在 35–52 这十几分里（本期 45.8 / 44.6 只差 1.2 分），末端几乎重合，
   // 所以按 y 排序后逐个压开最小间距；被压开的画一小段引线连回真实端点，
   // 否则标签看着像标到了旁边那条线上 —— 这比不标更糟。
+  // 计划外（观察/参考）的线只在图例里给数值，末端不再标字：
+  // 6 条线常挤在 32–64 这三十几分里，全标必然叠成一坨，而图例就在下方。
+  const planIds = {};
+  ((P.latest && P.latest.assets) || []).forEach(function(a){ if(a.in_plan) planIds[a.id] = 1; });
+  const hasPlan = Object.keys(planIds).length > 0;
   const labs = [];
   ids.forEach(function(id,ci){
     const pts = tail(id); if(!pts.length) return;
     const last = pts[pts.length-1]; if(last.s==null) return;
+    if(hasPlan && !planIds[id]) return;
     labs.push({y0: y(last.s), y: y(last.s), v: last.s,
                c: colorOf(id, ci), nm: labName[ci]});
   });
@@ -1576,6 +1644,8 @@ function renderChart(){
 const LIVE = [
   {c:'usIXIC',  nm:'纳斯达克综合'},
   {c:'usNDX',   nm:'纳斯达克100'},
+  {c:'usINX',   nm:'标普500'},
+  {c:'usRSP',   nm:'标普500等权重'},
   {c:'hf_GC',   nm:'黄金 COMEX'},
   {c:'usIXJ',   nm:'全球医疗保健'},
   {c:'sh000922',nm:'中证红利'},
@@ -1766,7 +1836,7 @@ function loadLive(){
   _liveKill=setTimeout(function(){ s.onerror(); }, 8000);
 }
 
-/* 二十二年那张图的窗口切换（服务端已生成好几份 SVG，这里只切显示） */
+/* 多窗口图的切换（VIX 卡片用；原来「二十二年」也用它，那块已删）。服务端已生成好几份 SVG，这里只切显示 */
 function bindEqw(){
   const roots=document.querySelectorAll('.eqw');
   Array.prototype.forEach.call(roots,function(root){
@@ -2144,7 +2214,7 @@ def _ellip(s, fs, maxw):
     return (out or s[:1]) + "…"
 
 
-def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
+def _month_svg(items, w=1060, h=300, fs=10, maxx=6, dim_names=()):
     """近一月累计涨跌对比图。**横轴按真实日期铺，不按数据点索引**。
 
     为什么不能用索引：各市场的交易日不同 —— 本期 A 股 17 个点、美股 23 个点
@@ -2152,8 +2222,15 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     看着「同起点同终点」，实际时间跨度并不一样，这是最容易骗人的画法。
 
     items = [(name, month_dict, color), ...]
+    dim_names：本图里「计划外、只观察」的标的，画成细线 + 半透明。
+        7 条线同粗细时根本分不清主次，而计划只有 3 只 —— 线宽就是「谁是主角」。
     """
     import datetime as dt
+
+    # 传进来的名字是完整名（「黄金（COMEX 主力连续）」），图里标的是 _chart_name 之后的短名
+    # （「黄金」）。两个都要认，否则「观察」的线会被当成计划内、照样标末端标签。
+    def _isdim(nm):
+        return nm in dim_names or _chart_name(nm) in dim_names
 
     ser = []
     for name, m, col in items:
@@ -2235,14 +2312,20 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
     for name, m, col, pts in ser:
         d = " ".join(("M" if i == 0 else "L") + f"{X(dd):.1f} {Y(v):.1f}"
                      for i, (dd, v) in enumerate(pts))
-        o.append(f'<path d="{d}" fill="none" stroke="{col}" stroke-width="2" '
+        dim = _isdim(name)
+        o.append(f'<path d="{d}" fill="none" stroke="{col}" '
+                 f'stroke-width="{1.4 if dim else 2.4}" '
+                 f'stroke-opacity="{".5" if dim else ".95"}" '
                  'stroke-linejoin="round" stroke-linecap="round"/>')
 
     # 末值标签单独一轮画：两条线末端靠得近时会糊成一坨（本期纳指综合 -4.10% 与
     # 纳指100 -5.00% 只差 0.9 个点 ≈ 13px），先按 y 排序再逐个压开最小间距。
     # 标签带指数名（原来是光秃秃的 +6.02%，读者对不上是哪条线）。
+    # 计划外的线不在末端标字：4 个观察标的的末值挤在 -6% ~ -11% 那一段，
+    # 标签必然叠成一坨；它们的数值图例里已经写了，端点上不再重复一遍。
     ends = sorted((Y(pts[-1][1]), pts[-1][1], col, X(pts[-1][0]), nm)
-                  for (_n, _m, col, pts), nm in zip(ser, names))
+                  for (_n, _m, col, pts), nm in zip(ser, names)
+                  if not _isdim(nm))
     bh = (nfs * 1.16 + pfs * 1.16) if stack else pfs * 1.25   # 单个标签块的高度
     # 两行模式下块与块之间要多留一截：名字和它自己的百分比贴紧、跟邻居拉开，
     # 否则「上一块的数字」看着像「下一块的名字」——正是这次要修的那个毛病。
@@ -2254,12 +2337,13 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
             y = prev + gap
         fixed.append((y, lv, col, xx, nm))
         prev = y
-    over = (fixed[-1][0] + bh / 2) - (h - PB + fs * 0.55)
-    if over > 0:                     # 推到底边外就整组上移
-        fixed = [(y - over, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
-    top = (fixed[0][0] - bh / 2) - 2
-    if top < 0:                      # 上移过头顶到画布外，再整组压回来
-        fixed = [(y - top, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
+    if fixed:
+        over = (fixed[-1][0] + bh / 2) - (h - PB + fs * 0.55)
+        if over > 0:                 # 推到底边外就整组上移
+            fixed = [(y - over, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
+        top = (fixed[0][0] - bh / 2) - 2
+        if top < 0:                  # 上移过头顶到画布外，再整组压回来
+            fixed = [(y - top, lv, col, xx, nm) for y, lv, col, xx, nm in fixed]
     # 被压开的标签画一小段引线连回真实端点：不然标签看着像标到了旁边那条线上。
     # ends 与 fixed 顺序一致（只按 y 排过一次，后面全是整体平移），可以 zip。
     for (y0, _lv, col, xx, _nm), (y, _a, _b, _c, _d) in zip(ends, fixed):
@@ -2267,9 +2351,10 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
             o.append(f'<path d="M{xx + 2:.1f} {y0:.1f}L{xx + 6:.1f} {y:.1f}" fill="none" '
                      f'stroke="{col}" stroke-width="1" stroke-opacity=".45"/>')
     for y, lv, col, xx, nm in fixed:
+        dop = ".52" if _isdim(nm) else ".78"   # .78 是原有口径，selfcheck 会按这个值断言
         if stack:
             o.append(f'<text x="{xx + 7:.1f}" y="{y - bh / 2 + nfs * 0.95:.1f}" '
-                     f'fill="{col}" fill-opacity=".78" font-size="{nfs}" '
+                     f'fill="{col}" fill-opacity="{dop}" font-size="{nfs}" '
                      'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
                      f'stroke-width="2.6" stroke-linejoin="round">{_esc(nm)}</text>')
             o.append(f'<text x="{xx + 7:.1f}" y="{y + bh / 2 - pfs * 0.22:.1f}" '
@@ -2282,7 +2367,7 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
             o.append(f'<text x="{xx + 7:.1f}" y="{y + fs * 0.35:.1f}" '
                      'text-anchor="start" paint-order="stroke fill" stroke="#fff" '
                      f'stroke-width="3" stroke-linejoin="round">'
-                     f'<tspan fill="{col}" fill-opacity=".78" font-size="{nfs}">{_esc(nm)}</tspan>'
+                     f'<tspan fill="{col}" fill-opacity="{dop}" font-size="{nfs}">{_esc(nm)}</tspan>'
                      f'<tspan dx="4" fill="{col}" font-size="{pfs}" '
                      f'font-weight="600">{lv:+.2f}%</tspan></text>')
 
@@ -2307,6 +2392,8 @@ def _month_svg(items, w=1060, h=300, fs=10, maxx=6):
 MONTH_COLORS = {
     "IXIC": "#111827",
     "NDX": "#2f6fb0",
+    "SPX": "#6b4fa0",
+    "SPX_EW": "#1f7f8c",
     "GOLD": "#a8752a",
     "SPG1200_HEALTH": "#2f7d5e",
     "CSI_DIVIDEND": "#b4512f",
@@ -2324,17 +2411,26 @@ def _month_html(latest):
         col = MONTH_COLORS.get(a["id"]) or MONTH_FALLBACK[i % len(MONTH_FALLBACK)]
         items.append((a["name"], a["month"], col))
 
-    wide = _month_svg(items, w=1060, h=310, fs=10, maxx=6)
-    # 窄画布抬高一点：末值标签改成两行（名称在上、百分比在下），5 个标的要竖着排开
-    narrow = _month_svg(items, w=430, h=330, fs=11, maxx=3)
+    # 计划外的标的（观察 / 参考）画成细线半透明：7 条线一样粗时看不出主次，
+    # 而这张图的用处正是「本月要投的那几只最近怎么走」。
+    # 这里存**短名**（_chart_name 之后），因为图里画线和标末端用的都是短名。
+    dim = set()
+    if any(a.get("in_plan") for a in assets):
+        dim = {_chart_name(a["name"]) for a in assets if not a.get("in_plan")}
+
+    wide = _month_svg(items, w=1060, h=372, fs=10, maxx=6, dim_names=dim)
+    # 窄画布抬高一点：末值标签改成两行（名称在上、百分比在下），7 个标的要竖着排开
+    narrow = _month_svg(items, w=430, h=430, fs=11, maxx=3, dim_names=dim)
     if not wide:
         return ""
 
     legs = "".join(
-        '<span class="mleg"><i style="background:%s"></i><em class="n">%s</em>'
-        '<b class="%s">%+.2f%%</b><em>7 日 %+.2f%%</em></span>'
-        % (c, _esc(n), "up" if m["chg_month"] >= 0 else "dn",
-           m["chg_month"], m["chg_week"])
+        '<span class="mleg"%s><i style="background:%s"></i><em class="n">%s</em>'
+        '<b class="%s">%+.2f%%</b><em>7 日 %+.2f%%</em>%s</span>'
+        % (' style="opacity:.6"' if n in dim else '', c, _esc(n),
+           "up" if m["chg_month"] >= 0 else "dn",
+           m["chg_month"], m["chg_week"],
+           '<em style="color:#8a6b25">观察</em>' if n in dim else '')
         for n, m, c in items)
 
     ends = sorted({str(a["month"].get("end_date") or "")[5:10] for a in assets})
@@ -2952,10 +3048,14 @@ def _vix_html(vix):
 
 
 def _labs_html(labs):
-    """两张「长期锚」卡片 + 一张二十二年双线图。数据缺失时整块不渲染。"""
+    """两张「长期锚」卡片（红利月线锚 / 创业板指÷中证红利）。数据缺失时整块不渲染。
+
+    原来的「二十二年，两条线」大图已于 2026-11-27 按用户要求删除，
+    所以这里只返回卡片部分（第二个返回值恒为空）。
+    """
     if not labs:
-        return "", "", ""
-    da, cy, el = labs.get("div_anchor"), labs.get("cyb_ratio"), labs.get("equity_long")
+        return "", ""
+    da, cy = labs.get("div_anchor"), labs.get("cyb_ratio")
 
     a = ""
     if da:
@@ -3000,77 +3100,8 @@ def _labs_html(labs):
   <div class="cap">历史低点 {cy['min']:.4f}（{cy['min_d']}）、高点 {cy['max']:.4f}（{cy['max_d']}）· 创业板指仅回溯到 {cy['from']}，故分位是近 12 年口径</div>
 </div>"""
 
-    b = ""
-    if el and el.get("win"):
-        wins = el["win"]
-        order = [k for k in ("1y", "5y", "10y", "all") if k in wins]
-        names = {"1y": "近 1 年", "5y": "近 5 年", "10y": "近 10 年"}
-        try:
-            _y0 = int(el["from"][:4])
-            _y1 = int(el["to"][:4])
-            all_lab = f"全部 {_y1 - _y0} 年"
-        except Exception:  # noqa: BLE001
-            all_lab = "全部"
-        names["all"] = all_lab
-
-        btns, panes = [], []
-        for k in order:
-            w = wins[k]
-            pw = w["pts"]
-            pn = w.get("pts_n") or pw
-            on = (k == "all")
-
-            def _layers(pts):
-                return [
-                    {"pts": [(j, r[2]) for j, r in enumerate(pts)], "color": "#111827", "width": 2.2},
-                    {"pts": [(j, r[1]) for j, r in enumerate(pts)], "color": "#2f6fb0", "width": 2.2},
-                ]
-
-            wide = _svg(_layers(pw), w=1060, h=336, log=True,
-                        pad=(54, 58, 16, 26), xlabels=_xlabels(pw, maxn=12),
-                        fs=10, ends=True)
-            # 窄屏没地方把末值标在线外，且右上角年化那块已经写了两个现值，就不标了
-            narrow = _svg(_layers(pn), w=430, h=330, log=True,
-                          pad=(44, 8, 14, 24), xlabels=_xlabels(pn, maxn=5),
-                          fs=11)
-            cls = ' class="on"' if on else ""
-            btns.append(f'<button type="button" data-k="{k}"{cls}>{names[k]}</button>')
-            panes.append(f'<div class="sw" data-k="{k}"{"" if on else " hidden"}>'
-                         f'<div class="v-w">{wide}</div>'
-                         f'<div class="v-n">{narrow}</div></div>')
-
-        # 三个年化数字：画线口径（黑线不含分红、蓝线含分红）在前，同口径对比在后
-        tr = el.get("cagr_market_tr")
-        same = ""
-        if tr is not None:
-            same = (f'<div>同口径全收益：全市场 <b style="color:#111827">{_num(tr, 2)}%</b>'
-                    f' · 沪深300 <b style="color:#2f6fb0">{_num(el["cagr300"], 2)}%</b></div>')
-        b = f"""<div class="chart eqw" id="eqw">
-  <div class="eqhead">
-    <div>
-      <div class="t">二十二年，两条线</div>
-      <div class="sub">
-        <span class="eqleg"><i style="background:#111827"></i>全市场 · 中证全指 <b>000985</b>（价格口径）</span>
-        <span class="eqleg"><i style="background:#2f6fb0"></i>沪深300 <b>H00300</b>（全收益，含分红）</span>
-        <div style="margin-top:3px">纵轴对数刻度 · 共 {el['days']} 个交易日（{el['from']} → {el['to']}）</div>
-      </div>
-    </div>
-    <div class="eqnums">
-      <div class="r">年化 · 画线口径</div>
-      <div>全市场 <b style="color:#111827">{_num(el['cagr_market'], 2)}%</b>（{_num(el['market'], 0)} 点）</div>
-      <div>沪深300 <b style="color:#2f6fb0">{_num(el['cagr300'], 2)}%</b>（{_num(el['h300'], 0)} 点）</div>
-      {same}
-    </div>
-  </div>
-  <div class="chartbar"><div class="btns">{''.join(btns)}</div>
-    <div class="delta"><span class="lb">日频数据</span>每个点一个交易日，按窗口抽稀</div></div>
-  {''.join(panes)}
-  <div class="cap">左轴对数刻度（1 · 2 · 3 · 5 · 7 优选，等距离散）。黑线原图是<b>万得全A 800707.WI</b>，
-    属 Wind 商业数据、公开接口取不到 → 改用中证全指 <code>000985</code> 价格指数近似（同为价格口径、基点 1000、覆盖全 A 股）；
-    蓝线照原样为沪深300全收益 H00300。一条不含分红、一条含分红，所以只能比形态和斜率，
-    比收益高低请看右上的「同口径全收益」。</div>
-</div>"""
-    return a, b, ""
+    # 2026-11-27 按用户要求删掉「二十二年，两条线」整块（中证全指 vs 沪深300 全收益）。
+    return a, ""
 
 
 def _signals_html(sg):
@@ -3142,12 +3173,18 @@ def render(payload):
     rows = []
     for a in latest["assets"]:
         ex = a.get("execution") or {}
+        in_plan = bool(a.get("in_plan"))
         mult = "—" if a["advisory_only"] else f"{a['multiplier']:.1f}×"
-        amt = "—" if a["advisory_only"] else f"{a['suggest_amount']:,.0f} 元"
+        amt = f"{a['suggest_amount']:,.0f} 元" if in_plan else "—"
+        pw = "—" if not in_plan else f"{a.get('plan_weight', 0) * 100:.0f}%"
+        name_td = _esc(a["name"])
+        if not in_plan and not a["advisory_only"]:
+            name_td += " <span style='font-size:9.5px;color:#8a6b25;letter-spacing:.1em'>观察</span>"
         rows.append(
             "<tr>"
-            f"<td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>{_esc(a['name'])}</td>"
+            f"<td style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:#14161b'>{name_td}</td>"
             f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>{a['score']:.1f}</td>"
+            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>{pw}</td>"
             f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim2)'>"
             f"{(a.get('band_pos') or 50):.0f}%</td>"
             f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'>"
@@ -3162,6 +3199,7 @@ def render(payload):
                "letter-spacing:.16em;text-transform:uppercase'>"
                "<th style='padding:0 10px 9px;font-weight:400'>标的</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>分数</th>"
+               "<th style='padding:0 10px 9px;font-weight:400'>配比</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>档内</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>倍数</th>"
                "<th style='padding:0 10px 9px;font-weight:400'>建议金额</th>"
@@ -3174,7 +3212,7 @@ def render(payload):
     month_sec = _month_html(latest)
     labs_obj = latest.get("labs") or {}
     vix_sec = _vix_html(labs_obj.get("vix"))
-    labs_a, labs_b, _ = _labs_html(labs_obj)
+    labs_a, _ = _labs_html(labs_obj)
     sig_sec = _signals_html(payload.get("signals") or {})
     szk_sec = _sz_kline_sections(latest.get("sz_kline"))
     zl_sec = _zhulong_html(latest.get("zhulong"))
@@ -3183,10 +3221,6 @@ def render(payload):
         labs_sec += ('<h2>长期锚 <small>不参与打分 · 只量「现在离长期参考点多远」</small>'
                      '<em class="fq snap">随跑批刷新</em></h2>\n'
                      f'<div class="labs">{labs_a}</div>\n')
-    if labs_b:
-        labs_sec += ('<h2>二十二年 <small>日频 · 对数轴 · 两条线口径不同</small>'
-                     '<em class="fq snap">随跑批刷新</em></h2>\n'
-                     f'{labs_b}\n')
 
     return f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -3233,6 +3267,8 @@ def render(payload):
   <span class="q">50 分 = 1.0×　·　≥ 56 分加仓　·　&lt; 40 分减仓　·　分数是「贵不贵」，不是价格涨跌</span>
 </div>
 
+<div class="planbar" id="planbar"></div>
+
 <div class="live" id="live"></div>
 {vix_sec}
 {sig_sec}
@@ -3269,7 +3305,7 @@ def render(payload):
     <li><b>更新频率分三层，不是所有数字都实时。</b>
         ① <b>实时行情条</b>（页面顶部那一排）= 浏览器每 60 秒直连腾讯行情，只有「价格 + 当日涨跌幅」，
         标着绿色「实时」；<br>
-        ② <b>分数 / 倍数 / 分数历史曲线 / 近一月涨跌 / 长期锚 / 二十二年</b> = 跑批时整体重算，
+        ② <b>分数 / 倍数 / 本月金额 / 分数历史曲线 / 近一月涨跌 / 长期锚</b> = 跑批时整体重算，
         每交易日 6 次（北京 08:07 / 10:07 / 11:17 / 13:37 / 14:47 / 15:17），
         区块标题右侧标着「每交易日 6 次」或「随跑批刷新」；<br>
         ③ <b>宏观利率那排</b> = 日频数据，跟着跑批刷新，标着「日频」。<br>
@@ -3290,15 +3326,17 @@ def render(payload):
     · 中证红利真实股息率历史序列不可得 → 用 PE 分位反向代理<br>
     · A 股 10Y 国债未接入（中债接口需鉴权）→ 红利宏观用「相对沪深300 强弱」+「沪深300 PE 分位」替代<br>
     · 黄金价格分位为名义口径，未做通胀调整<br>
-    · <b>「长期锚」三块不参与打分</b>：40/90 月均线、创红比 0.3 都来自民间经验规则（非学术结论），页面只量「现在离参考点多远」<br>
-    · 万得全A(800707.WI) 属 Wind 商业数据、公开接口取不到 → 「全市场」一条改用中证全指全收益 H00985 替代（同口径、同基点）<br>
+    · <b>标普500等权重指数的 PE 历史不可得</b>（需订阅；蛋卷未覆盖）→ 估值改用「等权重/标普500 比价分位」+「距 10 年对数趋势偏离」。行情用 RSP（Invesco 标普500等权重 ETF）代理，该 ETF 在 2006-04-27 做过 4:1 拆股，新浪原始序列未复权，本站已按 4:1 回溯复权<br>
+    · <b>「长期锚」两块不参与打分</b>：40/90 月均线、创红比 0.3 都来自民间经验规则（非学术结论），页面只量「现在离参考点多远」<br>
     · 创业板指公开接口只回溯到 2014-06 → 创红比分位是「近 12 年」口径，不是全历史
   </div>
   <ul>
-    <li><b>数据来源</b>：腾讯自选股 usIXJ（标普全球1200医疗 · iShares 全球医疗 ETF，历史种子 + 每日增量）· MSCI 官方指数接口（990100 比价基准）· 新浪财经 US_MinKService（.IXIC/.NDX/.INX）·
+    <li><b>数据来源</b>：腾讯自选股 usIXJ（标普全球1200医疗 · iShares 全球医疗 ETF，历史种子 + 每日增量）· MSCI 官方指数接口（990100 比价基准）·
+        新浪财经 US_MinKService（.IXIC / .NDX / .INX 标普500 / RSP 标普500等权重，含拆股复权）·
+        腾讯行情 qt.gtimg.cn（实时条：usIXIC / usNDX / usINX / usRSP / usIXJ / hf_GC / A 股指数）·
         东方财富 push2his（GC00Y/000922/000300/UDI/USDCNH）· 美国财政部 official CSV（TIPS 与名义收益率）·
-        蛋卷基金 index_eva（PE 周频序列 + PB 分位）· 天天基金（净值与申购状态）·
-        中证指数官网 index-perf（000922 / H00300 沪深300全收益 / H00985 中证全指全收益）·
+        蛋卷基金 index_eva（PE 周频序列 + PB 分位；NDX / SP500 / 中证红利 / 沪深300）· 天天基金（净值与申购状态）·
+        中证指数官网 index-perf（000922）·
         新浪 sz399006（创业板指，3000 条上限）·
         东方财富 push2ex 涨停板池 / 炸板池 / 跌停池 + 概念板块涨幅榜 + 行业成分（「超短线擒龙」板块，日频）</li>
     <li><b>跟踪误差实测</b>（纳指100 六只候选，QDII 净值按 T+1 对齐后年化）：

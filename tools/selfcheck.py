@@ -58,10 +58,38 @@ hist = data.get("history") or []
 series = data.get("series") or {}
 assets = latest.get("assets") or []
 
-if len(assets) != 5:
-    bad(f"标的数量应为 5，实际 {len(assets)}")
+if len(assets) < 5:
+    bad(f"标的数量过少 {len(assets)}（至少 5）")
 if len(hist) < 60:
     bad(f"历史期数过少 {len(hist)}")
+
+# ---------- 4a. 定投计划（配比 → 金额）----------
+plan = latest.get("plan") or {}
+pw = plan.get("weights") or {}
+if not pw:
+    bad("latest.json 缺 plan.weights，页面上的「本期计划」会整块不显示")
+else:
+    s = sum(pw.values())
+    if abs(s - 1.0) > 0.001:
+        bad(f"计划配比合计 {s:.4f} ≠ 100%，金额会算错")
+    ids = {a["id"] for a in assets}
+    for k in pw:
+        if k not in ids:
+            bad(f"计划里的 {k} 不在标的列表里")
+    for a in assets:
+        in_plan = bool(a.get("in_plan"))
+        if in_plan != (a["id"] in pw):
+            bad(f"{a.get('name')} 的 in_plan={in_plan} 与计划配比不一致")
+        if in_plan:
+            if not a.get("suggest_amount"):
+                bad(f"{a.get('name')} 在计划内但没有建议金额")
+            else:
+                want = latest.get("base_amount", 0) * pw[a["id"]] * a["multiplier"]
+                if abs(a["suggest_amount"] - want) > 1.5:
+                    bad(f"{a.get('name')} 金额 {a['suggest_amount']} ≠ "
+                        f"基准×配比×倍数 {want:.0f}")
+        elif not a["advisory_only"] and a.get("suggest_amount") is not None:
+            bad(f"{a.get('name')} 不在计划内却给了金额 {a['suggest_amount']}")
 
 # ---------- 4. 单标的数据完整性 ----------
 need = ("id", "name", "score", "multiplier", "label", "band_pos", "dimensions",
