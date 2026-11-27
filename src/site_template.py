@@ -258,6 +258,30 @@ h2 .fq.snap{color:#8a6b25;border-color:rgba(156,120,47,.3);background:rgba(156,1
 .planbar .pc.tot{background:linear-gradient(180deg,rgba(47,111,176,.08),rgba(47,111,176,.02));
   border-color:rgba(47,111,176,.3)}
 .planbar .pc.tot .v{color:#2f6fb0}
+/* 月预算输入卡：双击不用，直接改数字。改完按配比同比例缩放各标的金额，
+   值只存浏览器 localStorage，不回写仓库（静态页没有后端，也不该偷偷改用户配置） */
+.planbar .pc.bud{background:linear-gradient(180deg,rgba(156,120,47,.09),rgba(156,120,47,.02));
+  border-color:rgba(156,120,47,.34);flex:1 1 216px}
+.planbar .pc.bud .k b{color:#8a6b25}
+.planbar .pc.bud .v{display:flex;align-items:baseline;gap:5px;margin-top:4px}
+.planbar .pc.bud input.num{flex:0 0 auto;width:106px;min-width:0;font:inherit;font-size:21px;
+  font-weight:600;color:#0e1013;text-align:right;background:transparent;border:0;
+  border-bottom:1px dashed rgba(156,120,47,.6);
+  padding:0 0 2px;letter-spacing:-.01em;font-variant-numeric:tabular-nums;outline:none;border-radius:0}
+.planbar .pc.bud input.num:focus{border-bottom-color:#8a6b25;border-bottom-style:solid;
+  background:rgba(198,168,96,.12)}
+.planbar .pc.bud input.num::-webkit-outer-spin-button,
+.planbar .pc.bud input.num::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.planbar .pc.bud input.num{-moz-appearance:textfield;appearance:textfield}
+/* 预设按钮必须挤在一行：换行会把卡片顶高，五张卡一起被拉长，下面留一片空白 */
+.planbar .pc.bud .presets{display:flex;gap:4px;margin-top:6px;flex-wrap:nowrap}
+.planbar .pc.bud .presets button{font:inherit;font-size:9.5px;line-height:1.7;padding:0 5px;
+  border-radius:4px;border:1px solid rgba(156,120,47,.36);background:rgba(255,255,255,.6);
+  color:#6b5423;cursor:pointer;letter-spacing:.02em}
+.planbar .pc.bud .presets button:hover{background:rgba(198,168,96,.24)}
+.planbar .pc.bud .presets button.on{background:rgba(140,106,36,.88);
+  color:rgba(255,255,255,.97);border-color:transparent}
+.planbar .pc .v .amt{font-variant-numeric:tabular-nums}
 .planbar .pc .k span{min-width:0;overflow-wrap:anywhere}
 .planbar .pc .s{overflow-wrap:anywhere}
 /* 手机上一行放两张会把「标普500等权重指数 30%」挤到卡片外面，直接改成单列通栏 */
@@ -1281,6 +1305,137 @@ function restTag(td){
   return '<span class="idle nw">（非今日）</span>';
 }
 
+/* ---------- 月预算（页面上可直接改） ----------
+   金额 = 预算 × 配比 × 倍数。预算从 1000 改成 2000，三只标的按 5:3:2 同比例放大，
+   「本月合计」也跟着走。默认值取服务端 config.base_amount；用户改过的值只存
+   localStorage —— 静态页没有后端，也不该为了一个显示参数去回写仓库里的配置。 */
+const BUD_KEY = 'dca_budget_v1';
+const BUD_MIN = 50, BUD_MAX = 10000000;
+function budDefault(){ return (P.latest && P.latest.base_amount) || 1000; }
+function budLoad(){
+  try{
+    const raw = localStorage.getItem(BUD_KEY);
+    if(raw == null) return null;
+    const v = parseInt(raw, 10);
+    return (isFinite(v) && v >= BUD_MIN && v <= BUD_MAX) ? v : null;
+  }catch(e){ return null; }   // 隐私模式 / 禁用存储时 localStorage 会抛错，不能让整页挂掉
+}
+let BUDGET = budLoad();              // null = 跟服务端默认一致
+function budNow(){ return BUDGET == null ? budDefault() : BUDGET; }
+function budSave(){
+  try{
+    if(BUDGET == null) localStorage.removeItem(BUD_KEY);
+    else localStorage.setItem(BUD_KEY, String(BUDGET));
+  }catch(e){}
+}
+function budFmt(v){ return Math.round(v).toLocaleString('zh-CN'); }
+let HERO_TOP = null;                 // 本期最高分标的，hero 里那个金额也要跟着预算变
+const BUD_PRESETS = [500, 1000, 2000, 5000];
+
+function paintAmounts(){
+  const base = budNow();
+  let tot = 0, wsum = 0;
+  Array.prototype.forEach.call(document.querySelectorAll('#planbar .pc[data-pw]'), function(el){
+    const pw = parseFloat(el.getAttribute('data-pw')) || 0;
+    const ml = parseFloat(el.getAttribute('data-mult')) || 0;
+    const amt = Math.round(base * pw * ml);
+    tot += amt; wsum += pw * ml;
+    const s = el.querySelector('.amt');
+    if(s) s.textContent = budFmt(amt);
+  });
+  const t = document.getElementById('plantot');
+  if(t) t.textContent = budFmt(tot);
+  const basis = document.getElementById('planbasis');
+  if(basis) basis.textContent = '加权后 ×' + wsum.toFixed(2) + ' · 预算 ' + budFmt(base) + ' 元起算';
+  const bm = document.getElementById('basemeta');
+  if(bm) bm.textContent = budFmt(base) + ' 元/月';
+  const flag = document.getElementById('budflag');
+  if(flag) flag.textContent = (BUDGET != null && BUDGET !== budDefault()) ? '已改' : '默认';
+  if(HERO_TOP && HERO_TOP.in_plan){
+    const ha = document.getElementById('heroamt');
+    if(ha) ha.textContent = budFmt(base * (HERO_TOP.plan_weight || 0) * HERO_TOP.multiplier);
+  }
+  // 结论摘要表的「建议金额」不跟着改，同一页就会出现两个互相打架的数字
+  Array.prototype.forEach.call(document.querySelectorAll('td[data-pw]'), function(td){
+    const pw = parseFloat(td.getAttribute('data-pw')) || 0;
+    const ml = parseFloat(td.getAttribute('data-mult')) || 0;
+    td.textContent = pw > 0 ? budFmt(base * pw * ml) + ' 元' : '—';
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('#planbar .presets button'), function(b){
+    const v = parseInt(b.getAttribute('data-v'), 10);
+    b.classList.toggle('on', isFinite(v) ? (BUDGET != null && BUDGET === v) : (BUDGET == null));
+  });
+}
+
+function renderPlan(){
+  const box = document.getElementById('planbar');
+  if(!box) return;
+  const L = P.latest || {};
+  const pl = L.plan || {};
+  const inPlan = (L.assets || []).filter(function(a){ return a.in_plan; });
+  if(!inPlan.length){ box.innerHTML = ''; return; }
+  const def = budDefault(), base = budNow();
+  const changed = (BUDGET != null && BUDGET !== def);
+
+  const bud = '<div class="pc bud">'+
+    '<div class="k"><span>每月预算 · 可改</span><b id="budflag">'+(changed?'已改':'默认')+'</b></div>'+
+    '<div class="v"><input class="num" id="budin" type="number" inputmode="numeric" '+
+      'step="100" min="'+BUD_MIN+'" max="'+BUD_MAX+'" value="'+base+'" '+
+      'aria-label="每月定投预算，单位元"><small>元</small></div>'+
+    '<div class="presets">'+BUD_PRESETS.map(function(v){
+      return '<button type="button" data-v="'+v+'">'+v+'</button>';
+    }).join('')+'</div>'+
+    '<div class="s">改数字即同比例缩放 · 存本机</div></div>';
+
+  const cards = inPlan.map(function(a){
+    return '<div class="pc" data-pw="'+a.plan_weight+'" data-mult="'+a.multiplier+'">'+
+      '<div class="k"><span>'+esc(a.name)+'</span><b>'+(a.plan_weight*100).toFixed(0)+'%</b></div>'+
+      '<div class="v num"><span class="amt">'+budFmt(base*(a.plan_weight||0)*a.multiplier)+
+        '</span><small>元</small></div>'+
+      '<div class="s">'+a.score.toFixed(1)+' 分 · '+a.multiplier.toFixed(1)+'× · '+
+      esc(a.label)+'</div></div>';
+  }).join('');
+
+  box.innerHTML = bud + cards +
+    '<div class="pc tot"><div class="k"><span>本月合计</span><b>100%</b></div>'+
+    '<div class="v num"><span id="plantot">—</span><small>元</small></div>'+
+    '<div class="s" id="planbasis"></div>'+
+    (pl.as_of
+      ? '<div class="s" title="'+(pl.note?esc(pl.note):'')+'">配比自 '+esc(pl.as_of)+' 起</div>'
+      : '')+
+    '</div>';
+
+  const inp = document.getElementById('budin');
+  if(inp){
+    inp.addEventListener('input', function(){
+      const v = parseInt(inp.value, 10);
+      if(!isFinite(v) || v <= 0){ BUDGET = null; budSave(); paintAmounts(); return; }
+      // 输到一半的中间态（想打 2000，刚敲到 "2"）先别动画面，否则数字会乱跳
+      if(v < BUD_MIN || v > BUD_MAX) return;
+      BUDGET = Math.round(v); budSave(); paintAmounts();
+    });
+    inp.addEventListener('change', function(){
+      // 失焦 / 回车时把输入框回写成真正生效的值：空值回到默认，越界夹到上下限
+      const v = parseInt(inp.value, 10);
+      if(!isFinite(v) || v <= 0) BUDGET = null;
+      else BUDGET = Math.max(BUD_MIN, Math.min(BUD_MAX, Math.round(v)));
+      budSave(); inp.value = budNow(); paintAmounts();
+    });
+    inp.addEventListener('keydown', function(e){ if(e.key === 'Enter') inp.blur(); });
+  }
+  Array.prototype.forEach.call(box.querySelectorAll('.presets button'), function(b){
+    b.addEventListener('click', function(){
+      const v = parseInt(b.getAttribute('data-v'), 10);
+      if(!isFinite(v)) return;
+      BUDGET = (v === def) ? null : v;       // 点回默认值时清掉本地存储，跟服务端保持一致
+      budSave();
+      if(inp) inp.value = budNow();
+      paintAmounts();
+    });
+  });
+  paintAmounts();
+}
+
 function render(){
   const L = P.latest;
   // 数据新鲜度：用 epoch 秒算（没有就退回解析本地时间字符串），
@@ -1329,7 +1484,7 @@ function render(){
       (nTxt ? ' · <span class="idle nw">' + nTxt + '</span>' : '') + '</span>' +
     '<span class="ln rt"><span class="k">实时价格</span>每 60 秒自动刷新' +
       (perDay ? ' · 分数每交易日 ' + perDay + ' 次' : '') + '</span>' +
-    '<span class="ln"><span class="k">基准</span><b>' +
+    '<span class="ln"><span class="k">月预算</span><b id="basemeta">' +
       L.base_amount.toLocaleString('zh-CN') + ' 元/月</b> · 历史 <b>' +
       P.history.length + '</b> 期</span>';
 
@@ -1340,42 +1495,23 @@ function render(){
   const sorted = ex_.slice().sort((a,b)=>b.score-a.score);
   const top = sorted[0], low = sorted[sorted.length-1];
   const upN = ex_.filter(a=>a.multiplier>1.02).length;
+  HERO_TOP = top;
   // hero 三个数字全是分数派生的快照，不是实时值 —— 必须标出来，
   // 否则上面正好有一条每分钟刷新的行情条，很容易被当成"整页都在实时跑"。
   document.getElementById('hero').innerHTML =
     '<div><div class="k">本期最该加仓<i class="fqmini">快照</i></div><div class="v pick">'+esc(top.name)+
       '</div><div class="hint">'+top.score.toFixed(1)+' 分 · '+top.multiplier.toFixed(1)+
-      '× · '+(top.suggest_amount?top.suggest_amount.toLocaleString('zh-CN')+' 元':'—')+'</div></div>'+
+      '× · '+(top.in_plan
+        ? '<span id="heroamt">'+budFmt(budNow()*(top.plan_weight||0)*top.multiplier)+'</span> 元'
+        : '—')+'</div></div>'+
     '<div><div class="k">相对最贵<i class="fqmini">快照</i></div><div class="v">'+esc(low.name)+
       '</div><div class="hint">'+low.score.toFixed(1)+' 分 · '+low.multiplier.toFixed(1)+'×</div></div>'+
     '<div><div class="k">上调档位<i class="fqmini">快照</i></div><div class="v">'+upN+' / '+ex_.length+
       '</div><div class="hint">超过 1.0 倍的标的数</div></div>';
 
-  // 本期定投计划：每只标的「配比 × 自己的倍数」＝当月金额，合计就是本月要出的钱。
-  // 金额全部来自服务端快照（倍数一天最多变 6 次），不跟实时行情走，避免和分数打架。
-  const planBox = document.getElementById('planbar');
-  if(planBox){
-    const pl = L.plan||{};
-    const inPlan = L.assets.filter(function(a){ return a.in_plan; });
-    if(inPlan.length){
-      let tot = 0;
-      const cards = inPlan.map(function(a){
-        const amt = a.suggest_amount||0; tot += amt;
-        return '<div class="pc"><div class="k"><span>'+esc(a.name)+'</span><b>'+
-          (a.plan_weight*100).toFixed(0)+'%</b></div>'+
-          '<div class="v num">'+amt.toLocaleString('zh-CN')+'<small>元</small></div>'+
-          '<div class="s">'+a.score.toFixed(1)+' 分 · '+a.multiplier.toFixed(1)+'× · '+
-          esc(a.label)+'</div></div>';
-      }).join('');
-      planBox.innerHTML = cards +
-        '<div class="pc tot"><div class="k"><span>本月合计</span><b>100%</b></div>'+
-        '<div class="v num">'+tot.toLocaleString('zh-CN')+'<small>元</small></div>'+
-        '<div class="s">'+(pl.note?esc(pl.note):'')+
-        (pl.as_of?' · '+esc(pl.as_of)+' 起':'')+'</div></div>';
-    } else {
-      planBox.innerHTML = '';
-    }
-  }
+  // 本期定投计划：预算 × 配比 × 自己的倍数 ＝ 当月金额。
+  // 预算由页面上的输入框控制（存 localStorage），改一次全部金额同比例缩放。
+  renderPlan();
 
   const m = L.macro||{};
   const cells = [
@@ -3177,6 +3313,10 @@ def render(payload):
         mult = "—" if a["advisory_only"] else f"{a['multiplier']:.1f}×"
         amt = f"{a['suggest_amount']:,.0f} 元" if in_plan else "—"
         pw = "—" if not in_plan else f"{a.get('plan_weight', 0) * 100:.0f}%"
+        # 前端改了月预算要重算这一格，所以把「配比 × 倍数」一起带出去；
+        # 服务端这段文字是 JS 失效时的兜底值。
+        amt_attr = (f" data-pw='{a.get('plan_weight', 0)}' data-mult='{a['multiplier']}'"
+                    if in_plan else "")
         name_td = _esc(a["name"])
         if not in_plan and not a["advisory_only"]:
             name_td += " <span style='font-size:9.5px;color:#8a6b25;letter-spacing:.1em'>观察</span>"
@@ -3189,7 +3329,7 @@ def render(payload):
             f"{(a.get('band_pos') or 50):.0f}%</td>"
             f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--gold-l)'>"
             f"<b style='font-weight:550'>{mult}</b></td>"
-            f"<td class='num' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>"
+            f"<td class='num'{amt_attr} style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1)'>"
             f"{amt}</td>"
             f"<td class='mono' style='padding:9px 10px;border-bottom:1px solid rgba(20,22,27,.1);color:var(--dim)'>"
             f"{_esc(ex.get('fund_code') or '—')}</td>"

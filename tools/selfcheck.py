@@ -91,6 +91,16 @@ else:
         elif not a["advisory_only"] and a.get("suggest_amount") is not None:
             bad(f"{a.get('name')} 不在计划内却给了金额 {a['suggest_amount']}")
 
+# ---------- 4b. 月预算输入（页面上可直接改）----------
+for tag in ('id="budin"', 'id="budflag"', 'id="plantot"', 'id="planbasis"', 'id="basemeta"',
+            "BUD_KEY", "paintAmounts", "renderPlan"):
+    if tag not in h:
+        bad(f"月预算输入缺标记 {tag}")
+# 摘要表的「建议金额」必须带 data-pw / data-mult，否则改预算时那一列不跟着变，
+# 同一页会出现两个互相打架的数字
+if pw and h.count("data-pw=") < len(pw):
+    bad("摘要表的建议金额没带 data-pw，改预算时那一列不会同步")
+
 # ---------- 4. 单标的数据完整性 ----------
 need = ("id", "name", "score", "multiplier", "label", "band_pos", "dimensions",
         "price", "price_date", "advisory_only", "gates")
