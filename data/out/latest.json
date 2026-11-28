@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-28 01:29:37",
-  "generated_at_ts": 1795800577,
+  "generated_at": "2026-11-28 12:12:32",
+  "generated_at_ts": 1795839152,
   "generated_tz": "Asia/Shanghai",
   "trade_date": "2026-11-27",
   "base_amount": 1000,
@@ -59,151 +59,147 @@
       "advisory_only": false,
       "plan_weight": 0.5,
       "in_plan": true,
-      "price": 26046.9,
-      "price_date": "2026-11-25",
+      "price": 26726.39,
+      "price_date": "2026-11-27",
       "month": {
-        "base_date": "2026-10-26",
-        "base": 29273.4,
-        "end_date": "2026-11-25",
-        "end": 26046.9,
-        "n": 23,
+        "base_date": "2026-10-28",
+        "base": 29813.16,
+        "end_date": "2026-11-27",
+        "end": 26726.39,
+        "n": 22,
         "pts": [
           [
-            "2026-10-26",
+            "2026-10-28",
             0.0
           ],
           [
-            "2026-10-27",
-            1.29
-          ],
-          [
-            "2026-10-28",
-            1.84
-          ],
-          [
             "2026-10-29",
-            0.44
+            -1.38
           ],
           [
             "2026-10-30",
-            -3.04
+            -4.79
           ],
           [
             "2026-11-02",
-            -4.38
+            -6.12
           ],
           [
             "2026-11-03",
-            -3.73
+            -5.48
           ],
           [
             "2026-11-04",
-            -2.86
+            -4.62
           ],
           [
             "2026-11-05",
-            -9.03
+            -10.68
           ],
           [
             "2026-11-06",
-            -7.8
+            -9.47
           ],
           [
             "2026-11-09",
-            -4.67
+            -6.39
           ],
           [
             "2026-11-10",
-            -5.24
+            -6.95
           ],
           [
             "2026-11-11",
-            -3.07
+            -4.83
           ],
           [
             "2026-11-12",
-            -3.36
+            -5.11
           ],
           [
             "2026-11-13",
-            -4.54
+            -6.27
           ],
           [
             "2026-11-16",
-            -7.09
+            -8.77
           ],
           [
             "2026-11-17",
-            -7.76
+            -9.43
           ],
           [
             "2026-11-18",
-            -7.37
+            -9.05
           ],
           [
             "2026-11-19",
-            -9.42
+            -11.06
           ],
           [
             "2026-11-20",
-            -14.5
+            -16.05
           ],
           [
             "2026-11-23",
-            -8.63
+            -10.29
           ],
           [
             "2026-11-24",
-            -10.45
+            -12.07
           ],
           [
             "2026-11-25",
-            -11.02
+            -12.63
+          ],
+          [
+            "2026-11-27",
+            -10.35
           ]
         ],
-        "chg_month": -11.02,
-        "chg_week": -3.94,
-        "week_from": "2026-11-18",
-        "week_n": 5,
-        "hi": 1.84,
-        "lo": -14.5
+        "chg_month": -10.35,
+        "chg_week": 6.78,
+        "week_from": "2026-11-20",
+        "week_n": 4,
+        "hi": 0.0,
+        "lo": -16.05
       },
-      "score": 64.32,
+      "score": 62.81,
       "multiplier": 1.2,
       "label": "温和加码",
-      "band_pos": 69.3,
+      "band_pos": 56.8,
       "completeness": 1.0,
       "suggest_amount": 600.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 73.51,
+          "score": 71.46,
           "anchor": "纳指100(NDX) 指数自身 PE/PB，蛋卷口径",
           "metrics": [
             {
               "name": "纳指100 PE-TTM 10年分位",
-              "raw": 24.6111,
+              "raw": 25.1447,
               "unit": "",
-              "pct": 10.53,
-              "score": 89.47,
+              "pct": 12.48,
+              "score": 87.52,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-27 17:27 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "纳指100 PB 分位",
-              "raw": 7.626,
+              "raw": 7.7913,
               "unit": "",
-              "pct": 50.44,
-              "score": 49.56,
+              "pct": 52.64,
+              "score": 47.36,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-27 17:27 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-28 04:11 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.1"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.1288"
             }
           ],
           "missing_ratio": 0.0
@@ -211,30 +207,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 90.22,
+          "score": 87.92,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.0728,
+              "raw": -0.0488,
               "unit": "%",
-              "pct": 8.44,
-              "score": 91.56,
+              "pct": 11.32,
+              "score": 88.68,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-27 17:27 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.1658,
+              "raw": -0.1441,
               "unit": "%",
-              "pct": 11.12,
-              "score": 88.88,
+              "pct": 12.85,
+              "score": 87.15,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-27 17:27 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -244,30 +240,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 96.26,
+          "score": 95.22,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.4688,
+              "raw": 0.4816,
               "unit": "%",
-              "pct": 97.84,
-              "score": 97.84,
+              "pct": 97.92,
+              "score": 97.92,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-27 17:27 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.1042,
+              "raw": -0.0829,
               "unit": "%",
-              "pct": 6.12,
-              "score": 93.88,
+              "pct": 8.84,
+              "score": 91.16,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .NDX（2026-11-27 17:27 取）",
+              "source": "新浪财经 US_MinKService .NDX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -277,30 +273,30 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 1.85,
+          "score": 1.39,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0273,
+              "raw": 0.0279,
               "unit": "%",
-              "pct": 98.83,
-              "score": 1.17,
+              "pct": 99.18,
+              "score": 0.82,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-27 17:27 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.0485,
+              "raw": 0.0494,
               "unit": "%",
-              "pct": 96.56,
-              "score": 3.44,
+              "pct": 97.27,
+              "score": 2.73,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-27 17:27 取）",
+              "source": "美国财政部 yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -310,8 +306,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0418,
-        "dev": -0.0728
+        "ma200_slope_60d": 0.0413,
+        "dev": -0.0488
       },
       "execution": {
         "why": "6 只候选实测年化跟踪误差最低（0.83%）；华安1.00% / 大成1.03% / 南方1.42% / 天弘1.46% / 国泰11.83%",
@@ -368,7 +364,7 @@
         }
       ],
       "note": "评分口径：纳指100 指数本身。落地基金 000055。本期计划 50%。",
-      "conclusion": "综合 64.3 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
+      "conclusion": "综合 62.8 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
     },
     {
       "id": "SPX_EW",
@@ -377,149 +373,145 @@
       "advisory_only": false,
       "plan_weight": 0.3,
       "in_plan": true,
-      "price": 215.74,
-      "price_date": "2026-11-25",
+      "price": 218.38,
+      "price_date": "2026-11-27",
       "month": {
-        "base_date": "2026-10-26",
-        "base": 217.29,
-        "end_date": "2026-11-25",
-        "end": 215.74,
-        "n": 23,
+        "base_date": "2026-10-28",
+        "base": 217.43,
+        "end_date": "2026-11-27",
+        "end": 218.38,
+        "n": 22,
         "pts": [
           [
-            "2026-10-26",
+            "2026-10-28",
             0.0
           ],
           [
-            "2026-10-27",
-            0.11
-          ],
-          [
-            "2026-10-28",
-            0.06
-          ],
-          [
             "2026-10-29",
-            1.27
+            1.2
           ],
           [
             "2026-10-30",
-            0.47
+            0.4
           ],
           [
             "2026-11-02",
-            1.24
+            1.17
           ],
           [
             "2026-11-03",
-            0.91
+            0.84
           ],
           [
             "2026-11-04",
-            2.78
+            2.71
           ],
           [
             "2026-11-05",
-            -0.19
+            -0.26
           ],
           [
             "2026-11-06",
-            -0.57
+            -0.63
           ],
           [
             "2026-11-09",
-            1.68
+            1.62
           ],
           [
             "2026-11-10",
-            1.65
+            1.59
           ],
           [
             "2026-11-11",
-            2.47
+            2.4
           ],
           [
             "2026-11-12",
-            1.58
+            1.51
           ],
           [
             "2026-11-13",
-            1.78
+            1.72
           ],
           [
             "2026-11-16",
-            0.75
+            0.69
           ],
           [
             "2026-11-17",
-            -0.7
+            -0.77
           ],
           [
             "2026-11-18",
-            -0.86
+            -0.92
           ],
           [
             "2026-11-19",
-            -2.6
+            -2.67
           ],
           [
             "2026-11-20",
-            -4.53
+            -4.59
           ],
           [
             "2026-11-23",
-            -2.06
+            -2.12
           ],
           [
             "2026-11-24",
-            -1.53
+            -1.6
           ],
           [
             "2026-11-25",
-            -0.71
+            -0.78
+          ],
+          [
+            "2026-11-27",
+            0.44
           ]
         ],
-        "chg_month": -0.71,
-        "chg_week": 0.14,
-        "week_from": "2026-11-18",
-        "week_n": 5,
-        "hi": 2.78,
-        "lo": -4.53
+        "chg_month": 0.44,
+        "chg_week": 5.27,
+        "week_from": "2026-11-20",
+        "week_n": 4,
+        "hi": 2.71,
+        "lo": -4.59
       },
-      "score": 54.21,
+      "score": 50.69,
       "multiplier": 1.0,
       "label": "中性，基准",
-      "band_pos": 88.8,
+      "band_pos": 66.8,
       "completeness": 1.0,
       "suggest_amount": 300.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 35,
-          "score": 63.82,
+          "score": 61.61,
           "anchor": "标普500等权重指数官方 PE 历史不可得（需订阅），蛋卷未覆盖；用「等权重/标普500 比价分位」+「距 10 年对数趋势偏离」两个真实代理",
           "metrics": [
             {
               "name": "等权重 / 标普500 比价分位",
-              "raw": 0.03,
+              "raw": 0.0299,
               "unit": "",
-              "pct": 17.25,
-              "score": 82.75,
+              "pct": 16.77,
+              "score": 83.23,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "新浪 .RSP ÷ .INX（2026-11-27 17:28 取）",
+              "source": "新浪 .RSP ÷ .INX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "比值越低=资金越往大权重股挤、等权重相对越便宜，分数越高"
             },
             {
               "name": "距 10 年对数趋势偏离",
-              "raw": 0.0303,
+              "raw": 0.042,
               "unit": "%",
-              "pct": 64.58,
-              "score": 35.42,
+              "pct": 70.83,
+              "score": 29.17,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService RSP（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService RSP（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离对数趋势越多=越贵；CAPE 近似思路，趋势窗口 10 年"
             }
@@ -529,30 +521,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 59.74,
+          "score": 50.34,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": 0.0303,
+              "raw": 0.0425,
               "unit": "%",
-              "pct": 36.33,
-              "score": 63.67,
+              "pct": 46.22,
+              "score": 53.78,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService RSP（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService RSP（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.034,
+              "raw": -0.0222,
               "unit": "%",
-              "pct": 44.18,
-              "score": 55.82,
+              "pct": 53.1,
+              "score": 46.9,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService RSP（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService RSP（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -562,30 +554,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 82.84,
+          "score": 81.33,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.2278,
+              "raw": 0.228,
               "unit": "%",
               "pct": 87.64,
               "score": 87.64,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService RSP（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService RSP（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.0085,
+              "raw": -0.001,
               "unit": "%",
-              "pct": 24.37,
-              "score": 75.63,
+              "pct": 28.13,
+              "score": 71.87,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService RSP（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService RSP（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -595,30 +587,30 @@
         {
           "key": "macro",
           "weight": 20,
-          "score": 1.85,
+          "score": 1.39,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0273,
+              "raw": 0.0279,
               "unit": "%",
-              "pct": 98.83,
-              "score": 1.17,
+              "pct": 99.18,
+              "score": 0.82,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.0485,
+              "raw": 0.0494,
               "unit": "%",
-              "pct": 96.56,
-              "score": 3.44,
+              "pct": 97.27,
+              "score": 2.73,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -628,8 +620,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0309,
-        "dev": 0.0303
+        "ma200_slope_60d": 0.0304,
+        "dev": 0.0425
       },
       "execution": {
         "why": "国内唯一跟踪标普500等权重的场外基金（A 类 096001 / C 类 008401，短持选 C）。注意 013404 / 015545 是美元份额，净值口径不同，勿混用",
@@ -659,7 +651,7 @@
       "fund_meta": {},
       "gates": [],
       "note": "评分口径：标普500等权重指数，用 RSP（Invesco S&P 500 Equal Weight ETF）作行情代理——该 ETF 完全复制同一指数。估值用「等权重 ÷ 标普500 比价分位」+「距 10 年对数趋势偏离」两个真实代理（等权重指数本身无公开 PE 序列）。本期计划 30%。",
-      "conclusion": "综合 54.2 分 → 1.0 倍（中性，基准）：估值偏便宜，价格居中。"
+      "conclusion": "综合 50.7 分 → 1.0 倍（中性，基准）：估值偏便宜，价格居中。"
     },
     {
       "id": "SPG1200_HEALTH",
@@ -668,13 +660,13 @@
       "advisory_only": false,
       "plan_weight": 0.2,
       "in_plan": true,
-      "price": 112.88,
+      "price": 112.94,
       "price_date": "2026-11-27",
       "month": {
         "base_date": "2026-10-28",
         "base": 109.36,
         "end_date": "2026-11-27",
-        "end": 112.88,
+        "end": 112.94,
         "n": 22,
         "pts": [
           [
@@ -763,50 +755,50 @@
           ],
           [
             "2026-11-27",
-            3.22
+            3.27
           ]
         ],
-        "chg_month": 3.22,
-        "chg_week": 4.39,
+        "chg_month": 3.27,
+        "chg_week": 4.45,
         "week_from": "2026-11-20",
         "week_n": 4,
         "hi": 5.64,
         "lo": -1.12
       },
-      "score": 32.69,
+      "score": 32.74,
       "multiplier": 0.8,
       "label": "偏贵，略减",
-      "band_pos": 39.1,
+      "band_pos": 39.5,
       "completeness": 1.0,
       "suggest_amount": 160.0,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 35,
-          "score": 44.76,
+          "score": 45.45,
           "anchor": "标普全球1200医疗保健指数官方 PE 历史不可得（需订阅）；用相对 MSCI World 比价 + 对数趋势偏离代理。usIXJ ETF PE-TTM 约 27.6（Yahoo，2026-11 快照）",
           "metrics": [
             {
               "name": "医疗 / MSCI World 比价分位",
-              "raw": 0.0076,
+              "raw": 0.0074,
               "unit": "",
-              "pct": 36.21,
-              "score": 63.79,
+              "pct": 34.15,
+              "score": 65.85,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-27 17:28 取）",
+              "source": "usIXJ ÷ MSCI 990100（标普全球1200医疗 ÷ 全球大盘）（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "比价越高=医疗相对全球大盘越贵，分数越低；usIXJ 仅约 5 年历史，故为近 5 年分位"
             },
             {
               "name": "距对数趋势偏离",
-              "raw": 0.0772,
+              "raw": 0.0777,
               "unit": "%",
-              "pct": 83.78,
-              "score": 16.22,
+              "pct": 85.14,
+              "score": 14.86,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-27 17:28 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离对数趋势越多=越贵；CAPE 近似思路。usIXJ 仅约 5 年历史，趋势窗口取 2 年（其余标的为 10 年）"
             }
@@ -816,30 +808,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 14.1,
+          "score": 13.77,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": 0.1263,
+              "raw": 0.1269,
               "unit": "%",
-              "pct": 98.55,
-              "score": 1.45,
+              "pct": 98.64,
+              "score": 1.36,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-27 17:28 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.0229,
+              "raw": -0.0224,
               "unit": "%",
-              "pct": 73.25,
-              "score": 26.75,
+              "pct": 73.82,
+              "score": 26.18,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-27 17:28 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -849,30 +841,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 65.65,
+          "score": 65.58,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.2264,
+              "raw": 0.2265,
               "unit": "%",
               "pct": 94.71,
               "score": 94.71,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-27 17:28 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": 0.0679,
+              "raw": 0.0685,
               "unit": "%",
-              "pct": 77.95,
-              "score": 22.05,
+              "pct": 78.12,
+              "score": 21.88,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-27 17:28 取）",
+              "source": "腾讯自选股 usIXJ（iShares 全球医疗保健 ETF，跟踪标普全球1200医疗保健）（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -882,30 +874,30 @@
         {
           "key": "macro",
           "weight": 20,
-          "score": 1.85,
+          "score": 1.39,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0273,
+              "raw": 0.0279,
               "unit": "%",
-              "pct": 98.83,
-              "score": 1.17,
+              "pct": 99.18,
+              "score": 0.82,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.0485,
+              "raw": 0.0494,
               "unit": "%",
-              "pct": 96.56,
-              "score": 3.44,
+              "pct": 97.27,
+              "score": 2.73,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -916,7 +908,7 @@
       "trend_flag": {
         "flag": "healthy",
         "ma200_slope_60d": 0.028,
-        "dev": 0.1263
+        "dev": 0.1269
       },
       "execution": {
         "why": "该指数国内唯一主流跟踪产品；C类 016280（短持选C）。注意 000370/016281 是美元现汇份额，净值口径不同，勿混用",
@@ -943,151 +935,147 @@
       "advisory_only": false,
       "plan_weight": 0.0,
       "in_plan": false,
-      "price": 7182.78,
-      "price_date": "2026-11-25",
+      "price": 7297.49,
+      "price_date": "2026-11-27",
       "month": {
-        "base_date": "2026-10-26",
-        "base": 7676.77,
-        "end_date": "2026-11-25",
-        "end": 7182.78,
-        "n": 23,
+        "base_date": "2026-10-28",
+        "base": 7743.98,
+        "end_date": "2026-11-27",
+        "end": 7297.49,
+        "n": 22,
         "pts": [
           [
-            "2026-10-26",
+            "2026-10-28",
             0.0
           ],
           [
-            "2026-10-27",
-            0.6
-          ],
-          [
-            "2026-10-28",
-            0.88
-          ],
-          [
             "2026-10-29",
-            0.57
+            -0.3
           ],
           [
             "2026-10-30",
-            -1.26
+            -2.12
           ],
           [
             "2026-11-02",
-            -1.76
+            -2.62
           ],
           [
             "2026-11-03",
-            -1.4
+            -2.26
           ],
           [
             "2026-11-04",
-            0.15
+            -0.71
           ],
           [
             "2026-11-05",
-            -4.21
+            -5.04
           ],
           [
             "2026-11-06",
-            -3.91
+            -4.74
           ],
           [
             "2026-11-09",
-            -1.65
+            -2.51
           ],
           [
             "2026-11-10",
-            -2.03
+            -2.88
           ],
           [
             "2026-11-11",
-            -0.75
+            -1.61
           ],
           [
             "2026-11-12",
-            -1.1
+            -1.96
           ],
           [
             "2026-11-13",
-            -1.5
+            -2.35
           ],
           [
             "2026-11-16",
-            -3.39
+            -4.23
           ],
           [
             "2026-11-17",
-            -4.38
+            -5.21
           ],
           [
             "2026-11-18",
-            -4.6
+            -5.43
           ],
           [
             "2026-11-19",
-            -6.53
+            -7.34
           ],
           [
             "2026-11-20",
-            -9.98
+            -10.76
           ],
           [
             "2026-11-23",
-            -5.73
+            -6.54
           ],
           [
             "2026-11-24",
-            -6.2
+            -7.01
           ],
           [
             "2026-11-25",
-            -6.43
+            -7.25
+          ],
+          [
+            "2026-11-27",
+            -5.77
           ]
         ],
-        "chg_month": -6.43,
-        "chg_week": -1.92,
-        "week_from": "2026-11-18",
-        "week_n": 5,
-        "hi": 0.88,
-        "lo": -9.98
+        "chg_month": -5.77,
+        "chg_week": 5.6,
+        "week_from": "2026-11-20",
+        "week_n": 4,
+        "hi": 0.0,
+        "lo": -10.76
       },
-      "score": 56.96,
-      "multiplier": 1.2,
-      "label": "温和加码",
-      "band_pos": 8.0,
+      "score": 55.2,
+      "multiplier": 1.0,
+      "label": "中性，基准",
+      "band_pos": 95.0,
       "completeness": 1.0,
       "suggest_amount": null,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 54.74,
+          "score": 53.04,
           "anchor": "标普500(SP500) 指数自身 PE/PB，蛋卷口径（PE 为周频序列，2016-11 起）",
           "metrics": [
             {
               "name": "标普500 PE-TTM 10年分位",
-              "raw": 22.1007,
+              "raw": 22.4506,
               "unit": "",
-              "pct": 21.17,
-              "score": 78.83,
+              "pct": 22.91,
+              "score": 77.09,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-27 17:28 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "标普500 PB 分位",
-              "raw": 4.999,
+              "raw": 5.0781,
               "unit": "",
-              "pct": 81.4,
-              "score": 18.6,
+              "pct": 83.04,
+              "score": 16.96,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-27 17:28 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-28 04:11 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.2072"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.2232"
             }
           ],
           "missing_ratio": 0.0
@@ -1095,30 +1083,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 84.83,
+          "score": 80.79,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.0231,
+              "raw": -0.0077,
               "unit": "%",
-              "pct": 12.24,
-              "score": 87.76,
+              "pct": 15.85,
+              "score": 84.15,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .INX（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService .INX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.0814,
+              "raw": -0.0667,
               "unit": "%",
-              "pct": 18.09,
-              "score": 81.91,
+              "pct": 22.57,
+              "score": 77.43,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .INX（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService .INX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1128,30 +1116,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 94.35,
+          "score": 93.69,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.3168,
+              "raw": 0.3244,
               "unit": "%",
-              "pct": 96.8,
-              "score": 96.8,
+              "pct": 97.16,
+              "score": 97.16,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .INX（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService .INX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.0588,
+              "raw": -0.0481,
               "unit": "%",
-              "pct": 9.32,
-              "score": 90.68,
+              "pct": 11.52,
+              "score": 88.48,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .INX（2026-11-27 17:28 取）",
+              "source": "新浪财经 US_MinKService .INX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -1161,30 +1149,30 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 1.85,
+          "score": 1.39,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0273,
+              "raw": 0.0279,
               "unit": "%",
-              "pct": 98.83,
-              "score": 1.17,
+              "pct": 99.18,
+              "score": 0.82,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.0485,
+              "raw": 0.0494,
               "unit": "%",
-              "pct": 96.56,
-              "score": 3.44,
+              "pct": 97.27,
+              "score": 2.73,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -1194,8 +1182,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0317,
-        "dev": -0.0231
+        "ma200_slope_60d": 0.0312,
+        "dev": -0.0077
       },
       "execution": {
         "why": "场外标普500 里规模最大的一只（C 类 006075）；备选 161125 易方达标普500人民币A。注意 012861/003718 是美元份额，净值口径不同",
@@ -1241,7 +1229,7 @@
         }
       ],
       "note": "本期不在计划内（只观察）：做市值加权基准，用来和「标普500等权重」对比看风格。评分口径：标普500 指数本身，估值用蛋卷 SP500 的 PE 周频序列 + PB 分位。",
-      "conclusion": "综合 57.0 分 → 1.2 倍（温和加码）：估值中性，价格在均值下方。"
+      "conclusion": "综合 55.2 分 → 1.0 倍（中性，基准）：估值中性，价格在均值下方。"
     },
     {
       "id": "GOLD",
@@ -1250,13 +1238,13 @@
       "advisory_only": false,
       "plan_weight": 0.0,
       "in_plan": false,
-      "price": 3658.7,
+      "price": 3681.1,
       "price_date": "2026-11-27",
       "month": {
         "base_date": "2026-10-28",
         "base": 4081.1,
         "end_date": "2026-11-27",
-        "end": 3658.7,
+        "end": 3681.1,
         "n": 23,
         "pts": [
           [
@@ -1349,50 +1337,50 @@
           ],
           [
             "2026-11-27",
-            -10.35
+            -9.8
           ]
         ],
-        "chg_month": -10.35,
-        "chg_week": 3.4,
+        "chg_month": -9.8,
+        "chg_week": 4.03,
         "week_from": "2026-11-20",
         "week_n": 5,
         "hi": 1.68,
         "lo": -13.3
       },
-      "score": 58.38,
+      "score": 58.25,
       "multiplier": 1.0,
       "label": "温和加码",
-      "band_pos": 19.8,
+      "band_pos": 18.8,
       "completeness": 1.0,
       "suggest_amount": null,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 15,
-          "score": 21.88,
+          "score": 21.65,
           "anchor": "黄金无 PE，用 10 年价格分位 + 金/股比价",
           "metrics": [
             {
               "name": "金价 10 年名义分位",
-              "raw": 3658.7,
+              "raw": 3681.1,
               "unit": "",
-              "pct": 87.56,
-              "score": 12.44,
+              "pct": 87.84,
+              "score": 12.16,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-27 17:28 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "未做通胀调整，属近似口径"
             },
             {
               "name": "金价 / 标普500 比价分位",
-              "raw": 0.5036,
+              "raw": 0.5044,
               "unit": "",
-              "pct": 63.95,
-              "score": 36.05,
+              "pct": 64.11,
+              "score": 35.89,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-27 17:28 取）",
+              "source": "东财 GC00Y ÷ 新浪 .INX（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "金/股比价越高说明黄金相对股票越贵"
             }
@@ -1402,30 +1390,30 @@
         {
           "key": "trend",
           "weight": 30,
-          "score": 99.78,
+          "score": 99.75,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.168,
+              "raw": -0.1629,
               "unit": "%",
               "pct": 0.25,
               "score": 99.75,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-27 17:28 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.3282,
+              "raw": -0.3241,
               "unit": "%",
-              "pct": 0.2,
-              "score": 99.8,
+              "pct": 0.24,
+              "score": 99.76,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-27 17:28 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1435,30 +1423,30 @@
         {
           "key": "sentiment",
           "weight": 25,
-          "score": 98.43,
+          "score": 98.64,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.3251,
+              "raw": 0.3311,
               "unit": "%",
-              "pct": 97.6,
-              "score": 97.6,
+              "pct": 98.0,
+              "score": 98.0,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪外盘期货 GC 日线（2026-11-27 17:28 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.1828,
+              "raw": -0.1778,
               "unit": "%",
-              "pct": 0.32,
-              "score": 99.68,
+              "pct": 0.4,
+              "score": 99.6,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪外盘期货 GC 日线（2026-11-27 17:28 取）",
+              "source": "新浪外盘期货 GC 日线（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -1468,30 +1456,30 @@
         {
           "key": "macro",
           "weight": 30,
-          "score": 1.85,
+          "score": 1.39,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0273,
+              "raw": 0.0279,
               "unit": "%",
-              "pct": 98.83,
-              "score": 1.17,
+              "pct": 99.18,
+              "score": 0.82,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.0485,
+              "raw": 0.0494,
               "unit": "%",
-              "pct": 96.56,
-              "score": 3.44,
+              "pct": 97.27,
+              "score": 2.73,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-27 17:28 取）",
+              "source": "美国财政部 yield_curve（2026-11-28 04:11 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -1502,7 +1490,7 @@
       "trend_flag": {
         "flag": "breakdown",
         "ma200_slope_60d": -0.0352,
-        "dev": -0.168
+        "dev": -0.1629
       },
       "execution": {
         "why": "场外定投首选，跟踪上海金 AU9999，申购费 0.06%（天天基金 2026-10-22 查）；备选 002610 博时黄金ETF联接A。注意：本站评分口径是 COMEX 主力连续，落地标的是上海金，两者存在汇率与内外盘基差，长期方向一致但短期会有偏离",
@@ -1552,7 +1540,7 @@
         }
       ],
       "note": "本期不在计划内（只观察）。评分口径：COMEX 黄金主力连续合约日线",
-      "conclusion": "综合 58.4 分 → 1.0 倍（温和加码）：估值偏贵，价格在均值下方。"
+      "conclusion": "综合 58.2 分 → 1.0 倍（温和加码）：估值偏贵，价格在均值下方。"
     },
     {
       "id": "CSI_DIVIDEND",
@@ -1691,7 +1679,7 @@
               "score": 11.26,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-27 17:29 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "真实股息率=0.044，历史股息率序列不可得，用 PE 分位反向代理"
             },
@@ -1703,7 +1691,7 @@
               "score": 37.84,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-27 17:29 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "蛋卷口径"
             }
@@ -1724,7 +1712,7 @@
               "score": 74.91,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-27 17:29 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
@@ -1736,7 +1724,7 @@
               "score": 54.7,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "中证指数官网 indexCode=000922（2026-11-27 17:29 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -1757,7 +1745,7 @@
               "score": 19.69,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-27 17:29 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
@@ -1769,7 +1757,7 @@
               "score": 85.71,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "中证指数官网 indexCode=000922（2026-11-27 17:29 取）",
+              "source": "中证指数官网 indexCode=000922（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "放量（恐慌或狂热）给分，需结合趋势看"
             }
@@ -1790,7 +1778,7 @@
               "score": 20.25,
               "weight": 60,
               "higher_is_cheaper": false,
-              "source": "东财 000922 ÷ 000300（2026-11-27 17:29 取）",
+              "source": "东财 000922 ÷ 000300（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "红利相对大盘越强，性价比越低"
             },
@@ -1802,7 +1790,7 @@
               "score": 69.32,
               "weight": 40,
               "higher_is_cheaper": true,
-              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-27 17:29 取）",
+              "source": "蛋卷基金 index_eva pe_history SH000300（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "大盘越贵，资金越倾向高股息防御，红利相对吸引力上升 → 方向为正"
             }
@@ -1844,151 +1832,147 @@
       "advisory_only": true,
       "plan_weight": 0.0,
       "in_plan": false,
-      "price": 23585.8,
-      "price_date": "2026-11-25",
+      "price": 24129.5,
+      "price_date": "2026-11-27",
       "month": {
-        "base_date": "2026-10-26",
-        "base": 26169.38,
-        "end_date": "2026-11-25",
-        "end": 23585.8,
-        "n": 23,
+        "base_date": "2026-10-28",
+        "base": 26549.85,
+        "end_date": "2026-11-27",
+        "end": 24129.5,
+        "n": 22,
         "pts": [
           [
-            "2026-10-26",
+            "2026-10-28",
             0.0
           ],
           [
-            "2026-10-27",
-            1.18
-          ],
-          [
-            "2026-10-28",
-            1.45
-          ],
-          [
             "2026-10-29",
-            0.06
+            -1.38
           ],
           [
             "2026-10-30",
-            -2.8
+            -4.19
           ],
           [
             "2026-11-02",
-            -3.84
+            -5.22
           ],
           [
             "2026-11-03",
-            -3.05
+            -4.44
           ],
           [
             "2026-11-04",
-            -1.65
+            -3.06
           ],
           [
             "2026-11-05",
-            -7.09
+            -8.42
           ],
           [
             "2026-11-06",
-            -6.08
+            -7.42
           ],
           [
             "2026-11-09",
-            -3.5
+            -4.88
           ],
           [
             "2026-11-10",
-            -4.22
+            -5.59
           ],
           [
             "2026-11-11",
-            -2.69
+            -4.08
           ],
           [
             "2026-11-12",
-            -3.07
+            -4.46
           ],
           [
             "2026-11-13",
-            -3.95
+            -5.32
           ],
           [
             "2026-11-16",
-            -6.34
+            -7.68
           ],
           [
             "2026-11-17",
-            -7.03
+            -8.37
           ],
           [
             "2026-11-18",
-            -6.65
+            -7.98
           ],
           [
             "2026-11-19",
-            -8.75
+            -10.06
           ],
           [
             "2026-11-20",
-            -13.57
+            -14.81
           ],
           [
             "2026-11-23",
-            -7.95
+            -9.27
           ],
           [
             "2026-11-24",
-            -9.31
+            -10.61
           ],
           [
             "2026-11-25",
-            -9.87
+            -11.16
+          ],
+          [
+            "2026-11-27",
+            -9.12
           ]
         ],
-        "chg_month": -9.87,
-        "chg_week": -3.46,
-        "week_from": "2026-11-18",
-        "week_n": 5,
-        "hi": 1.45,
-        "lo": -13.57
+        "chg_month": -9.12,
+        "chg_week": 6.68,
+        "week_from": "2026-11-20",
+        "week_n": 4,
+        "hi": 0.0,
+        "lo": -14.81
       },
-      "score": 62.33,
+      "score": 60.77,
       "multiplier": 1.2,
       "label": "温和加码",
-      "band_pos": 52.7,
+      "band_pos": 39.8,
       "completeness": 1.0,
       "suggest_amount": null,
       "dimensions": [
         {
           "key": "valuation",
           "weight": 30,
-          "score": 69.52,
+          "score": 67.44,
           "anchor": "纳斯达克综合指数自身 PE 不可得，用纳指100(NDX) 估值代理",
           "metrics": [
             {
               "name": "纳指100 PE-TTM 10年分位",
-              "raw": 24.6111,
+              "raw": 25.1447,
               "unit": "",
-              "pct": 10.53,
-              "score": 89.47,
+              "pct": 12.48,
+              "score": 87.52,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva pe_history（2026-11-27 17:29 取）",
+              "source": "蛋卷基金 index_eva pe_history（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "PE 越低分位越低，价格越便宜、分数越高"
             },
             {
               "name": "纳指100 PB 分位",
-              "raw": 7.626,
+              "raw": 7.7913,
               "unit": "",
-              "pct": 50.44,
-              "score": 49.56,
+              "pct": 52.64,
+              "score": 47.36,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "蛋卷基金 index_eva detail（2026-11-27 17:29 取）",
+              "source": "蛋卷基金 index_eva detail（2026-11-28 04:12 取）",
               "fetched_at": "",
-              "note": "蛋卷口径；交叉校验 PE 分位=0.1"
+              "note": "蛋卷口径；交叉校验 PE 分位=0.1288"
             }
           ],
           "missing_ratio": 0.0
@@ -1996,30 +1980,30 @@
         {
           "key": "trend",
           "weight": 25,
-          "score": 88.08,
+          "score": 85.45,
           "anchor": null,
           "metrics": [
             {
               "name": "距 200 日均线偏离",
-              "raw": -0.0629,
+              "raw": -0.0415,
               "unit": "%",
-              "pct": 10.64,
-              "score": 89.36,
+              "pct": 13.29,
+              "score": 86.71,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-27 17:29 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "偏离越大越贵，分位越高分数越低"
             },
             {
               "name": "距 52 周高点回撤",
-              "raw": -0.1454,
+              "raw": -0.1257,
               "unit": "%",
-              "pct": 13.21,
-              "score": 86.79,
+              "pct": 15.81,
+              "score": 84.19,
               "weight": 50,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-27 17:29 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "回撤越深（历史分位越低）分数越高"
             }
@@ -2029,30 +2013,30 @@
         {
           "key": "sentiment",
           "weight": 20,
-          "score": 94.95,
+          "score": 94.16,
           "anchor": null,
           "metrics": [
             {
               "name": "20 日年化波动率",
-              "raw": 0.4245,
+              "raw": 0.4351,
               "unit": "%",
-              "pct": 97.16,
-              "score": 97.16,
+              "pct": 97.52,
+              "score": 97.52,
               "weight": 60,
               "higher_is_cheaper": true,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-27 17:29 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "波动放大=恐慌，分数升高"
             },
             {
               "name": "60 日动量",
-              "raw": -0.0963,
+              "raw": -0.0797,
               "unit": "%",
-              "pct": 8.36,
-              "score": 91.64,
+              "pct": 10.88,
+              "score": 89.12,
               "weight": 40,
               "higher_is_cheaper": false,
-              "source": "新浪财经 US_MinKService .IXIC（2026-11-27 17:29 取）",
+              "source": "新浪财经 US_MinKService .IXIC（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "无成交额数据，改用动量：涨得越多越热，分数越低"
             }
@@ -2062,30 +2046,30 @@
         {
           "key": "macro",
           "weight": 25,
-          "score": 1.85,
+          "score": 1.39,
           "anchor": null,
           "metrics": [
             {
               "name": "美债 10Y 实际利率(TIPS)",
-              "raw": 0.0273,
+              "raw": 0.0279,
               "unit": "%",
-              "pct": 98.83,
-              "score": 1.17,
+              "pct": 99.18,
+              "score": 0.82,
               "weight": 70,
               "higher_is_cheaper": false,
-              "source": "美国财政部 real_yield_curve（2026-11-27 17:29 取）",
+              "source": "美国财政部 real_yield_curve（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "全历史(2003起)分位；实际利率越高，折现压力越大，分数越低"
             },
             {
               "name": "美债 10Y 名义利率",
-              "raw": 0.0485,
+              "raw": 0.0494,
               "unit": "%",
-              "pct": 96.56,
-              "score": 3.44,
+              "pct": 97.27,
+              "score": 2.73,
               "weight": 30,
               "higher_is_cheaper": false,
-              "source": "美国财政部 yield_curve（2026-11-27 17:29 取）",
+              "source": "美国财政部 yield_curve（2026-11-28 04:12 取）",
               "fetched_at": "",
               "note": "全历史分位；名义利率抬升压制估值，与实际利率之差反映通胀预期"
             }
@@ -2095,8 +2079,8 @@
       ],
       "trend_flag": {
         "flag": "healthy",
-        "ma200_slope_60d": 0.0338,
-        "dev": -0.0629
+        "ma200_slope_60d": 0.0334,
+        "dev": -0.0415
       },
       "execution": {},
       "fund_meta": {},
@@ -2107,16 +2091,16 @@
         }
       ],
       "note": "仅作市场温度参考，不产生买入动作",
-      "conclusion": "综合 62.3 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
+      "conclusion": "综合 60.8 分 → 1.2 倍（温和加码）：估值偏便宜，价格在均值下方。"
     }
   ],
   "alternatives": [],
   "macro": {
-    "ust_10y_real": 2.73,
-    "ust_10y_nominal": 4.85,
-    "dxy": 104.0,
-    "usdcnh": 6.6547,
-    "gold_spot": 3636.83
+    "ust_10y_real": 2.79,
+    "ust_10y_nominal": 4.94,
+    "dxy": 104.04,
+    "usdcnh": 6.6551,
+    "gold_spot": 3654.15
   },
   "errors": [],
   "data_notes": [],
@@ -5954,18 +5938,18 @@
       ]
     },
     "vix": {
-      "last": 26.8,
-      "date": "2026-11-26",
-      "chg": -1.49,
-      "chg_pct": -5.3,
+      "last": 23.81,
+      "date": "2026-11-27",
+      "chg": -2.99,
+      "chg_pct": -11.2,
       "label": "警惕",
       "zone": [
         20,
         30
       ],
-      "pct": 89.8,
+      "pct": 81.9,
       "median": 17.61,
-      "mean": 19.09,
+      "mean": 19.08,
       "zones": [
         {
           "lo": 0,
@@ -6008,25 +5992,21 @@
           "n": 4
         }
       ],
-      "from": "2022-01-24",
-      "to": "2026-11-26",
+      "from": "2022-01-25",
+      "to": "2026-11-27",
       "days": 1250,
       "win": {
         "1w": {
           "name": "近 1 周",
           "days": 5,
-          "from": "2026-11-20",
-          "to": "2026-11-26",
-          "lo": 26.36,
-          "hi": 35.89,
-          "avg": 28.79,
-          "chg": -9.09,
-          "chg_pct": -25.3,
+          "from": "2026-11-23",
+          "to": "2026-11-27",
+          "lo": 23.81,
+          "hi": 28.29,
+          "avg": 26.38,
+          "chg": -2.81,
+          "chg_pct": -10.6,
           "pts": [
-            [
-              "2026-11-20",
-              35.89
-            ],
             [
               "2026-11-23",
               26.62
@@ -6042,24 +6022,24 @@
             [
               "2026-11-26",
               26.8
+            ],
+            [
+              "2026-11-27",
+              23.81
             ]
           ]
         },
         "1m": {
           "name": "近 1 月",
           "days": 21,
-          "from": "2026-10-29",
-          "to": "2026-11-26",
+          "from": "2026-10-30",
+          "to": "2026-11-27",
           "lo": 16.61,
           "hi": 35.89,
-          "avg": 23.3,
-          "chg": 9.6,
-          "chg_pct": 55.8,
+          "avg": 23.61,
+          "chg": 4.39,
+          "chg_pct": 22.6,
           "pts": [
-            [
-              "2026-10-29",
-              17.2
-            ],
             [
               "2026-10-30",
               19.42
@@ -6139,24 +6119,24 @@
             [
               "2026-11-26",
               26.8
+            ],
+            [
+              "2026-11-27",
+              23.81
             ]
           ]
         },
         "3m": {
           "name": "近 3 月",
           "days": 63,
-          "from": "2026-09-01",
-          "to": "2026-11-26",
+          "from": "2026-09-02",
+          "to": "2026-11-27",
           "lo": 14.21,
           "hi": 35.89,
-          "avg": 18.59,
-          "chg": 10.46,
-          "chg_pct": 64.0,
+          "avg": 18.71,
+          "chg": 8.61,
+          "chg_pct": 56.6,
           "pts": [
-            [
-              "2026-09-01",
-              16.34
-            ],
             [
               "2026-09-02",
               15.2
@@ -6404,24 +6384,24 @@
             [
               "2026-11-26",
               26.8
+            ],
+            [
+              "2026-11-27",
+              23.81
             ]
           ]
         },
         "6m": {
           "name": "近 6 月",
           "days": 126,
-          "from": "2026-06-04",
-          "to": "2026-11-26",
+          "from": "2026-06-05",
+          "to": "2026-11-27",
           "lo": 14.21,
           "hi": 35.89,
-          "avg": 17.7,
-          "chg": 11.4,
-          "chg_pct": 74.0,
+          "avg": 17.77,
+          "chg": 2.3,
+          "chg_pct": 10.7,
           "pts": [
-            [
-              "2026-06-04",
-              15.4
-            ],
             [
               "2026-06-05",
               21.51
@@ -6921,1851 +6901,1854 @@
             [
               "2026-11-26",
               26.8
+            ],
+            [
+              "2026-11-27",
+              23.81
             ]
           ]
         },
         "1y": {
           "name": "近 1 年",
           "days": 245,
-          "from": "2025-12-16",
-          "to": "2026-11-26",
+          "from": "2025-12-17",
+          "to": "2026-11-27",
           "lo": 13.47,
           "hi": 35.89,
-          "avg": 18.4,
-          "chg": 10.32,
-          "chg_pct": 62.6,
+          "avg": 18.43,
+          "chg": 6.19,
+          "chg_pct": 35.1,
           "pts": [
-            [
-              "2025-12-16",
-              16.48
-            ],
             [
               "2025-12-17",
               17.62
             ],
             [
-              "2025-12-19",
-              14.91
+              "2025-12-18",
+              16.87
             ],
             [
               "2025-12-22",
               14.08
             ],
             [
-              "2025-12-24",
-              13.47
+              "2025-12-23",
+              14.0
             ],
             [
-              "2025-12-29",
-              14.2
+              "2025-12-26",
+              13.6
             ],
             [
               "2025-12-30",
               14.33
             ],
             [
-              "2026-01-02",
-              14.51
+              "2025-12-31",
+              14.95
             ],
             [
-              "2026-01-06",
-              14.75
+              "2026-01-05",
+              14.9
             ],
             [
               "2026-01-07",
               15.38
             ],
             [
-              "2026-01-09",
-              14.49
+              "2026-01-08",
+              15.45
             ],
             [
               "2026-01-12",
               15.12
             ],
             [
-              "2026-01-14",
-              16.75
-            ],
-            [
-              "2026-01-16",
-              15.86
-            ],
-            [
-              "2026-01-19",
-              18.84
-            ],
-            [
-              "2026-01-21",
-              16.9
-            ],
-            [
-              "2026-01-23",
-              16.09
-            ],
-            [
-              "2026-01-26",
-              16.15
-            ],
-            [
-              "2026-01-28",
-              16.35
-            ],
-            [
-              "2026-01-30",
-              17.44
-            ],
-            [
-              "2026-02-02",
-              16.34
-            ],
-            [
-              "2026-02-04",
-              18.64
-            ],
-            [
-              "2026-02-05",
-              21.77
-            ],
-            [
-              "2026-02-09",
-              17.36
-            ],
-            [
-              "2026-02-11",
-              17.65
-            ],
-            [
-              "2026-02-12",
-              20.82
-            ],
-            [
-              "2026-02-16",
-              21.2
-            ],
-            [
-              "2026-02-18",
-              19.62
-            ],
-            [
-              "2026-02-19",
-              20.23
-            ],
-            [
-              "2026-02-23",
-              21.01
-            ],
-            [
-              "2026-02-25",
-              17.93
-            ],
-            [
-              "2026-02-26",
-              18.63
-            ],
-            [
-              "2026-03-02",
-              21.44
-            ],
-            [
-              "2026-03-03",
-              23.57
-            ],
-            [
-              "2026-03-05",
-              23.75
-            ],
-            [
-              "2026-03-09",
-              25.5
-            ],
-            [
-              "2026-03-10",
-              24.93
-            ],
-            [
-              "2026-03-12",
-              27.29
-            ],
-            [
-              "2026-03-16",
-              23.51
-            ],
-            [
-              "2026-03-17",
-              22.37
-            ],
-            [
-              "2026-03-19",
-              24.06
-            ],
-            [
-              "2026-03-20",
-              26.78
-            ],
-            [
-              "2026-03-24",
-              26.95
-            ],
-            [
-              "2026-03-26",
-              27.44
-            ],
-            [
-              "2026-03-27",
-              31.05
-            ],
-            [
-              "2026-03-31",
-              25.25
-            ],
-            [
-              "2026-04-02",
-              23.87
-            ],
-            [
-              "2026-04-06",
-              24.17
-            ],
-            [
-              "2026-04-08",
-              21.04
-            ],
-            [
-              "2026-04-10",
-              19.23
-            ],
-            [
-              "2026-04-13",
-              19.12
-            ],
-            [
-              "2026-04-15",
-              18.17
-            ],
-            [
-              "2026-04-16",
-              17.94
-            ],
-            [
-              "2026-04-20",
-              18.87
-            ],
-            [
-              "2026-04-22",
-              18.92
-            ],
-            [
-              "2026-04-23",
-              19.31
-            ],
-            [
-              "2026-04-27",
-              18.02
-            ],
-            [
-              "2026-04-29",
-              18.81
-            ],
-            [
-              "2026-04-30",
-              16.89
-            ],
-            [
-              "2026-05-04",
-              18.29
-            ],
-            [
-              "2026-05-06",
-              17.39
-            ],
-            [
-              "2026-05-07",
-              17.08
-            ],
-            [
-              "2026-05-11",
-              18.38
-            ],
-            [
-              "2026-05-12",
-              17.99
-            ],
-            [
-              "2026-05-14",
-              17.26
-            ],
-            [
-              "2026-05-18",
-              17.82
-            ],
-            [
-              "2026-05-19",
-              18.06
-            ],
-            [
-              "2026-05-21",
-              16.76
-            ],
-            [
-              "2026-05-25",
-              16.59
-            ],
-            [
-              "2026-05-26",
-              17.01
-            ],
-            [
-              "2026-05-28",
-              15.74
-            ],
-            [
-              "2026-05-29",
-              15.32
-            ],
-            [
-              "2026-06-02",
-              15.77
-            ],
-            [
-              "2026-06-04",
-              15.4
-            ],
-            [
-              "2026-06-05",
-              21.51
-            ],
-            [
-              "2026-06-09",
-              19.87
-            ],
-            [
-              "2026-06-11",
-              19.44
-            ],
-            [
-              "2026-06-12",
-              17.68
-            ],
-            [
-              "2026-06-16",
-              16.41
-            ],
-            [
-              "2026-06-18",
-              16.4
-            ],
-            [
-              "2026-06-19",
-              16.78
-            ],
-            [
-              "2026-06-23",
-              19.49
-            ],
-            [
-              "2026-06-24",
-              18.63
-            ],
-            [
-              "2026-06-26",
-              18.41
-            ],
-            [
-              "2026-06-30",
-              16.45
-            ],
-            [
-              "2026-07-01",
-              16.59
-            ],
-            [
-              "2026-07-03",
-              15.81
-            ],
-            [
-              "2026-07-07",
-              16.13
-            ],
-            [
-              "2026-07-08",
-              16.9
-            ],
-            [
-              "2026-07-10",
-              15.03
-            ],
-            [
-              "2026-07-14",
-              16.5
-            ],
-            [
-              "2026-07-15",
-              15.67
-            ],
-            [
-              "2026-07-17",
-              18.77
-            ],
-            [
-              "2026-07-20",
-              18.65
-            ],
-            [
-              "2026-07-22",
-              16.64
-            ],
-            [
-              "2026-07-24",
-              18.58
-            ],
-            [
-              "2026-07-27",
-              18.67
-            ],
-            [
-              "2026-07-29",
-              20.66
-            ],
-            [
-              "2026-07-31",
-              15.99
-            ],
-            [
-              "2026-08-03",
-              15.86
-            ],
-            [
-              "2026-08-05",
-              15.81
-            ],
-            [
-              "2026-08-06",
-              15.15
-            ],
-            [
-              "2026-08-10",
-              15.46
-            ],
-            [
-              "2026-08-12",
-              14.55
-            ],
-            [
-              "2026-08-13",
-              14.63
-            ],
-            [
-              "2026-08-17",
-              15.19
-            ],
-            [
-              "2026-08-19",
-              14.89
-            ],
-            [
-              "2026-08-20",
-              16.01
-            ],
-            [
-              "2026-08-24",
-              15.85
-            ],
-            [
-              "2026-08-26",
-              15.21
-            ],
-            [
-              "2026-08-27",
-              14.51
-            ],
-            [
-              "2026-08-31",
-              14.92
-            ],
-            [
-              "2026-09-01",
-              16.34
-            ],
-            [
-              "2026-09-03",
-              14.32
-            ],
-            [
-              "2026-09-07",
-              15.3
-            ],
-            [
-              "2026-09-08",
-              15.72
-            ],
-            [
-              "2026-09-10",
-              17.84
-            ],
-            [
-              "2026-09-14",
-              17.1
-            ],
-            [
-              "2026-09-15",
-              17.2
-            ],
-            [
-              "2026-09-17",
-              15.44
-            ],
-            [
-              "2026-09-21",
-              14.87
-            ],
-            [
-              "2026-09-22",
-              14.21
-            ],
-            [
-              "2026-09-24",
-              15.67
-            ],
-            [
-              "2026-09-25",
-              14.87
-            ],
-            [
-              "2026-09-29",
-              16.04
-            ],
-            [
-              "2026-10-01",
-              16.39
-            ],
-            [
-              "2026-10-02",
-              15.31
-            ],
-            [
-              "2026-10-06",
-              15.01
-            ],
-            [
-              "2026-10-08",
-              15.41
-            ],
-            [
-              "2026-10-09",
-              14.84
-            ],
-            [
-              "2026-10-13",
-              15.27
-            ],
-            [
-              "2026-10-14",
-              16.87
-            ],
-            [
-              "2026-10-16",
-              19.99
-            ],
-            [
-              "2026-10-20",
-              17.31
-            ],
-            [
-              "2026-10-21",
-              16.68
-            ],
-            [
-              "2026-10-23",
-              19.45
-            ],
-            [
-              "2026-10-27",
-              17.52
-            ],
-            [
-              "2026-10-28",
-              16.91
-            ],
-            [
-              "2026-10-30",
-              19.42
-            ],
-            [
-              "2026-11-03",
-              20.83
-            ],
-            [
-              "2026-11-04",
-              16.61
-            ],
-            [
-              "2026-11-06",
-              25.64
-            ],
-            [
-              "2026-11-09",
-              19.92
-            ],
-            [
-              "2026-11-11",
-              17.49
-            ],
-            [
-              "2026-11-13",
-              19.3
-            ],
-            [
-              "2026-11-16",
-              22.91
-            ],
-            [
-              "2026-11-18",
-              24.56
-            ],
-            [
-              "2026-11-20",
-              35.89
-            ],
-            [
-              "2026-11-23",
-              26.62
-            ],
-            [
-              "2026-11-26",
-              26.8
-            ]
-          ]
-        },
-        "3y": {
-          "name": "近 3 年",
-          "days": 735,
-          "from": "2024-01-24",
-          "to": "2026-11-26",
-          "lo": 11.86,
-          "hi": 52.33,
-          "avg": 17.74,
-          "chg": 13.66,
-          "chg_pct": 104.0,
-          "pts": [
-            [
-              "2024-01-24",
-              13.14
-            ],
-            [
-              "2024-01-30",
-              13.31
-            ],
-            [
-              "2024-02-06",
-              13.06
-            ],
-            [
-              "2024-02-13",
-              15.85
-            ],
-            [
-              "2024-02-20",
-              15.42
-            ],
-            [
-              "2024-02-27",
-              13.43
-            ],
-            [
-              "2024-03-05",
-              14.46
-            ],
-            [
-              "2024-03-12",
-              13.84
-            ],
-            [
-              "2024-03-19",
-              13.82
-            ],
-            [
-              "2024-03-26",
-              13.24
-            ],
-            [
-              "2024-04-03",
-              14.33
-            ],
-            [
-              "2024-04-09",
-              14.98
-            ],
-            [
-              "2024-04-16",
-              18.4
-            ],
-            [
-              "2024-04-23",
-              15.69
-            ],
-            [
-              "2024-04-30",
-              15.65
-            ],
-            [
-              "2024-05-07",
-              13.23
-            ],
-            [
-              "2024-05-14",
-              13.42
-            ],
-            [
-              "2024-05-21",
-              11.86
-            ],
-            [
-              "2024-05-28",
-              12.92
-            ],
-            [
-              "2024-06-04",
-              13.16
-            ],
-            [
-              "2024-06-11",
-              12.85
-            ],
-            [
-              "2024-06-17",
-              12.75
-            ],
-            [
-              "2024-06-24",
-              13.33
-            ],
-            [
-              "2024-07-01",
-              12.22
-            ],
-            [
-              "2024-07-08",
-              12.37
-            ],
-            [
-              "2024-07-15",
-              13.12
-            ],
-            [
-              "2024-07-22",
-              14.91
-            ],
-            [
-              "2024-07-29",
-              16.6
-            ],
-            [
-              "2024-08-05",
-              38.57
-            ],
-            [
-              "2024-08-12",
-              20.71
-            ],
-            [
-              "2024-08-19",
-              14.65
-            ],
-            [
-              "2024-08-23",
-              15.86
-            ],
-            [
-              "2024-08-30",
-              15.0
-            ],
-            [
-              "2024-09-06",
-              22.38
-            ],
-            [
-              "2024-09-13",
-              16.56
-            ],
-            [
-              "2024-09-20",
-              16.15
-            ],
-            [
-              "2024-09-27",
-              16.96
-            ],
-            [
-              "2024-10-04",
-              19.21
-            ],
-            [
-              "2024-10-11",
-              20.46
-            ],
-            [
-              "2024-10-18",
-              18.03
-            ],
-            [
-              "2024-10-25",
-              20.33
-            ],
-            [
-              "2024-10-31",
-              23.16
-            ],
-            [
-              "2024-11-07",
-              15.2
-            ],
-            [
-              "2024-11-14",
-              14.31
-            ],
-            [
-              "2024-11-21",
-              16.87
-            ],
-            [
-              "2024-11-28",
-              13.9
-            ],
-            [
-              "2024-12-05",
-              13.54
-            ],
-            [
-              "2024-12-12",
-              13.92
-            ],
-            [
-              "2024-12-19",
-              24.09
-            ],
-            [
-              "2024-12-27",
-              15.95
-            ],
-            [
-              "2025-01-06",
-              16.04
-            ],
-            [
-              "2025-01-10",
-              19.54
-            ],
-            [
-              "2025-01-17",
-              15.97
-            ],
-            [
-              "2025-01-24",
-              14.85
-            ],
-            [
-              "2025-01-31",
-              16.43
-            ],
-            [
-              "2025-02-07",
-              16.54
-            ],
-            [
-              "2025-02-14",
-              14.77
-            ],
-            [
-              "2025-02-21",
-              18.21
-            ],
-            [
-              "2025-02-28",
-              19.63
-            ],
-            [
-              "2025-03-07",
-              23.37
-            ],
-            [
-              "2025-03-14",
-              21.77
-            ],
-            [
-              "2025-03-20",
-              19.8
-            ],
-            [
-              "2025-03-27",
-              18.69
-            ],
-            [
-              "2025-04-03",
-              30.02
-            ],
-            [
-              "2025-04-10",
-              40.72
-            ],
-            [
-              "2025-04-17",
-              29.65
-            ],
-            [
-              "2025-04-25",
-              24.84
-            ],
-            [
-              "2025-05-02",
-              22.68
-            ],
-            [
-              "2025-05-09",
-              21.9
-            ],
-            [
-              "2025-05-16",
-              17.24
-            ],
-            [
-              "2025-05-23",
-              22.29
-            ],
-            [
-              "2025-05-29",
-              19.18
-            ],
-            [
-              "2025-06-05",
-              18.48
-            ],
-            [
-              "2025-06-12",
-              18.02
-            ],
-            [
-              "2025-06-19",
-              22.17
-            ],
-            [
-              "2025-06-26",
-              16.59
-            ],
-            [
-              "2025-07-03",
-              16.38
-            ],
-            [
-              "2025-07-10",
-              15.78
-            ],
-            [
-              "2025-07-17",
-              16.52
-            ],
-            [
-              "2025-07-24",
-              15.39
-            ],
-            [
-              "2025-07-31",
-              16.72
-            ],
-            [
-              "2025-08-06",
-              16.77
-            ],
-            [
-              "2025-08-13",
-              14.49
-            ],
-            [
-              "2025-08-20",
-              15.69
-            ],
-            [
-              "2025-08-27",
-              14.85
-            ],
-            [
-              "2025-09-03",
-              16.35
-            ],
-            [
-              "2025-09-10",
-              15.35
-            ],
-            [
-              "2025-09-17",
-              15.72
-            ],
-            [
-              "2025-09-24",
-              16.18
-            ],
-            [
-              "2025-10-01",
-              16.29
-            ],
-            [
-              "2025-10-08",
-              16.3
-            ],
-            [
-              "2025-10-14",
-              20.81
-            ],
-            [
-              "2025-10-21",
-              17.87
-            ],
-            [
-              "2025-10-28",
-              16.42
-            ],
-            [
-              "2025-11-04",
-              19.0
-            ],
-            [
-              "2025-11-11",
-              17.28
-            ],
-            [
-              "2025-11-18",
-              24.69
-            ],
-            [
-              "2025-11-25",
-              18.56
-            ],
-            [
-              "2025-12-02",
-              16.59
-            ],
-            [
-              "2025-12-09",
-              16.93
-            ],
-            [
-              "2025-12-16",
-              16.48
-            ],
-            [
-              "2025-12-22",
-              14.08
-            ],
-            [
-              "2025-12-30",
-              14.33
-            ],
-            [
-              "2026-01-07",
-              15.38
-            ],
-            [
-              "2026-01-14",
-              16.75
-            ],
-            [
-              "2026-01-21",
-              16.9
-            ],
-            [
-              "2026-01-28",
-              16.35
-            ],
-            [
-              "2026-02-04",
-              18.64
-            ],
-            [
-              "2026-02-11",
-              17.65
-            ],
-            [
-              "2026-02-18",
-              19.62
-            ],
-            [
-              "2026-02-25",
-              17.93
-            ],
-            [
-              "2026-03-03",
-              23.57
-            ],
-            [
-              "2026-03-10",
-              24.93
-            ],
-            [
-              "2026-03-17",
-              22.37
-            ],
-            [
-              "2026-03-24",
-              26.95
-            ],
-            [
-              "2026-03-31",
-              25.25
-            ],
-            [
-              "2026-04-08",
-              21.04
-            ],
-            [
-              "2026-04-15",
-              18.17
-            ],
-            [
-              "2026-04-22",
-              18.92
-            ],
-            [
-              "2026-04-29",
-              18.81
-            ],
-            [
-              "2026-05-06",
-              17.39
-            ],
-            [
-              "2026-05-12",
-              17.99
-            ],
-            [
-              "2026-05-19",
-              18.06
-            ],
-            [
-              "2026-05-26",
-              17.01
-            ],
-            [
-              "2026-06-02",
-              15.77
-            ],
-            [
-              "2026-06-09",
-              19.87
-            ],
-            [
-              "2026-06-16",
-              16.41
-            ],
-            [
-              "2026-06-23",
-              19.49
-            ],
-            [
-              "2026-06-30",
-              16.45
-            ],
-            [
-              "2026-07-07",
-              16.13
-            ],
-            [
-              "2026-07-14",
-              16.5
-            ],
-            [
-              "2026-07-20",
-              18.65
-            ],
-            [
-              "2026-07-27",
-              18.67
-            ],
-            [
-              "2026-08-03",
-              15.86
-            ],
-            [
-              "2026-08-10",
-              15.46
-            ],
-            [
-              "2026-08-17",
-              15.19
-            ],
-            [
-              "2026-08-24",
-              15.85
-            ],
-            [
-              "2026-08-31",
-              14.92
-            ],
-            [
-              "2026-09-07",
-              15.3
-            ],
-            [
-              "2026-09-14",
-              17.1
-            ],
-            [
-              "2026-09-21",
-              14.87
-            ],
-            [
-              "2026-09-25",
-              14.87
-            ],
-            [
-              "2026-10-02",
-              15.31
-            ],
-            [
-              "2026-10-09",
-              14.84
-            ],
-            [
-              "2026-10-16",
-              19.99
-            ],
-            [
-              "2026-10-23",
-              19.45
-            ],
-            [
-              "2026-10-30",
-              19.42
-            ],
-            [
-              "2026-11-06",
-              25.64
-            ],
-            [
-              "2026-11-13",
-              19.3
-            ],
-            [
-              "2026-11-26",
-              26.8
-            ]
-          ]
-        },
-        "5y": {
-          "name": "近 5 年",
-          "days": 1250,
-          "from": "2022-01-24",
-          "to": "2026-11-26",
-          "lo": 11.86,
-          "hi": 52.33,
-          "avg": 19.09,
-          "chg": -3.1,
-          "chg_pct": -10.4,
-          "pts": [
-            [
-              "2022-01-24",
-              29.9
-            ],
-            [
-              "2022-02-03",
-              24.35
-            ],
-            [
-              "2022-02-15",
-              25.7
-            ],
-            [
-              "2022-03-01",
-              33.32
-            ],
-            [
-              "2022-03-11",
-              30.75
-            ],
-            [
-              "2022-03-23",
-              23.57
-            ],
-            [
-              "2022-04-05",
-              21.03
-            ],
-            [
-              "2022-04-18",
-              22.17
-            ],
-            [
-              "2022-04-28",
-              29.99
-            ],
-            [
-              "2022-05-11",
-              32.56
-            ],
-            [
-              "2022-05-23",
-              28.48
-            ],
-            [
-              "2022-06-02",
-              24.72
-            ],
-            [
-              "2022-06-15",
-              29.62
-            ],
-            [
-              "2022-06-27",
-              26.95
-            ],
-            [
-              "2022-07-07",
-              26.08
-            ],
-            [
-              "2022-07-20",
-              23.88
-            ],
-            [
-              "2022-08-01",
-              22.84
-            ],
-            [
-              "2022-08-11",
-              20.2
-            ],
-            [
-              "2022-08-24",
-              22.82
-            ],
-            [
-              "2022-09-05",
-              25.99
-            ],
-            [
-              "2022-09-15",
-              26.27
-            ],
-            [
-              "2022-09-28",
-              30.18
-            ],
-            [
-              "2022-10-10",
-              32.45
-            ],
-            [
-              "2022-10-20",
-              29.98
-            ],
-            [
-              "2022-11-02",
-              25.86
-            ],
-            [
-              "2022-11-14",
-              23.73
-            ],
-            [
-              "2022-11-24",
-              20.42
-            ],
-            [
-              "2022-12-07",
-              22.68
-            ],
-            [
-              "2022-12-19",
-              22.42
-            ],
-            [
-              "2022-12-30",
-              21.67
-            ],
-            [
-              "2023-01-13",
-              18.35
-            ],
-            [
-              "2023-01-25",
-              19.08
-            ],
-            [
-              "2023-02-06",
-              19.43
-            ],
-            [
-              "2023-02-17",
-              20.02
-            ],
-            [
-              "2023-03-01",
-              20.58
-            ],
-            [
-              "2023-03-13",
-              26.52
-            ],
-            [
-              "2023-03-24",
-              21.74
-            ],
-            [
-              "2023-04-05",
-              19.08
-            ],
-            [
-              "2023-04-18",
-              16.83
-            ],
-            [
-              "2023-05-01",
-              16.08
-            ],
-            [
-              "2023-05-11",
-              16.93
-            ],
-            [
-              "2023-05-23",
-              18.53
-            ],
-            [
-              "2023-06-05",
-              14.73
-            ],
-            [
-              "2023-06-15",
-              14.5
-            ],
-            [
-              "2023-06-27",
-              13.74
-            ],
-            [
-              "2023-07-10",
-              15.07
-            ],
-            [
-              "2023-07-20",
-              13.99
-            ],
-            [
-              "2023-08-01",
-              13.93
-            ],
-            [
-              "2023-08-14",
-              14.82
-            ],
-            [
-              "2023-08-24",
-              17.2
-            ],
-            [
-              "2023-09-05",
-              14.01
-            ],
-            [
-              "2023-09-18",
-              14.0
-            ],
-            [
-              "2023-09-28",
-              17.34
-            ],
-            [
-              "2023-10-10",
-              17.03
-            ],
-            [
-              "2023-10-23",
-              20.37
-            ],
-            [
-              "2023-11-02",
-              15.66
-            ],
-            [
-              "2023-11-14",
-              14.16
-            ],
-            [
-              "2023-11-27",
-              12.69
-            ],
-            [
-              "2023-12-07",
-              13.06
-            ],
-            [
-              "2023-12-19",
-              12.53
-            ],
-            [
-              "2024-01-03",
-              14.04
-            ],
-            [
-              "2024-01-15",
-              13.25
-            ],
-            [
-              "2024-01-25",
-              13.45
-            ],
-            [
-              "2024-02-07",
-              12.83
-            ],
-            [
-              "2024-02-19",
-              14.71
-            ],
-            [
-              "2024-02-29",
-              13.4
-            ],
-            [
-              "2024-03-13",
-              13.75
-            ],
-            [
-              "2024-03-25",
-              13.19
-            ],
-            [
-              "2024-04-05",
-              16.03
-            ],
-            [
-              "2024-04-18",
-              18.0
-            ],
-            [
-              "2024-04-30",
-              15.65
-            ],
-            [
-              "2024-05-10",
-              12.55
-            ],
-            [
-              "2024-05-23",
-              12.77
-            ],
-            [
-              "2024-06-04",
-              13.16
-            ],
-            [
-              "2024-06-14",
-              12.66
-            ],
-            [
-              "2024-06-27",
-              12.24
-            ],
-            [
-              "2024-07-09",
-              12.51
-            ],
-            [
-              "2024-07-19",
-              16.52
-            ],
-            [
-              "2024-08-01",
-              18.59
-            ],
-            [
-              "2024-08-13",
-              18.12
-            ],
-            [
-              "2024-08-23",
-              15.86
-            ],
-            [
-              "2024-09-05",
-              19.9
-            ],
-            [
-              "2024-09-17",
-              17.61
-            ],
-            [
-              "2024-09-27",
-              16.96
-            ],
-            [
-              "2024-10-10",
-              20.93
-            ],
-            [
-              "2024-10-22",
-              18.2
-            ],
-            [
-              "2024-11-01",
-              21.88
-            ],
-            [
-              "2024-11-14",
-              14.31
-            ],
-            [
-              "2024-11-26",
-              14.1
-            ],
-            [
-              "2024-12-06",
-              12.77
-            ],
-            [
-              "2024-12-19",
-              24.09
-            ],
-            [
-              "2025-01-02",
-              17.93
-            ],
-            [
-              "2025-01-14",
-              18.71
-            ],
-            [
-              "2025-01-27",
-              17.9
-            ],
-            [
-              "2025-02-06",
-              15.5
-            ],
-            [
-              "2025-02-18",
-              15.35
-            ],
-            [
-              "2025-03-03",
-              22.78
-            ],
-            [
-              "2025-03-13",
-              24.66
-            ],
-            [
-              "2025-03-25",
-              17.15
-            ],
-            [
-              "2025-04-07",
-              46.98
-            ],
-            [
-              "2025-04-17",
-              29.65
-            ],
-            [
-              "2025-04-30",
-              24.7
-            ],
-            [
-              "2025-05-13",
-              18.22
-            ],
-            [
-              "2025-05-23",
-              22.29
-            ],
-            [
-              "2025-06-04",
-              17.61
-            ],
-            [
-              "2025-06-17",
-              21.6
-            ],
-            [
-              "2025-06-27",
-              16.32
-            ],
-            [
-              "2025-07-09",
-              15.94
-            ],
-            [
-              "2025-07-22",
-              16.5
-            ],
-            [
-              "2025-08-01",
-              20.38
-            ],
-            [
-              "2025-08-13",
-              14.49
-            ],
-            [
-              "2025-08-26",
-              14.62
-            ],
-            [
-              "2025-09-05",
-              15.18
-            ],
-            [
-              "2025-09-17",
-              15.72
-            ],
-            [
-              "2025-09-30",
-              16.28
-            ],
-            [
-              "2025-10-10",
-              21.66
-            ],
-            [
-              "2025-10-22",
-              18.6
-            ],
-            [
-              "2025-11-04",
-              19.0
-            ],
-            [
-              "2025-11-14",
-              19.83
-            ],
-            [
-              "2025-11-26",
-              17.19
-            ],
-            [
-              "2025-12-09",
-              16.93
-            ],
-            [
-              "2025-12-19",
-              14.91
-            ],
-            [
-              "2026-01-02",
-              14.51
+              "2026-01-13",
+              15.98
             ],
             [
               "2026-01-15",
               15.84
             ],
             [
+              "2026-01-19",
+              18.84
+            ],
+            [
+              "2026-01-20",
+              20.09
+            ],
+            [
+              "2026-01-22",
+              15.64
+            ],
+            [
+              "2026-01-26",
+              16.15
+            ],
+            [
               "2026-01-27",
               16.35
+            ],
+            [
+              "2026-01-29",
+              16.88
+            ],
+            [
+              "2026-02-02",
+              16.34
+            ],
+            [
+              "2026-02-03",
+              18.0
+            ],
+            [
+              "2026-02-05",
+              21.77
             ],
             [
               "2026-02-06",
               17.76
             ],
             [
+              "2026-02-10",
+              17.79
+            ],
+            [
+              "2026-02-12",
+              20.82
+            ],
+            [
+              "2026-02-13",
+              20.6
+            ],
+            [
+              "2026-02-17",
+              20.29
+            ],
+            [
               "2026-02-19",
               20.23
+            ],
+            [
+              "2026-02-20",
+              19.09
+            ],
+            [
+              "2026-02-24",
+              19.55
+            ],
+            [
+              "2026-02-26",
+              18.63
+            ],
+            [
+              "2026-02-27",
+              19.86
             ],
             [
               "2026-03-03",
               23.57
             ],
             [
+              "2026-03-04",
+              21.15
+            ],
+            [
+              "2026-03-06",
+              29.49
+            ],
+            [
+              "2026-03-10",
+              24.93
+            ],
+            [
+              "2026-03-11",
+              24.23
+            ],
+            [
               "2026-03-13",
               27.19
             ],
             [
-              "2026-03-26",
-              27.44
+              "2026-03-17",
+              22.37
             ],
             [
-              "2026-04-08",
-              21.04
+              "2026-03-18",
+              25.09
             ],
             [
-              "2026-04-20",
-              18.87
+              "2026-03-20",
+              26.78
+            ],
+            [
+              "2026-03-23",
+              26.15
+            ],
+            [
+              "2026-03-25",
+              25.33
+            ],
+            [
+              "2026-03-27",
+              31.05
+            ],
+            [
+              "2026-03-30",
+              30.61
+            ],
+            [
+              "2026-04-01",
+              24.54
+            ],
+            [
+              "2026-04-06",
+              24.17
+            ],
+            [
+              "2026-04-07",
+              25.78
+            ],
+            [
+              "2026-04-09",
+              19.49
+            ],
+            [
+              "2026-04-13",
+              19.12
+            ],
+            [
+              "2026-04-14",
+              18.36
+            ],
+            [
+              "2026-04-16",
+              17.94
+            ],
+            [
+              "2026-04-17",
+              17.48
+            ],
+            [
+              "2026-04-21",
+              19.5
+            ],
+            [
+              "2026-04-23",
+              19.31
+            ],
+            [
+              "2026-04-24",
+              18.71
+            ],
+            [
+              "2026-04-28",
+              17.83
+            ],
+            [
+              "2026-04-30",
+              16.89
             ],
             [
               "2026-05-01",
               16.99
             ],
             [
+              "2026-05-05",
+              17.38
+            ],
+            [
+              "2026-05-07",
+              17.08
+            ],
+            [
+              "2026-05-08",
+              17.19
+            ],
+            [
+              "2026-05-12",
+              17.99
+            ],
+            [
               "2026-05-13",
               17.87
             ],
             [
-              "2026-05-25",
-              16.59
+              "2026-05-15",
+              18.43
+            ],
+            [
+              "2026-05-19",
+              18.06
+            ],
+            [
+              "2026-05-20",
+              17.44
+            ],
+            [
+              "2026-05-22",
+              16.7
+            ],
+            [
+              "2026-05-26",
+              17.01
+            ],
+            [
+              "2026-05-27",
+              16.29
+            ],
+            [
+              "2026-05-29",
+              15.32
+            ],
+            [
+              "2026-06-01",
+              16.05
+            ],
+            [
+              "2026-06-03",
+              16.06
             ],
             [
               "2026-06-05",
               21.51
             ],
             [
+              "2026-06-08",
+              18.92
+            ],
+            [
+              "2026-06-10",
+              22.22
+            ],
+            [
+              "2026-06-12",
+              17.68
+            ],
+            [
+              "2026-06-15",
+              16.2
+            ],
+            [
               "2026-06-17",
               18.44
+            ],
+            [
+              "2026-06-19",
+              16.78
+            ],
+            [
+              "2026-06-22",
+              17.28
+            ],
+            [
+              "2026-06-24",
+              18.63
+            ],
+            [
+              "2026-06-25",
+              18.89
             ],
             [
               "2026-06-29",
               17.65
             ],
             [
-              "2026-07-10",
-              15.03
+              "2026-07-01",
+              16.59
             ],
             [
-              "2026-07-22",
-              16.64
+              "2026-07-02",
+              16.15
+            ],
+            [
+              "2026-07-06",
+              15.57
+            ],
+            [
+              "2026-07-08",
+              16.9
+            ],
+            [
+              "2026-07-09",
+              15.84
+            ],
+            [
+              "2026-07-13",
+              17.16
+            ],
+            [
+              "2026-07-15",
+              15.67
+            ],
+            [
+              "2026-07-16",
+              16.73
+            ],
+            [
+              "2026-07-20",
+              18.65
+            ],
+            [
+              "2026-07-21",
+              17.05
+            ],
+            [
+              "2026-07-23",
+              18.7
+            ],
+            [
+              "2026-07-27",
+              18.67
+            ],
+            [
+              "2026-07-28",
+              18.21
+            ],
+            [
+              "2026-07-30",
+              17.09
             ],
             [
               "2026-08-03",
               15.86
             ],
             [
+              "2026-08-04",
+              16.5
+            ],
+            [
+              "2026-08-06",
+              15.15
+            ],
+            [
+              "2026-08-07",
+              14.9
+            ],
+            [
+              "2026-08-11",
+              15.28
+            ],
+            [
+              "2026-08-13",
+              14.63
+            ],
+            [
               "2026-08-14",
               14.25
             ],
             [
-              "2026-08-26",
-              15.21
+              "2026-08-18",
+              15.84
             ],
             [
-              "2026-09-07",
-              15.3
+              "2026-08-20",
+              16.01
+            ],
+            [
+              "2026-08-21",
+              15.13
+            ],
+            [
+              "2026-08-25",
+              15.45
+            ],
+            [
+              "2026-08-27",
+              14.51
+            ],
+            [
+              "2026-08-28",
+              14.43
+            ],
+            [
+              "2026-09-01",
+              16.34
+            ],
+            [
+              "2026-09-02",
+              15.2
+            ],
+            [
+              "2026-09-04",
+              14.53
+            ],
+            [
+              "2026-09-08",
+              15.72
+            ],
+            [
+              "2026-09-09",
+              16.46
+            ],
+            [
+              "2026-09-11",
+              15.84
+            ],
+            [
+              "2026-09-15",
+              17.2
+            ],
+            [
+              "2026-09-16",
+              17.71
             ],
             [
               "2026-09-18",
               14.81
             ],
             [
+              "2026-09-22",
+              14.21
+            ],
+            [
+              "2026-09-23",
+              15.18
+            ],
+            [
+              "2026-09-25",
+              14.87
+            ],
+            [
+              "2026-09-28",
+              16.07
+            ],
+            [
               "2026-09-30",
               16.34
+            ],
+            [
+              "2026-10-02",
+              15.31
+            ],
+            [
+              "2026-10-05",
+              15.52
+            ],
+            [
+              "2026-10-07",
+              15.08
+            ],
+            [
+              "2026-10-09",
+              14.84
             ],
             [
               "2026-10-12",
               15.21
             ],
             [
-              "2026-10-23",
-              19.45
+              "2026-10-14",
+              16.87
+            ],
+            [
+              "2026-10-15",
+              16.46
+            ],
+            [
+              "2026-10-19",
+              18.44
+            ],
+            [
+              "2026-10-21",
+              16.68
+            ],
+            [
+              "2026-10-22",
+              19.03
+            ],
+            [
+              "2026-10-26",
+              18.39
+            ],
+            [
+              "2026-10-28",
+              16.91
+            ],
+            [
+              "2026-10-29",
+              17.2
+            ],
+            [
+              "2026-11-02",
+              21.15
             ],
             [
               "2026-11-04",
               16.61
             ],
             [
-              "2026-11-26",
-              26.8
+              "2026-11-05",
+              28.18
+            ],
+            [
+              "2026-11-09",
+              19.92
+            ],
+            [
+              "2026-11-10",
+              19.46
+            ],
+            [
+              "2026-11-12",
+              18.7
+            ],
+            [
+              "2026-11-16",
+              22.91
+            ],
+            [
+              "2026-11-17",
+              25.46
+            ],
+            [
+              "2026-11-19",
+              28.44
+            ],
+            [
+              "2026-11-23",
+              26.62
+            ],
+            [
+              "2026-11-24",
+              26.36
+            ],
+            [
+              "2026-11-27",
+              23.81
+            ]
+          ]
+        },
+        "3y": {
+          "name": "近 3 年",
+          "days": 735,
+          "from": "2024-01-25",
+          "to": "2026-11-27",
+          "lo": 11.86,
+          "hi": 52.33,
+          "avg": 17.76,
+          "chg": 10.36,
+          "chg_pct": 77.0,
+          "pts": [
+            [
+              "2024-01-25",
+              13.45
+            ],
+            [
+              "2024-01-31",
+              14.35
+            ],
+            [
+              "2024-02-07",
+              12.83
+            ],
+            [
+              "2024-02-14",
+              14.38
+            ],
+            [
+              "2024-02-21",
+              15.34
+            ],
+            [
+              "2024-02-28",
+              13.84
+            ],
+            [
+              "2024-03-06",
+              14.5
+            ],
+            [
+              "2024-03-13",
+              13.75
+            ],
+            [
+              "2024-03-20",
+              13.04
+            ],
+            [
+              "2024-03-27",
+              12.78
+            ],
+            [
+              "2024-04-04",
+              16.35
+            ],
+            [
+              "2024-04-10",
+              15.8
+            ],
+            [
+              "2024-04-17",
+              18.21
+            ],
+            [
+              "2024-04-24",
+              15.97
+            ],
+            [
+              "2024-05-01",
+              15.39
+            ],
+            [
+              "2024-05-08",
+              13.0
+            ],
+            [
+              "2024-05-15",
+              12.45
+            ],
+            [
+              "2024-05-22",
+              12.29
+            ],
+            [
+              "2024-05-29",
+              14.28
+            ],
+            [
+              "2024-06-05",
+              12.63
+            ],
+            [
+              "2024-06-12",
+              12.04
+            ],
+            [
+              "2024-06-18",
+              12.3
+            ],
+            [
+              "2024-06-25",
+              12.84
+            ],
+            [
+              "2024-07-02",
+              12.03
+            ],
+            [
+              "2024-07-09",
+              12.51
+            ],
+            [
+              "2024-07-16",
+              13.19
+            ],
+            [
+              "2024-07-23",
+              14.72
+            ],
+            [
+              "2024-07-30",
+              17.69
+            ],
+            [
+              "2024-08-06",
+              27.71
+            ],
+            [
+              "2024-08-13",
+              18.12
+            ],
+            [
+              "2024-08-20",
+              15.88
+            ],
+            [
+              "2024-08-26",
+              16.15
+            ],
+            [
+              "2024-09-02",
+              15.55
+            ],
+            [
+              "2024-09-09",
+              19.45
+            ],
+            [
+              "2024-09-16",
+              17.14
+            ],
+            [
+              "2024-09-23",
+              15.89
+            ],
+            [
+              "2024-09-30",
+              16.73
+            ],
+            [
+              "2024-10-07",
+              22.64
+            ],
+            [
+              "2024-10-14",
+              19.7
+            ],
+            [
+              "2024-10-21",
+              18.37
+            ],
+            [
+              "2024-10-28",
+              19.8
+            ],
+            [
+              "2024-11-01",
+              21.88
+            ],
+            [
+              "2024-11-08",
+              14.94
+            ],
+            [
+              "2024-11-15",
+              16.14
+            ],
+            [
+              "2024-11-22",
+              15.24
+            ],
+            [
+              "2024-11-29",
+              13.51
+            ],
+            [
+              "2024-12-06",
+              12.77
+            ],
+            [
+              "2024-12-13",
+              13.81
+            ],
+            [
+              "2024-12-20",
+              18.36
+            ],
+            [
+              "2024-12-30",
+              17.4
+            ],
+            [
+              "2025-01-07",
+              17.82
+            ],
+            [
+              "2025-01-13",
+              19.19
+            ],
+            [
+              "2025-01-20",
+              15.81
+            ],
+            [
+              "2025-01-27",
+              17.9
+            ],
+            [
+              "2025-02-03",
+              18.62
+            ],
+            [
+              "2025-02-10",
+              15.81
+            ],
+            [
+              "2025-02-17",
+              15.37
+            ],
+            [
+              "2025-02-24",
+              18.98
+            ],
+            [
+              "2025-03-03",
+              22.78
+            ],
+            [
+              "2025-03-10",
+              27.86
+            ],
+            [
+              "2025-03-17",
+              20.51
+            ],
+            [
+              "2025-03-21",
+              19.28
+            ],
+            [
+              "2025-03-28",
+              21.65
+            ],
+            [
+              "2025-04-04",
+              45.31
+            ],
+            [
+              "2025-04-11",
+              37.56
+            ],
+            [
+              "2025-04-21",
+              33.82
+            ],
+            [
+              "2025-04-28",
+              25.15
+            ],
+            [
+              "2025-05-05",
+              23.64
+            ],
+            [
+              "2025-05-12",
+              18.39
+            ],
+            [
+              "2025-05-19",
+              18.14
+            ],
+            [
+              "2025-05-26",
+              20.57
+            ],
+            [
+              "2025-05-30",
+              18.57
+            ],
+            [
+              "2025-06-06",
+              16.77
+            ],
+            [
+              "2025-06-13",
+              20.82
+            ],
+            [
+              "2025-06-20",
+              20.62
+            ],
+            [
+              "2025-06-27",
+              16.32
+            ],
+            [
+              "2025-07-04",
+              17.48
+            ],
+            [
+              "2025-07-11",
+              16.4
+            ],
+            [
+              "2025-07-18",
+              16.41
+            ],
+            [
+              "2025-07-25",
+              14.93
+            ],
+            [
+              "2025-08-01",
+              20.38
+            ],
+            [
+              "2025-08-07",
+              16.57
+            ],
+            [
+              "2025-08-14",
+              14.83
+            ],
+            [
+              "2025-08-21",
+              16.6
+            ],
+            [
+              "2025-08-28",
+              14.43
+            ],
+            [
+              "2025-09-04",
+              15.3
+            ],
+            [
+              "2025-09-11",
+              14.71
+            ],
+            [
+              "2025-09-18",
+              15.7
+            ],
+            [
+              "2025-09-25",
+              16.74
+            ],
+            [
+              "2025-10-02",
+              16.63
+            ],
+            [
+              "2025-10-09",
+              16.43
+            ],
+            [
+              "2025-10-15",
+              20.64
+            ],
+            [
+              "2025-10-22",
+              18.6
+            ],
+            [
+              "2025-10-29",
+              16.92
+            ],
+            [
+              "2025-11-05",
+              18.01
+            ],
+            [
+              "2025-11-12",
+              17.51
+            ],
+            [
+              "2025-11-19",
+              23.66
+            ],
+            [
+              "2025-11-26",
+              17.19
+            ],
+            [
+              "2025-12-03",
+              16.08
+            ],
+            [
+              "2025-12-10",
+              15.77
+            ],
+            [
+              "2025-12-17",
+              17.62
+            ],
+            [
+              "2025-12-23",
+              14.0
+            ],
+            [
+              "2025-12-31",
+              14.95
+            ],
+            [
+              "2026-01-08",
+              15.45
+            ],
+            [
+              "2026-01-15",
+              15.84
+            ],
+            [
+              "2026-01-22",
+              15.64
+            ],
+            [
+              "2026-01-29",
+              16.88
+            ],
+            [
+              "2026-02-05",
+              21.77
+            ],
+            [
+              "2026-02-12",
+              20.82
+            ],
+            [
+              "2026-02-19",
+              20.23
+            ],
+            [
+              "2026-02-26",
+              18.63
+            ],
+            [
+              "2026-03-04",
+              21.15
+            ],
+            [
+              "2026-03-11",
+              24.23
+            ],
+            [
+              "2026-03-18",
+              25.09
+            ],
+            [
+              "2026-03-25",
+              25.33
+            ],
+            [
+              "2026-04-01",
+              24.54
+            ],
+            [
+              "2026-04-09",
+              19.49
+            ],
+            [
+              "2026-04-16",
+              17.94
+            ],
+            [
+              "2026-04-23",
+              19.31
+            ],
+            [
+              "2026-04-30",
+              16.89
+            ],
+            [
+              "2026-05-07",
+              17.08
+            ],
+            [
+              "2026-05-13",
+              17.87
+            ],
+            [
+              "2026-05-20",
+              17.44
+            ],
+            [
+              "2026-05-27",
+              16.29
+            ],
+            [
+              "2026-06-03",
+              16.06
+            ],
+            [
+              "2026-06-10",
+              22.22
+            ],
+            [
+              "2026-06-17",
+              18.44
+            ],
+            [
+              "2026-06-24",
+              18.63
+            ],
+            [
+              "2026-07-01",
+              16.59
+            ],
+            [
+              "2026-07-08",
+              16.9
+            ],
+            [
+              "2026-07-15",
+              15.67
+            ],
+            [
+              "2026-07-21",
+              17.05
+            ],
+            [
+              "2026-07-28",
+              18.21
+            ],
+            [
+              "2026-08-04",
+              16.5
+            ],
+            [
+              "2026-08-11",
+              15.28
+            ],
+            [
+              "2026-08-18",
+              15.84
+            ],
+            [
+              "2026-08-25",
+              15.45
+            ],
+            [
+              "2026-09-01",
+              16.34
+            ],
+            [
+              "2026-09-08",
+              15.72
+            ],
+            [
+              "2026-09-15",
+              17.2
+            ],
+            [
+              "2026-09-22",
+              14.21
+            ],
+            [
+              "2026-09-28",
+              16.07
+            ],
+            [
+              "2026-10-05",
+              15.52
+            ],
+            [
+              "2026-10-12",
+              15.21
+            ],
+            [
+              "2026-10-19",
+              18.44
+            ],
+            [
+              "2026-10-26",
+              18.39
+            ],
+            [
+              "2026-11-02",
+              21.15
+            ],
+            [
+              "2026-11-09",
+              19.92
+            ],
+            [
+              "2026-11-16",
+              22.91
+            ],
+            [
+              "2026-11-27",
+              23.81
+            ]
+          ]
+        },
+        "5y": {
+          "name": "近 5 年",
+          "days": 1250,
+          "from": "2022-01-25",
+          "to": "2026-11-27",
+          "lo": 11.86,
+          "hi": 52.33,
+          "avg": 19.08,
+          "chg": -7.35,
+          "chg_pct": -23.6,
+          "pts": [
+            [
+              "2022-01-25",
+              31.16
+            ],
+            [
+              "2022-02-04",
+              23.22
+            ],
+            [
+              "2022-02-16",
+              24.29
+            ],
+            [
+              "2022-03-02",
+              30.74
+            ],
+            [
+              "2022-03-14",
+              31.77
+            ],
+            [
+              "2022-03-24",
+              21.67
+            ],
+            [
+              "2022-04-06",
+              22.1
+            ],
+            [
+              "2022-04-19",
+              21.37
+            ],
+            [
+              "2022-04-29",
+              33.4
+            ],
+            [
+              "2022-05-12",
+              31.77
+            ],
+            [
+              "2022-05-24",
+              29.45
+            ],
+            [
+              "2022-06-03",
+              24.79
+            ],
+            [
+              "2022-06-16",
+              32.95
+            ],
+            [
+              "2022-06-28",
+              28.36
+            ],
+            [
+              "2022-07-08",
+              24.64
+            ],
+            [
+              "2022-07-21",
+              23.11
+            ],
+            [
+              "2022-08-02",
+              23.93
+            ],
+            [
+              "2022-08-12",
+              19.53
+            ],
+            [
+              "2022-08-25",
+              21.78
+            ],
+            [
+              "2022-09-06",
+              26.91
+            ],
+            [
+              "2022-09-16",
+              26.3
+            ],
+            [
+              "2022-09-29",
+              31.84
+            ],
+            [
+              "2022-10-11",
+              33.63
+            ],
+            [
+              "2022-10-21",
+              29.69
+            ],
+            [
+              "2022-11-03",
+              25.3
+            ],
+            [
+              "2022-11-15",
+              24.54
+            ],
+            [
+              "2022-11-25",
+              20.5
+            ],
+            [
+              "2022-12-08",
+              22.29
+            ],
+            [
+              "2022-12-20",
+              21.48
+            ],
+            [
+              "2023-01-03",
+              22.9
+            ],
+            [
+              "2023-01-16",
+              19.49
+            ],
+            [
+              "2023-01-26",
+              18.73
+            ],
+            [
+              "2023-02-07",
+              18.66
+            ],
+            [
+              "2023-02-20",
+              21.23
+            ],
+            [
+              "2023-03-02",
+              19.59
+            ],
+            [
+              "2023-03-14",
+              23.73
+            ],
+            [
+              "2023-03-27",
+              20.6
+            ],
+            [
+              "2023-04-06",
+              18.4
+            ],
+            [
+              "2023-04-19",
+              16.46
+            ],
+            [
+              "2023-05-02",
+              17.78
+            ],
+            [
+              "2023-05-12",
+              17.03
+            ],
+            [
+              "2023-05-24",
+              20.03
+            ],
+            [
+              "2023-06-06",
+              13.96
+            ],
+            [
+              "2023-06-16",
+              13.54
+            ],
+            [
+              "2023-06-28",
+              13.43
+            ],
+            [
+              "2023-07-11",
+              14.84
+            ],
+            [
+              "2023-07-21",
+              13.6
+            ],
+            [
+              "2023-08-02",
+              16.09
+            ],
+            [
+              "2023-08-15",
+              16.46
+            ],
+            [
+              "2023-08-25",
+              15.68
+            ],
+            [
+              "2023-09-06",
+              14.45
+            ],
+            [
+              "2023-09-19",
+              14.11
+            ],
+            [
+              "2023-09-29",
+              17.52
+            ],
+            [
+              "2023-10-11",
+              16.09
+            ],
+            [
+              "2023-10-24",
+              18.97
+            ],
+            [
+              "2023-11-03",
+              14.91
+            ],
+            [
+              "2023-11-15",
+              14.18
+            ],
+            [
+              "2023-11-28",
+              12.69
+            ],
+            [
+              "2023-12-08",
+              12.35
+            ],
+            [
+              "2023-12-20",
+              13.67
+            ],
+            [
+              "2024-01-04",
+              14.13
+            ],
+            [
+              "2024-01-16",
+              13.84
+            ],
+            [
+              "2024-01-26",
+              13.26
+            ],
+            [
+              "2024-02-08",
+              12.79
+            ],
+            [
+              "2024-02-20",
+              15.42
+            ],
+            [
+              "2024-03-01",
+              13.11
+            ],
+            [
+              "2024-03-14",
+              14.4
+            ],
+            [
+              "2024-03-26",
+              13.24
+            ],
+            [
+              "2024-04-08",
+              15.19
+            ],
+            [
+              "2024-04-19",
+              18.71
+            ],
+            [
+              "2024-05-01",
+              15.39
+            ],
+            [
+              "2024-05-13",
+              13.6
+            ],
+            [
+              "2024-05-24",
+              11.93
+            ],
+            [
+              "2024-06-05",
+              12.63
+            ],
+            [
+              "2024-06-17",
+              12.75
+            ],
+            [
+              "2024-06-28",
+              12.44
+            ],
+            [
+              "2024-07-10",
+              12.85
+            ],
+            [
+              "2024-07-22",
+              14.91
+            ],
+            [
+              "2024-08-02",
+              23.39
+            ],
+            [
+              "2024-08-14",
+              16.19
+            ],
+            [
+              "2024-08-26",
+              16.15
+            ],
+            [
+              "2024-09-06",
+              22.38
+            ],
+            [
+              "2024-09-18",
+              18.23
+            ],
+            [
+              "2024-09-30",
+              16.73
+            ],
+            [
+              "2024-10-11",
+              20.46
+            ],
+            [
+              "2024-10-23",
+              19.24
+            ],
+            [
+              "2024-11-04",
+              21.98
+            ],
+            [
+              "2024-11-15",
+              16.14
+            ],
+            [
+              "2024-11-27",
+              14.1
+            ],
+            [
+              "2024-12-09",
+              14.19
+            ],
+            [
+              "2024-12-20",
+              18.36
+            ],
+            [
+              "2025-01-03",
+              16.13
+            ],
+            [
+              "2025-01-15",
+              16.12
+            ],
+            [
+              "2025-01-28",
+              16.41
+            ],
+            [
+              "2025-02-07",
+              16.54
+            ],
+            [
+              "2025-02-19",
+              15.27
+            ],
+            [
+              "2025-03-04",
+              23.51
+            ],
+            [
+              "2025-03-14",
+              21.77
+            ],
+            [
+              "2025-03-26",
+              18.33
+            ],
+            [
+              "2025-04-08",
+              52.33
+            ],
+            [
+              "2025-04-21",
+              33.82
+            ],
+            [
+              "2025-05-01",
+              24.6
+            ],
+            [
+              "2025-05-14",
+              18.62
+            ],
+            [
+              "2025-05-26",
+              20.57
+            ],
+            [
+              "2025-06-05",
+              18.48
+            ],
+            [
+              "2025-06-18",
+              20.14
+            ],
+            [
+              "2025-06-30",
+              16.73
+            ],
+            [
+              "2025-07-10",
+              15.78
+            ],
+            [
+              "2025-07-23",
+              15.37
+            ],
+            [
+              "2025-08-04",
+              17.52
+            ],
+            [
+              "2025-08-14",
+              14.83
+            ],
+            [
+              "2025-08-27",
+              14.85
+            ],
+            [
+              "2025-09-08",
+              15.11
+            ],
+            [
+              "2025-09-18",
+              15.7
+            ],
+            [
+              "2025-10-01",
+              16.29
+            ],
+            [
+              "2025-10-13",
+              19.03
+            ],
+            [
+              "2025-10-23",
+              17.3
+            ],
+            [
+              "2025-11-05",
+              18.01
+            ],
+            [
+              "2025-11-17",
+              22.38
+            ],
+            [
+              "2025-11-27",
+              17.21
+            ],
+            [
+              "2025-12-10",
+              15.77
+            ],
+            [
+              "2025-12-22",
+              14.08
+            ],
+            [
+              "2026-01-05",
+              14.9
+            ],
+            [
+              "2026-01-16",
+              15.86
+            ],
+            [
+              "2026-01-28",
+              16.35
+            ],
+            [
+              "2026-02-09",
+              17.36
+            ],
+            [
+              "2026-02-20",
+              19.09
+            ],
+            [
+              "2026-03-04",
+              21.15
+            ],
+            [
+              "2026-03-16",
+              23.51
+            ],
+            [
+              "2026-03-27",
+              31.05
+            ],
+            [
+              "2026-04-09",
+              19.49
+            ],
+            [
+              "2026-04-21",
+              19.5
+            ],
+            [
+              "2026-05-04",
+              18.29
+            ],
+            [
+              "2026-05-14",
+              17.26
+            ],
+            [
+              "2026-05-26",
+              17.01
+            ],
+            [
+              "2026-06-08",
+              18.92
+            ],
+            [
+              "2026-06-18",
+              16.4
+            ],
+            [
+              "2026-06-30",
+              16.45
+            ],
+            [
+              "2026-07-13",
+              17.16
+            ],
+            [
+              "2026-07-23",
+              18.7
+            ],
+            [
+              "2026-08-04",
+              16.5
+            ],
+            [
+              "2026-08-17",
+              15.19
+            ],
+            [
+              "2026-08-27",
+              14.51
+            ],
+            [
+              "2026-09-08",
+              15.72
+            ],
+            [
+              "2026-09-21",
+              14.87
+            ],
+            [
+              "2026-10-01",
+              16.39
+            ],
+            [
+              "2026-10-13",
+              15.27
+            ],
+            [
+              "2026-10-26",
+              18.39
+            ],
+            [
+              "2026-11-05",
+              28.18
+            ],
+            [
+              "2026-11-27",
+              23.81
             ]
           ]
         }
       },
       "hist": [
-        29.9,
         31.16,
         31.96,
         30.49,
@@ -10014,20 +9997,21 @@
         26.62,
         26.36,
         28.29,
-        26.8
+        26.8,
+        23.81
       ],
       "live": {
-        "last": 24.56,
-        "chg": -2.24,
-        "chg_pct": -8.36,
+        "last": 23.81,
+        "chg": -2.99,
+        "chg_pct": -11.16,
         "prev_close": 26.8,
-        "at": "12:29 PM EST",
+        "at": "1:15 PM EST",
         "label": "警惕",
         "zone": [
           20,
           30
         ],
-        "pct": 84.2,
+        "pct": 81.9,
         "source": "CNBC 报价（quote.cnbc.com，CORS 开放，前端每分钟直连）"
       },
       "source": "CBOE 官方 VIX_History.csv（日频收盘，1990 起）"
